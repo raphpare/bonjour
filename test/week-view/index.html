@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- <link rel="stylesheet" href="../../lib/week-view/index.css"> -->
+    <style>
+        .style-body {
+            max-height: 600px;
+            overflow: auto;
+        }
+
+        .style-header-month {
+            font-family: sans-serif;
+        }
+
+        .style-header-day {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border: 1px solid #000;
+            border-radius: 50%;
+            text-align: center;
+        }
+
+        .style-header-day--today {
+            background-color: black;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <select id="langueSelect">
+            <option value="fr-CA">Français</option>
+            <option value="en">English</option>
+        </select>
+        <header style="display: flex; justify-content: space-between;">
+            <div>
+                <button id="previousButton">Previous</button>
+                <button id="nextButton">Next</button>
+            </div>
+            <h1 id="currentDateRange"></h1>
+            <button id="todayButton">Today</button>
+            <select id="mode">
+                <option value="1-day">1 day</option>
+                <option value="3-days">3 days</option>
+                <option value="7-days" selected>7 days</option>
+            </select>
+        </header>
+        
+        <div id="calendar"></div>
+    </main>
+    <script type="module" src="scripts/main.js"></script>
+</body>
+</html>

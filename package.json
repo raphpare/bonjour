@@ -1,0 +1,33 @@
+{
+    "name": "bonjour",
+    "version": "0.0.0-beta.1",
+    "description": "Week calendar",
+    "keywords": ["calendar", "agenda", "day", "week", "month", "year"],
+    "license": "ISC",
+    "author": "Raphaël Paré <raph.pare@outlook.com> (https://github.com/raphpare)",
+    "files": [
+        "lib"
+    ],
+    "main": "lib/index.js",
+    "module": "lib/index.esm.js",
+    "types": "lib/index.d.ts",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/raphpare/bonjour.git"
+    },
+    "scripts": {
+        "build": "rimraf lib && node esbuild.config.js",
+        "watch": "rimraf lib && node esbuild.config.js --watch",
+        "typedoc": "rimraf docs && typedoc --out docs ./src",
+        "clean": "rimraf node_modules && rimraf lib && rimraf docs"
+    },
+    "devDependencies": {
+        "autoprefixer": "^10.4.7",
+        "esbuild": "^0.14.2",
+        "esbuild-sass-plugin": "^2.2.6",
+        "postcss": "^8.4.14",
+        "postcss-preset-env": "^7.7.1",
+        "typedoc": "^0.22.10",
+        "typescript": "^4.5.2"
+    }
+}

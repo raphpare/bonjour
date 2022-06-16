@@ -1,0 +1,6 @@
+.DS_Store
+.vscode
+node_modules
+lib
+src/month-view/*
+test/month-view/*

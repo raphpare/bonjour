@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "declaration": true,
+        "declarationDir": "./lib",
+        "emitDeclarationOnly": true,
+        "declarationMap": true,
+        "target": "es6",
+        "moduleResolution": "node",
+    },
+    "typedocOptions": {
+        "entryPoints": ["src/week-view/week-view.ts"],
+        "out": "docs"
+    },
+    "include": ["src/**/*", "test/mocks"],
+    "exclude": ["node_modules"]
+}
