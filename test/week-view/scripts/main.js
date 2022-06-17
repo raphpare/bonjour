@@ -184,6 +184,6 @@ refModeAttribute.addEventListener('change', () => {
 });
 refModeAttribute.value = weekView.mode;
 
-refEventsExample.innerHTML = `weekView.setEvent(${cleanIt(eventsExemple)});`;
+refEventsExample.innerHTML = `weekView.setEvents(${cleanIt(eventsExemple)});`;
 
 setDatesDisplayed();
