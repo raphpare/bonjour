@@ -8,7 +8,7 @@ const fs = require('fs');
 
 function fromDir(startPath, filter, callback) {
     if (!fs.existsSync(startPath)) {
-        console.log("no dir ", startPath);
+        console.log('no dir ', startPath);
         return;
     }
 
