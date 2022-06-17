@@ -31,10 +31,36 @@ const eventsExemple = [
         id: '2',
         title: 'Event 2',
         dateRange: {
+            start: new Date(new Date().setHours(new Date().getHours())),
+            end: new Date(new Date().setHours(new Date().getHours() + 3))
+        }
+    },
+    {
+        id: '3',
+        title: 'Event 3',
+        dateRange: {
             start: new Date(new Date().setHours(new Date().getHours() + 2)),
             end: new Date(new Date().setHours(new Date().getHours() + 4))
         }
-    }
+    },
+    {
+        id: '4',
+        title: 'Event 4',
+        subtitle: 'subtitle',
+        dateRange: {
+            start: new Date(new Date().setHours(new Date().getHours() - 9)),
+            end: new Date(new Date().setHours(new Date().getHours() - 8))
+        }
+    },
+    {
+        id: '5',
+        title: 'Event 5',
+        subtitle: 'subtitle',
+        dateRange: {
+            start: new Date(new Date().setDate(new Date().getDate() - 1)),
+            end: new Date(new Date().setHours(new Date().getHours() - 20))
+        }
+    },
     
 ];
 
