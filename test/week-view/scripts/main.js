@@ -1,79 +1,161 @@
 import { BjWeekView } from '../../../../lib/week-view.esm.js';
-import { EVENTS_MOCK } from '../../mocks/events.mocks.js';
 
-const bonjourWeekView = new BjWeekView(
-    document.getElementById('calendar'), 
-    { 
-        mode: '7-day',
-        currentDate: new Date(),
-        classNames: {
-            event: {
-                title: 'style-1-event-title',
-                subtitle: 'style-1-event-subtitle',
-            },
-            body: 'style-body',
-            header: 'style-header',
-            headerColumn: 'style-header-column',
-            headerDay: 'style-header-day',
-            headerMonth: 'style-header-month',
-            today: {
-                headerColumn: 'style-header-column--today',
-                headerDay: 'style-header-day--today',
-                headerMonth: 'style-header-month--today',
-            }
-        },
-        customProperties: {
-            '--background-weekend': 'rgb(200,100, 245)',
-            '--border-color': 'rgb(220, 220, 220)'
-        },
-        callbacks: {
-            updated: setTextCurrentDateRange,
-            eventOnClick: (e, event) => {
-                console.log('test-eventOnClick', e, event);
-            }
-        }
-    }
-);
+// Variable: Initial week options
+const refModeInitialOption = document.getElementById('modeInitialOption');
+const refCurrentDate = document.getElementById('currentDate');
+const refCode = document.getElementById('code');
+const refCustomPropertiesInit = document.querySelectorAll('.custom-properties-init');
 
-
-console.log('Loading events...');
-setTimeout(() => {
-    bonjourWeekView.setEvents(EVENTS_MOCK).then(() => {
-        console.log('Events are displayed');
-    });
-}, 10);
-
-
+// Variable: Methods
 const refPreviousButton = document.getElementById('previousButton');
 const refNextButton = document.getElementById('nextButton');
-const refCurrentDateRange = document.getElementById('currentDateRange');
-const refLangueSelect = document.getElementById('langueSelect');
 const refTodayButton = document.getElementById('todayButton');
-const refModeSelect = document.getElementById('mode');
+const refEventsExample =  document.getElementById('eventsExemple');
+const refSetEventsButton = document.getElementById('setEventsButton');
+
+const refModeAttribute =  document.getElementById('modeAttribute');
+const refLocalAttribute =  document.getElementById('localAttribute');
+const refFullDatesOfWeekAttribute = document.getElementById('datesDisplayedAttribute');
+
+const eventsExemple = [
+    {
+        id: '1',
+        title: 'Event 1',
+        subtitle: 'Subtitle',
+        dateRange: {
+            start: new Date(),
+            end: new Date(new Date().setHours(new Date().getHours() + 1))
+        },
+    },
+    {
+        id: '2',
+        title: 'Event 2',
+        dateRange: {
+            start: new Date(new Date().setHours(new Date().getHours() + 2)),
+            end: new Date(new Date().setHours(new Date().getHours() + 4))
+        }
+    }
+    
+];
+
+let weekView = null;
+
+const options = {
+    callbacks: {
+        updated: () => {
+            console.log('view update');
+            setTextCurrentDateRange();
+        },
+        eventOnClick: (ponterEvent, event) => {
+            console.log(ponterEvent, event);
+        }
+    }
+};
+
+const setOptionMode = (mode) => {
+    options.mode = mode === '' ? undefined : mode;
+    updateWeekView();
+}
+
+const setOptionCurrentDate = (currentDate) => {
+    options.currentDate = new Date(currentDate);
+    updateWeekView();
+}
+
+function cleanIt(obj) {
+    const cleaned = JSON.stringify(obj, null, 4);
+    return cleaned.replace(/^[\t ]*"[^:\n\r]+(?<!\\)":/gm, (match) => match.replace(/"/g, ""));
+}
+
+const updateWeekView = () => {
+    if(weekView) {
+        weekView.destroy()
+    };
+
+    document.getElementById('weekView').removeAttribute('style');
+    
+    refCode.innerHTML = `const weekView = new BjWeekView(
+    document.getElementById('weekView'), ${cleanIt(options)
+        .replace('callbacks: {}',`callbacks: {
+        updated: () => {
+            console.log('view update');
+        },
+        eventOnClick: (ponterEvent, event) => {
+            console.log(ponterEvent, event);
+        }
+    }`).replace(/"/g, `'`)
+        .replace(/currentDate: '[0-9:.TZ\-]{0,}'/, 
+            (match) => match.replace(" '", " new Date('").replace(/'$/, "')")
+        ).replace(/\-\-[a-z\-]{1,}:/g, 
+            (match) => `'${match.replace(':' ,'')}':`
+        )
+    });`
+
+    weekView = new BjWeekView(
+        document.getElementById('weekView'), 
+        options,
+    );
+}
+
+const disabledInitialWeekOptions = (callback) => {
+    refModeInitialOption.disabled = true;
+    refCurrentDate.disabled = true;
+    Array.from(refCustomPropertiesInit).forEach((el) => {
+        const refInput = el.querySelector('input');
+        refInput.disabled = true;
+    });
+
+    document.getElementById('initialWeekOptions').hidden = true;
+
+    callback;
+}
+
+const setEvent = () => {
+    weekView.setEvents(eventsExemple).then(() => {
+        console.log('Events are displayed');
+    });
+}
 
 
-refPreviousButton.addEventListener('click', () => bonjourWeekView.goToLastWeek());
-refNextButton.addEventListener('click', () => bonjourWeekView.goToNextWeek());
+updateWeekView();
+refModeInitialOption.addEventListener('change', () => setOptionMode(refModeInitialOption.value));
+refCurrentDate.addEventListener('change', () => setOptionCurrentDate(refCurrentDate.value));
 
-refTodayButton.addEventListener('click', () => {
-    console.log('Click on today button');
-    bonjourWeekView.goToToday().then((res) => {
-        console.log('Today view is displayed', res)
+refSetEventsButton.addEventListener('click', () => disabledInitialWeekOptions(weekView.setEvents(eventsExemple)));
+refTodayButton.addEventListener('click', () => disabledInitialWeekOptions(weekView.goToToday()));
+refPreviousButton.addEventListener('click', () => disabledInitialWeekOptions(weekView.goToPreviousDate()));
+refNextButton.addEventListener('click', () => disabledInitialWeekOptions(weekView.goToNextDate()));
+
+Array.from(refCustomPropertiesInit).forEach((el) => {
+    const refInput = el.querySelector('input');
+    const refLabel = el.querySelector('label');
+    refInput.addEventListener('change', () => {
+        if (!options.customProperties) {
+            options.customProperties = {};
+        }
+        options.customProperties[refLabel.innerText] = refInput.value ? refInput.value : undefined;
+
+        if (!Object.values(options.customProperties).some(v => v !== undefined)) {
+            delete options.customProperties;
+        }
+        updateWeekView();
     });
 });
 
-refLangueSelect.addEventListener('change', (e) => {
-    bonjourWeekView.local = e.target.value;
+refLocalAttribute.addEventListener('change', () => {
+   weekView.local = refLocalAttribute.value;
 });
+refLocalAttribute.value = weekView.local;
 
-refModeSelect.addEventListener('change', () => {
-    bonjourWeekView.mode = refModeSelect.value;
+refModeAttribute.addEventListener('change', () => {
+    weekView.mode = refModeAttribute.value;
 });
+refModeAttribute.value = weekView.mode;
+
+refEventsExample.innerHTML = `weekView.setEvent(${cleanIt(eventsExemple)});`;
 
 function setTextCurrentDateRange() {
-    const start = bonjourWeekView.fullDatesOfWeek[0].toLocaleString('fr-CA', {  year: 'numeric', month: 'long', day: 'numeric' });
-    const end = bonjourWeekView.fullDatesOfWeek[bonjourWeekView.fullDatesOfWeek.length - 1].toLocaleString('fr-CA', {  year: 'numeric', month: 'long', day: 'numeric' });
-    refCurrentDateRange.innerHTML = start === end ? start : `${start} - ${end}`;
+    refFullDatesOfWeekAttribute.innerHTML = cleanIt(weekView.datesDisplayed);
 }
 
 setTextCurrentDateRange();

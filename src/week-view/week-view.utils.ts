@@ -34,7 +34,6 @@ export interface BjWeekClassName {
 export interface BjWeekCustomProperties {
     ['--time-area-width']?: string,
     ['--day-height']?: string,
-    ['--number-of-columns']?: string;
     ['--border-color']?: string;
     ['--background-weekend']?: string;
     ['--background-today']?: string;

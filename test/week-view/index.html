@@ -7,6 +7,43 @@
     <title>Document</title>
     <!-- <link rel="stylesheet" href="../../lib/week-view/index.css"> -->
     <style>
+        body {
+            display: flex;
+        }
+        main {
+            flex: auto;
+        }
+
+        aside {
+            width: 320px;
+            padding: 32px 24px;
+        }
+        aside ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        aside li  {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        aside li + li  {
+            margin-top: 16px;
+            border-top: 1px solid rgb(241, 241, 241);
+            padding-top: 16px;
+        }
+
+
+        pre {
+            padding: 16px;
+            border-radius: 6px;
+            background: rgb(237, 237, 237);
+            overflow: auto;
+            max-height: 100px;
+        }
         /* .style-body {
             max-height: 600px;
             overflow: auto;
@@ -35,26 +72,105 @@
 </head>
 <body>
     <main>
-        <select id="langueSelect">
-            <option value="fr-CA">Français</option>
-            <option value="en">English</option>
-        </select>
-        <header style="display: flex; justify-content: space-between;">
-            <div>
-                <button id="previousButton">Previous</button>
-                <button id="nextButton">Next</button>
-            </div>
-            <h1 id="currentDateRange"></h1>
-            <button id="todayButton">Today</button>
-            <select id="mode">
-                <option value="1-day">1 day</option>
-                <option value="3-days">3 days</option>
-                <option value="7-days" selected>7 days</option>
-            </select>
-        </header>
-        
-        <div id="calendar"></div>
+        <div id="weekView"></div>
     </main>
+    <aside>
+        <h2>Initial week options</h2>
+        <div id="initialWeekOptions">
+            <ul>
+                <li>
+                    <label for="idRootElement">Id root element</label>
+                    weekView
+                </li>
+                <li>
+                    <label for="modeInitialOption">mode</label>
+                    <select id="modeInitialOption">
+                        <option value="">undefined</option>
+                        <option value="1-day">1-day</option>
+                        <option value="3-days">3-days</option>
+                        <option value="7-days">7-days</option>
+                    </select>
+                </li>
+                <li>
+                    <label for="currentDate">currentDate</label>
+                    <input type="date" id="currentDate" >
+                    
+                </li>
+            </ul>
+            <p><strong>customProperties</strong></p>
+            <ul>
+                <li class="custom-properties-init">
+                    <label for="timeAreaWidth">--time-area-width</label>
+                    <input type="text" id="timeAreaWidth" >
+                </li>
+                <li class="custom-properties-init">
+                    <label for="dayHeight">--day-height</label>
+                    <input type="text" id="dayHeight" >
+                </li>
+                <li class="custom-properties-init">
+                    <label for="borderColor">--border-color</label>
+                    <input type="text" id="borderColor" >
+                </li>
+                <li class="custom-properties-init">
+                    <label for="backgroundToday">--background-today</label>
+                    <input type="text" id="backgroundToday">
+                </li>
+                <li class="custom-properties-init">
+                    <label for="backgroundWeekend">--background-weekend</label>
+                    <input type="text" id="backgroundWeekend">
+                </li>
+            </ul>
+        </div>
+            
+        <h3>copy-paste</h3>
+        <pre id="code"></pre>
+
+        <h2>Methods</h2>
+        <ul>
+            <li >
+                <span style="width: 100%;">setEvent()</span>
+                <pre id="eventsExemple" ></pre>
+                <button id="setEventsButton">setEvent()</button>
+            </li>
+            <li>
+                goToToday()
+                <button id="todayButton">Today</button>
+            </li>
+            <li>
+                goToPreviousDate()
+                <button id="previousButton">Previous</button>
+            </li>
+            <li>
+                goToNextDate()
+                <button id="nextButton">Next</button>
+            </li>
+        </ul>
+
+        <h2>Attributes</h2>
+        <ul>
+            <li>
+                <label for="modeAttribute">mode</label>
+                <select id="modeAttribute">
+                    <option value="1-day">1-day</option>
+                    <option value="3-days">3-days</option>
+                    <option value="7-days">7-days</option>
+                </select>
+            </li>
+            <li>
+                <label for="localAttribute">local</label>
+                <input type="text" id="localAttribute">
+            </li>
+
+            <li>
+                datesDisplayed
+                <pre type="text" id="datesDisplayedAttribute"></pre>
+            </li>
+            
+        </ul>
+        
+        
+    </aside>
+
     <script type="module" src="scripts/main.js"></script>
 </body>
 </html>

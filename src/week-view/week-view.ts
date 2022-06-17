@@ -15,7 +15,7 @@ export class BjWeekView {
     #nbDaysDisplayed: number = 7;
     #local: string = LOCAL_FR_CA;
     #classNames: BjWeekClassName = null;
-    #fullDatesOfWeek: Date[] = [];
+    #datesDisplayed: Date[] = [];
     #currentDate: Date = new Date();
     #weekEvents: BjInternalEvent[] = [];
     #callbacks: BjWeekCallbacks;
@@ -33,7 +33,7 @@ export class BjWeekView {
         }
         this.mode = options.mode;
         this.#currentDate = options.currentDate;
-        this.#setFullDatesOfWeek(options.currentDate);
+        this.#setDatesDisplayed(options.currentDate);
         this.#local = options.local;
         this.#classNames = options.classNames;
         this.#createTemplate(element);
@@ -59,7 +59,7 @@ export class BjWeekView {
 
         if (this.refRoot) {
             this.destroy();
-            this.#setFullDatesOfWeek(this.#currentDate);
+            this.#setDatesDisplayed(this.#currentDate);
             this.#createTemplate();
             this.updateView();
         }
@@ -78,14 +78,14 @@ export class BjWeekView {
         return this.#local;
     }
 
-    get fullDatesOfWeek(): Date[] {
-        return this.#fullDatesOfWeek;   
+    get datesDisplayed(): Date[] {
+        return this.#datesDisplayed;   
     }
 
     get dateRangesDisplayed(): BjDateRange {
-        const dateFin = this.fullDatesOfWeek[this.fullDatesOfWeek.length - 1];
+        const dateFin = this.datesDisplayed[this.datesDisplayed.length - 1];
         return {
-            start: this.fullDatesOfWeek[0],
+            start: this.datesDisplayed[0],
             end: new Date(dateFin.getFullYear(), dateFin.getMonth(), dateFin.getDate(), 23, 59, 59)
         }
     }
@@ -178,19 +178,19 @@ export class BjWeekView {
     }
 
     get dayOfWeek(): string[] {
-        return this.#fullDatesOfWeek.map(d => 
+        return this.#datesDisplayed.map(d => 
             d.toLocaleString(this.local, { weekday: 'short', day: 'numeric'})
         );   
     }
 
     get dayOfWeekAriaLabel(): string[] {
-        return this.#fullDatesOfWeek.map(d => 
+        return this.#datesDisplayed.map(d => 
             d.toLocaleString(this.local, {  day: 'numeric', month: 'long', year: 'numeric'})
         );   
     }
 
     get datesOfWeek(): string[] {
-        return this.#fullDatesOfWeek.map(d => 
+        return this.#datesDisplayed.map(d => 
             d.toLocaleString(this.local, { year: 'numeric', month: '2-digit', day: '2-digit' })
         );   
     }
@@ -216,27 +216,27 @@ export class BjWeekView {
     goToToday(): Promise<Date> {
         return new Promise<Date>((resolve) => {
             this.#currentDate = new Date();
-            this.#setFullDatesOfWeek(this.#currentDate);
+            this.#setDatesDisplayed(this.#currentDate);
             this.updateView();
             resolve(this.#currentDate);
         })
     }
 
-    goToNextWeek(): Promise<Date[]> {
+    goToNextDate(): Promise<Date[]> {
         return new Promise<Date[]>((resolve) => {
             this.#currentDate.setDate(this.#currentDate.getDate() + this.#nbDaysDisplayed);
-            this.#setFullDatesOfWeek(this.#currentDate);
+            this.#setDatesDisplayed(this.#currentDate);
             this.updateView();
-            resolve(this.fullDatesOfWeek);
+            resolve(this.datesDisplayed);
         });
     }
 
-    goToLastWeek(): Promise<Date[]> {
+    goToPreviousDate(): Promise<Date[]> {
         return new Promise<Date[]>((resolve) => {
             this.#currentDate.setDate(this.#currentDate.getDate() - this.#nbDaysDisplayed);
-            this.#setFullDatesOfWeek(this.#currentDate);
+            this.#setDatesDisplayed(this.#currentDate);
             this.updateView();
-            resolve(this.fullDatesOfWeek);
+            resolve(this.datesDisplayed);
         });
     }
 
@@ -268,8 +268,8 @@ export class BjWeekView {
         this.refRoot.classList.remove(ROOT_CLASS);
     }
 
-    #setFullDatesOfWeek(currentDate: Date): void {
-        this.#fullDatesOfWeek = [];
+    #setDatesDisplayed(currentDate: Date): void {
+        this.#datesDisplayed = [];
         
         for (let i = 0; i < this.#nbDaysDisplayed; i++) {
             let date = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 0, 0, 0);
@@ -279,7 +279,7 @@ export class BjWeekView {
                 date.setDate(currentDate.getDate() + i);
             }
             
-            this.#fullDatesOfWeek.push(date);
+            this.#datesDisplayed.push(date);
         }
         
     }
@@ -397,7 +397,7 @@ export class BjWeekView {
         refAllDayEvent.disabled = event.disabled;
         
         const indexStart = event.dateRange.start < this.dateRangesDisplayed.start ? 0 : getDaysBetween(this.dateRangesDisplayed.start, event.dateRange.start);
-        const indexEnd = event.dateRange.end > this.dateRangesDisplayed.end ? this.fullDatesOfWeek.length : getDaysBetween(this.dateRangesDisplayed.start, event.dateRange.end) + 1;
+        const indexEnd = event.dateRange.end > this.dateRangesDisplayed.end ? this.datesDisplayed.length : getDaysBetween(this.dateRangesDisplayed.start, event.dateRange.end) + 1;
         refAllDayEvent.style.setProperty('--index-start', indexStart.toString());
         refAllDayEvent.style.setProperty('--index-end', indexEnd > this.#nbDaysDisplayed ? this.#nbDaysDisplayed.toString() : indexEnd.toString());
         refAllDayEvent.style.setProperty('--number-of-columns', this.#nbDaysDisplayed.toString());
@@ -467,7 +467,7 @@ export class BjWeekView {
     #getHeaderTemplate(): HTMLElement {
         this.refHeader = document.createElement('header');
         this.refHeader.className = HEADER_CLASS;
-        if (this.#classNames.header) {
+        if (this.#classNames?.header) {
             this.refHeader.classList.add(this.#classNames.header);
         }
         this.refHeader.append(this.#getBackgroundTemplate());
@@ -505,7 +505,7 @@ export class BjWeekView {
 
             const todayClassNames = this.#classNames?.today;
 
-            if (isTodayDate(this.fullDatesOfWeek[i]) && todayClassNames) {
+            if (isTodayDate(this.datesDisplayed[i]) && todayClassNames) {
                 if (todayClassNames?.headerColumn) {
                     headerColumnClass += ` ${todayClassNames.headerColumn}`;
                 }
@@ -534,7 +534,7 @@ export class BjWeekView {
     #getBodyTemplate(): HTMLElement {
         this.refBody = document.createElement('div');
         this.refBody.className = BODY_CLASS;
-        this.refBody.classList.add(this.#classNames.body);
+        this.refBody.classList.add(this.#classNames?.body);
         this.refBody.append(this.#getHourRowsTemplate());
         this.refBody.append(this.#getDayColumnsTemplate());
         return this.refBody;
@@ -544,19 +544,19 @@ export class BjWeekView {
         const refBackground = document.createElement('div');
         refBackground.className = BACKGROUND_CLASS;
         refBackground.ariaHidden = 'true';
-        let day = this.#nbDaysDisplayed;
-        while(day--) {
+
+        for(let day = 0; day < this.#nbDaysDisplayed; day++) {
             const refColumn = document.createElement('div');
             refColumn.className = COLUMN_CLASS;
             refColumn.ariaHidden = 'true';
 
-            const currentDay = this.fullDatesOfWeek[day].getDay();
+            const currentDay = this.datesDisplayed[day].getDay();
 
             if(currentDay === 0 || currentDay === 6) {
                 refColumn.classList.add(COLUMN_WEEKEND_CLASS);
             }
 
-            if (isTodayDate(this.fullDatesOfWeek[day])) {
+            if (isTodayDate(this.datesDisplayed[day])) {
                 refColumn.classList.add(COLUMN_TODAY_CLASS);
             }
 
@@ -571,14 +571,14 @@ export class BjWeekView {
         [refHeaderColumn, refBodyColumn].forEach(
             (refColumns => {
                 refColumns.forEach((refColumn, i) => {
-                    const currentDay = this.fullDatesOfWeek[i].getDay();
+                    const currentDay = this.datesDisplayed[i].getDay();
                     if(currentDay === 0 || currentDay === 6) {
                         refColumn.classList.add(COLUMN_WEEKEND_CLASS);
                     } else {
                         refColumn.classList.remove(COLUMN_WEEKEND_CLASS);
                     }
 
-                    if (isTodayDate(this.fullDatesOfWeek[i])) {
+                    if (isTodayDate(this.datesDisplayed[i])) {
                         refColumn.classList.add(COLUMN_TODAY_CLASS);
                     } else {
                         refColumn.classList.remove(COLUMN_TODAY_CLASS);
