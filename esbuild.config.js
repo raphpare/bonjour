@@ -40,7 +40,8 @@ const typeScriptFormats = [
 const watchChange = process.argv.slice(2).includes('--watch');
 
 async function build (watchChange) {
-    sassEntryPoints.forEach(async (entryPoint) => {
+    for(let index = 0; index < sassEntryPoints.length; index++) {
+        const entryPoint = sassEntryPoints[index];
         const path = entryPoint.replace(/[a-z\-]{1,}\.scss$/, '');
         const outfile = path + entryPoint.replace(path, '').replace(/\.scss$/, '.css');
 
@@ -60,7 +61,7 @@ async function build (watchChange) {
                 }
             })]
         });
-    })
+    }
 
     typeScriptEntryPoints.forEach(entryPoint => {
         typeScriptFormats.forEach(format => {
