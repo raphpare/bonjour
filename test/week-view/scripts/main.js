@@ -12,6 +12,7 @@ const refNextButton = document.getElementById('nextButton');
 const refTodayButton = document.getElementById('todayButton');
 const refEventsExample =  document.getElementById('eventsExemple');
 const refSetEventsButton = document.getElementById('setEventsButton');
+const refDestoyButton = document.getElementById('destoyButton');
 
 const refModeAttribute =  document.getElementById('modeAttribute');
 const refLocalAttribute =  document.getElementById('localAttribute');
@@ -155,6 +156,7 @@ refSetEventsButton.addEventListener('click', () => disabledInitialWeekOptions(we
 refTodayButton.addEventListener('click', () => disabledInitialWeekOptions(weekView.goToToday()));
 refPreviousButton.addEventListener('click', () => disabledInitialWeekOptions(weekView.goToPreviousDate()));
 refNextButton.addEventListener('click', () => disabledInitialWeekOptions(weekView.goToNextDate()));
+refDestoyButton.addEventListener('click', () => disabledInitialWeekOptions(weekView.destroy()));
 
 Array.from(refCustomCSSPropertiesInit).forEach((el) => {
     const refInput = el.querySelector('input');
