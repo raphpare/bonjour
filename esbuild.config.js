@@ -3,59 +3,80 @@ const sassPlugin = require('esbuild-sass-plugin').sassPlugin;
 const postcss = require('postcss');
 const autoprefixer = require('autoprefixer');
 const postcssPresetEnv = require('postcss-preset-env');
+const path = require('path');
+const fs = require('fs');
 
-const ROOT_OUTFILE = 'lib';
-
-const getFiles = (rootOutfile) => ([
-    {
-        outfile: `${rootOutfile}/index.js`,
-        format: 'cjs'
-    },
-    {
-        outfile: `${rootOutfile}/index.esm.js`,
-        format: 'esm'
+function fromDir(startPath, filter, callback) {
+    if (!fs.existsSync(startPath)) {
+        console.log("no dir ", startPath);
+        return;
     }
-]);
 
-const configsTypeScript = [
-    {
-        entryPoint: './src/index.ts',
-        files: getFiles(`${ROOT_OUTFILE}`),
-        
-    },
-    {
-        entryPoint: './src/week-view/week-view.ts',
-        files: getFiles(`${ROOT_OUTFILE}/week-view`),
-    }
+    const files = fs.readdirSync(startPath);
+    for (var i = 0; i < files.length; i++) {
+        const filename = path.join(startPath, files[i]);
+        const stat = fs.lstatSync(filename);
+        if (stat.isDirectory()) {
+            fromDir(filename, filter, callback); //recurse
+        } else if (filter.test(filename)) callback(filename.replace(/\\/g, '/'));
+    };
+};
+
+const sassEntryPoints = [];
+fromDir('src', /[a-z\-]{1,}\.scss$/, (filename) => {
+    sassEntryPoints.push(filename);
+});
+
+const typeScriptEntryPoints = [];
+fromDir('src', /[a-z\-]{1,}\.ts$/, (filename) => {
+    typeScriptEntryPoints.push(filename);
+});
+
+const typeScriptFormats = [
+    'cjs',
+    'esm'
 ];
 
 const watchChange = process.argv.slice(2).includes('--watch');
 
 async function build (watchChange) {
-    await esbuild.build({
-        entryPoints: ['./src/week-view/week-view.scss'],
-        minify: true,
-        sourcemap: false,
-        outfile: './src/week-view/week-view.css',
-        watch: watchChange,
-        plugins: [sassPlugin({
-            async transform(source) {
-                const {css} = await postcss([autoprefixer, postcssPresetEnv({stage: 0})]).process(source)
-                return css
-            }
-        })]
-    });
+    sassEntryPoints.forEach(async (entryPoint) => {
+        const path = entryPoint.replace(/[a-z\-]{1,}\.scss$/, '');
+        const outfile = path + entryPoint.replace(path, '').replace(/\.scss$/, '.css');
 
-    configsTypeScript.forEach(config => {
-        config.files.forEach(file => {
+        await esbuild.build({
+            entryPoints: [entryPoint],
+            minify: true,
+            sourcemap: false,
+            outfile,
+            watch: watchChange,
+            plugins: [sassPlugin({
+                async transform(source) {
+                    const {css} = await postcss([
+                        autoprefixer, 
+                        postcssPresetEnv({stage: 0})]
+                    ).process(source, {from: undefined});
+                    return css
+                }
+            })]
+        });
+    })
+
+    typeScriptEntryPoints.forEach(entryPoint => {
+        typeScriptFormats.forEach(format => {
+            const extension = format == 'cjs' ? '.js' : `.${format}.js`;
+            const path = entryPoint.replace(/[a-z\-]{1,}\.ts$/, '');
+            const outfile = 'lib/' + entryPoint.replace(path, '').replace(/\.ts$/, extension);
+
             esbuild.build({
-                entryPoints: [config.entryPoint],
+                entryPoints: [entryPoint],
                 bundle: true,
                 minify: true,
                 platform: 'node',
                 sourcemap: true,
                 target: 'es6',
-                ...file,
+                format,
+                outfile,
                 watch: watchChange,
                 plugins: [
                     sassPlugin(

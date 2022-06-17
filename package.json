@@ -29,5 +29,8 @@
         "postcss-preset-env": "^7.7.1",
         "typedoc": "^0.22.10",
         "typescript": "^4.5.2"
+    },
+    "browserslist": { 
+        "browsers": "last 4 versions, > 1%"
     }
 }

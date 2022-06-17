@@ -1,4 +1,4 @@
-import { BjWeekView } from '../../../../lib/index.esm.js';
+import { BjWeekView } from '../../../../lib/week-view.esm.js';
 import { EVENTS_MOCK } from '../../mocks/events.mocks.js';
 
 const bonjourWeekView = new BjWeekView(
@@ -23,7 +23,7 @@ const bonjourWeekView = new BjWeekView(
             }
         },
         customProperties: {
-            '--background-weekend': 'rgb(245, 245, 245)',
+            '--background-weekend': 'rgb(200,100, 245)',
             '--border-color': 'rgb(220, 220, 220)'
         },
         callbacks: {
