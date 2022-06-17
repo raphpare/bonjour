@@ -5,7 +5,7 @@ export interface BjWeekOptions {
     currentDate?: Date, 
     local?:  string,
     classNames?: BjWeekClassName,
-    customProperties?: BjWeekCustomProperties,
+    customCSSProperties?: BjWeekCustomCSSProperties,
     callbacks?: BjWeekCallbacks,
 }
 
@@ -31,7 +31,7 @@ export interface BjWeekClassName {
     }
 }
 
-export interface BjWeekCustomProperties {
+export interface BjWeekCustomCSSProperties {
     ['--time-area-width']?: string,
     ['--day-height']?: string,
     ['--border-color']?: string;

@@ -4,7 +4,7 @@ import { BjWeekView } from '../../../../lib/week-view.esm.js';
 const refModeInitialOption = document.getElementById('modeInitialOption');
 const refCurrentDate = document.getElementById('currentDate');
 const refCode = document.getElementById('code');
-const refCustomPropertiesInit = document.querySelectorAll('.custom-properties-init');
+const refCustomCSSPropertiesInit = document.querySelectorAll('.custom-properties-init');
 
 // Variable: Methods
 const refPreviousButton = document.getElementById('previousButton');
@@ -15,7 +15,7 @@ const refSetEventsButton = document.getElementById('setEventsButton');
 
 const refModeAttribute =  document.getElementById('modeAttribute');
 const refLocalAttribute =  document.getElementById('localAttribute');
-const refFullDatesOfWeekAttribute = document.getElementById('datesDisplayedAttribute');
+const refDatesDisplayedAttribute = document.getElementById('datesDisplayedAttribute');
 
 const eventsExemple = [
     {
@@ -70,7 +70,7 @@ const options = {
     callbacks: {
         updated: () => {
             console.log('view update');
-            setTextCurrentDateRange();
+            setDatesDisplayed();
         },
         eventOnClick: (ponterEvent, event) => {
             console.log(ponterEvent, event);
@@ -90,7 +90,11 @@ const setOptionCurrentDate = (currentDate) => {
 
 function cleanIt(obj) {
     const cleaned = JSON.stringify(obj, null, 4);
-    return cleaned.replace(/^[\t ]*"[^:\n\r]+(?<!\\)":/gm, (match) => match.replace(/"/g, ""));
+    return cleaned.replace(/^[\t ]*"[^:\n\r]+(?<!\\)":/gm, (match) => match.replace(/"/g, ''));
+}
+
+const setDatesDisplayed = () => {
+    refDatesDisplayedAttribute.innerHTML = cleanIt(weekView.datesDisplayed);
 }
 
 const updateWeekView = () => {
@@ -126,7 +130,7 @@ const updateWeekView = () => {
 const disabledInitialWeekOptions = (callback) => {
     refModeInitialOption.disabled = true;
     refCurrentDate.disabled = true;
-    Array.from(refCustomPropertiesInit).forEach((el) => {
+    Array.from(refCustomCSSPropertiesInit).forEach((el) => {
         const refInput = el.querySelector('input');
         refInput.disabled = true;
     });
@@ -152,17 +156,17 @@ refTodayButton.addEventListener('click', () => disabledInitialWeekOptions(weekVi
 refPreviousButton.addEventListener('click', () => disabledInitialWeekOptions(weekView.goToPreviousDate()));
 refNextButton.addEventListener('click', () => disabledInitialWeekOptions(weekView.goToNextDate()));
 
-Array.from(refCustomPropertiesInit).forEach((el) => {
+Array.from(refCustomCSSPropertiesInit).forEach((el) => {
     const refInput = el.querySelector('input');
     const refLabel = el.querySelector('label');
     refInput.addEventListener('change', () => {
-        if (!options.customProperties) {
-            options.customProperties = {};
+        if (!options.customCSSProperties) {
+            options.customCSSProperties = {};
         }
-        options.customProperties[refLabel.innerText] = refInput.value ? refInput.value : undefined;
+        options.customCSSProperties[refLabel.innerText] = refInput.value ? refInput.value : undefined;
 
-        if (!Object.values(options.customProperties).some(v => v !== undefined)) {
-            delete options.customProperties;
+        if (!Object.values(options.customCSSProperties).some(v => v !== undefined)) {
+            delete options.customCSSProperties;
         }
         updateWeekView();
     });
@@ -180,8 +184,4 @@ refModeAttribute.value = weekView.mode;
 
 refEventsExample.innerHTML = `weekView.setEvent(${cleanIt(eventsExemple)});`;
 
-function setTextCurrentDateRange() {
-    refFullDatesOfWeekAttribute.innerHTML = cleanIt(weekView.datesDisplayed);
-}
-
-setTextCurrentDateRange();
+setDatesDisplayed();

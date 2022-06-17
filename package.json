@@ -2,7 +2,14 @@
     "name": "bonjour",
     "version": "0.0.0-beta.1",
     "description": "Week calendar",
-    "keywords": ["calendar", "agenda", "day", "week", "month", "year"],
+    "keywords": [
+        "calendar",
+        "agenda",
+        "day",
+        "week",
+        "month",
+        "year"
+    ],
     "license": "ISC",
     "author": "Raphaël Paré <raph.pare@outlook.com> (https://github.com/raphpare)",
     "files": [
@@ -30,7 +37,7 @@
         "typedoc": "^0.22.10",
         "typescript": "^4.5.2"
     },
-    "browserslist": { 
+    "browserslist": {
         "browsers": "last 4 versions, > 1%"
     }
 }

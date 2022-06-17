@@ -1,5 +1,5 @@
 import { LOCAL_FR_CA, DAY_MS, isDateRangeOverlap, getDaysBetween, generateUuid, BjEvent, BjInternalEvent, BjDateRange,  isTodayDate, } from '../utils/index';
-import { ALL_DAY_AREA_CLASS, ALL_DAY_EVENT_CLASS, BACKGROUND_CLASS, DEFAULT_OPTIONS, BJ_WEEK_VIEW_STYLE_ID, BjWeekCallbacks, BjWeekClassName, BjWeekCustomProperties, BjWeekOptions, BjWeekViewMode, BODY_CLASS, COLUMNS_CLASS, COLUMN_CLASS, COLUMN_TODAY_CLASS, COLUMN_WEEKEND_CLASS, DAY_COLUMN_CLASS, EVENT_CLASS, HEADER_CLASS, HEADER_COLUMN_CLASS, HEADER_DAY_CLASS, HEADER_MONTH_CLASS, ROOT_CLASS } from './week-view.utils';
+import { ALL_DAY_AREA_CLASS, ALL_DAY_EVENT_CLASS, BACKGROUND_CLASS, DEFAULT_OPTIONS, BJ_WEEK_VIEW_STYLE_ID, BjWeekCallbacks, BjWeekClassName, BjWeekCustomCSSProperties, BjWeekOptions, BjWeekViewMode, BODY_CLASS, COLUMNS_CLASS, COLUMN_CLASS, COLUMN_TODAY_CLASS, COLUMN_WEEKEND_CLASS, DAY_COLUMN_CLASS, EVENT_CLASS, HEADER_CLASS, HEADER_COLUMN_CLASS, HEADER_DAY_CLASS, HEADER_MONTH_CLASS, ROOT_CLASS } from './week-view.utils';
 import cssText from './week-view.css';
  
 export class BjWeekView {
@@ -37,7 +37,7 @@ export class BjWeekView {
         this.#local = options.local;
         this.#classNames = options.classNames;
         this.#createTemplate(element);
-        this.#setCustomProperties(options?.customProperties);
+        this.#setCustomCSSProperties(options?.customCSSProperties);
 
         if(options.callbacks) {
             this.#callbacks = options.callbacks;
@@ -298,10 +298,10 @@ export class BjWeekView {
         this.refHeader.style.width = `calc(100% - ${bodyScrollabrWidth}px)`;
     }
 
-    #setCustomProperties(customProperties?: BjWeekCustomProperties): void {
-        if (!customProperties) return;
-        for (const propertie in customProperties) {
-            this.refRoot.style.setProperty(propertie, customProperties[propertie]);
+    #setCustomCSSProperties(customCSSProperties?: BjWeekCustomCSSProperties): void {
+        if (!customCSSProperties) return;
+        for (const propertie in customCSSProperties) {
+            this.refRoot.style.setProperty(propertie, customCSSProperties[propertie]);
         }
     }
 
