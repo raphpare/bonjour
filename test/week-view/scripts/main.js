@@ -100,9 +100,9 @@ const setDatesDisplayed = () => {
 
 const updateWeekView = () => {
     if(weekView) {
-        weekView.destroy()
+        weekView.destroy();
     };
-
+    
     document.getElementById('weekView').removeAttribute('style');
     
     refCode.innerHTML = `const weekView = new BjWeekView(
@@ -170,6 +170,7 @@ Array.from(refCustomCSSPropertiesInit).forEach((el) => {
         if (!Object.values(options.customCSSProperties).some(v => v !== undefined)) {
             delete options.customCSSProperties;
         }
+
         updateWeekView();
     });
 });
