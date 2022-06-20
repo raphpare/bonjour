@@ -15,6 +15,7 @@ const refDestoyButton = document.getElementById('destoyButton');
 
 const refModeAttribute =  document.getElementById('modeAttribute');
 const refLocalAttribute =  document.getElementById('localAttribute');
+const refCurrentDateAttribute =  document.getElementById('currentDateAttribute');
 const refDatesDisplayedAttribute = document.getElementById('datesDisplayedAttribute');
 
 let weekView = null;
@@ -37,7 +38,7 @@ const setOptionMode = (mode) => {
 }
 
 const setOptionCurrentDate = (currentDate) => {
-    options.currentDate = new Date(currentDate);
+    options.currentDate = new Date(currentDate + ' 00:00');
     updateWeekView();
 }
 
@@ -47,6 +48,7 @@ function cleanIt(obj) {
 }
 
 const setDatesDisplayed = () => {
+    refCurrentDateAttribute.value = weekView.currentDate.toISOString();
     refDatesDisplayedAttribute.innerHTML = cleanIt(weekView.datesDisplayed);
 }
 
@@ -78,6 +80,8 @@ const updateWeekView = () => {
         document.getElementById('weekView'), 
         options,
     );
+    setDatesDisplayed();
+   
 }
 
 const disabledInitialWeekOptions = (callback) => {
@@ -125,6 +129,11 @@ refLocalAttribute.addEventListener('change', () => {
    weekView.local = refLocalAttribute.value;
 });
 refLocalAttribute.value = weekView.local;
+
+refCurrentDateAttribute.addEventListener('change', () => {
+    weekView.currentDate = new Date(refCurrentDateAttribute.value);
+});
+refCurrentDateAttribute.value = weekView.currentDate.toISOString();
 
 refModeAttribute.addEventListener('change', () => {
     weekView.mode = refModeAttribute.value;

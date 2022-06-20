@@ -33,8 +33,7 @@ export class BjWeekView {
             ...options
         }
         this.mode = options.mode;
-        this.#currentDate = options.currentDate;
-        this.#setDatesDisplayed(options.currentDate);
+        this.currentDate = options.currentDate;
         this.#local = options.local;
         this.#classNames = options.classNames;
         this.#createTemplate(element);
@@ -60,7 +59,7 @@ export class BjWeekView {
 
         if (this.refRoot) {
             this.destroy();
-            this.#setDatesDisplayed(this.#currentDate);
+            this.#setDatesDisplayed(this.currentDate);
             this.#createTemplate();
             this.updateView();
         }
@@ -68,6 +67,16 @@ export class BjWeekView {
 
     get mode(): BjWeekViewMode {
         return this.#mode;
+    }
+
+    set currentDate(currentDate: Date) {
+        this.#currentDate = currentDate;
+        this.#setDatesDisplayed(currentDate);
+        this.updateView();
+    }
+
+    get currentDate(): Date {
+        return this.#currentDate;
     }
 
     set local(local: string) {
@@ -215,6 +224,7 @@ export class BjWeekView {
     }
 
     async updateView(): Promise<void> {
+        if (!this.refRoot) return;
         this.refRoot.querySelector(`.${HEADER_CLASS} .${COLUMNS_CLASS}`).innerHTML = this.#getHeaderColumnsContainTemplate();
         await this.setEvents(this.weekEvents);
         this.#updateBackgroundTemplate();
@@ -223,27 +233,21 @@ export class BjWeekView {
 
     goToToday(): Promise<Date> {
         return new Promise<Date>((resolve) => {
-            this.#currentDate = new Date();
-            this.#setDatesDisplayed(this.#currentDate);
-            this.updateView();
-            resolve(this.#currentDate);
+            this.currentDate = new Date();
+            resolve(this.currentDate);
         })
     }
 
     goToNextDate(): Promise<Date[]> {
         return new Promise<Date[]>((resolve) => {
-            this.#currentDate.setDate(this.#currentDate.getDate() + this.#nbDaysDisplayed);
-            this.#setDatesDisplayed(this.#currentDate);
-            this.updateView();
+            this.currentDate = new Date(this.currentDate.setDate(this.currentDate.getDate() + this.#nbDaysDisplayed));
             resolve(this.datesDisplayed);
         });
     }
 
     goToPreviousDate(): Promise<Date[]> {
         return new Promise<Date[]>((resolve) => {
-            this.#currentDate.setDate(this.#currentDate.getDate() - this.#nbDaysDisplayed);
-            this.#setDatesDisplayed(this.#currentDate);
-            this.updateView();
+            this.currentDate = new Date(this.currentDate.setDate(this.currentDate.getDate() - this.#nbDaysDisplayed));
             resolve(this.datesDisplayed);
         });
     }
@@ -269,8 +273,10 @@ export class BjWeekView {
     #setDatesDisplayed(currentDate: Date): void {
         this.#datesDisplayed = [];
         
-        for (let i = 0; i < this.#nbDaysDisplayed; i++) {
-            let date = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 0, 0, 0);
+        
+        for (let i = 0; i <= this.#nbDaysDisplayed; i++) {
+            let date = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
+
             if (this.#nbDaysDisplayed === 7) {
                 date.setDate(date.getDate() - date.getDay() + i);
             } else {
