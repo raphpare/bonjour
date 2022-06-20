@@ -6,9 +6,10 @@ export class BjWeekView {
     events: BjEvent[] = [];
     refRoot: HTMLElement = null;
     refEvents: HTMLElement[] = [];
+    refAllDayEvents: HTMLElement[] = [];
+    refWeekEvents: HTMLElement[] = [];
     refHeader: HTMLElement = null;
     refAllDayArea:HTMLElement = null;
-    refAllDayEvents: HTMLElement[] = [];
     refBody: HTMLElement = null;
     refDayColumns: HTMLElement[] = [];
     #mode: BjWeekViewMode = BjWeekViewMode.SevenDays;
@@ -159,18 +160,25 @@ export class BjWeekView {
         );
 
         this.#weekEvents = sortEvents.map(((event) => {
-            const eventsOverlapped = sortEvents.filter(
-                (e) => (isDateRangeOverlap(event.dateRange, e.dateRange) || event === e) && e.allDay === undefined
-            );
+            let eventsOverlapped = [];
+            if (event.allDay) {
+                eventsOverlapped = sortEvents.filter(
+                    (e) => (isDateRangeOverlap(event.dateRange, e.dateRange) || event === e) && e.allDay === true
+                );
+            } else {
+                eventsOverlapped = sortEvents.filter(
+                    (e) => (isDateRangeOverlap(event.dateRange, e.dateRange) || event === e) && e.allDay !== true
+                );
+            }
             
             if (eventsOverlapped.length > 1) {
                 event._overlapped = {
-                    index: eventsOverlapped.indexOf(event),
                     eventIds: eventsOverlapped.map(e => e._id),
                 };
             }
+
             return event;
-        }));
+        }))
     }
 
     get weekEvents(): BjInternalEvent[] {
@@ -245,17 +253,7 @@ export class BjWeekView {
             let indexEvent = this.refEvents.length;
             while (indexEvent--) {
                 const refEvent = this.refEvents[indexEvent];
-                const event: BjEvent = this.weekEvents.filter(e => e.allDay !== true)[indexEvent];
-                refEvent.removeEventListener('click', this.#eventOnClick.bind(this, event));
-                refEvent.remove();
-            }
-        }
-
-        if (this.refAllDayEvents) {
-            let indexEvent = this.refAllDayEvents.length;
-            while (indexEvent--) {
-                const refEvent = this.refAllDayEvents[indexEvent];
-                const event: BjEvent = this.weekEvents.filter(e => e.allDay === true)[indexEvent];
+                const event: BjEvent = this.weekEvents.find(we => we._id === refEvent.id);
                 refEvent.removeEventListener('click', this.#eventOnClick.bind(this, event));
                 refEvent.remove();
             }
@@ -332,9 +330,11 @@ export class BjWeekView {
             }
             columnIndex++;
         }
-        
+
+        this.refRoot.style.setProperty('--number-of-columns', this.#nbDaysDisplayed.toString());
         this.refAllDayEvents = Array.from(this.refRoot.querySelectorAll(`.${ALL_DAY_EVENT_CLASS}`));
-        this.refEvents = Array.from(this.refRoot.querySelectorAll(`.${EVENT_CLASS}`));
+        this.refWeekEvents = Array.from(this.refRoot.querySelectorAll(`.${EVENT_CLASS}`));
+        this.refEvents = [...this.refAllDayEvents, ...this.refWeekEvents];
     }
 
     #createEvent(event: BjInternalEvent, refColumn: HTMLElement, indexColumn: number): void {
@@ -362,6 +362,7 @@ export class BjWeekView {
             refEvent.classList.add(event.classNames.root);
         }
 
+        refEvent.id = event._id;
         refEvent.type = 'button';
         refEvent.disabled = event.disabled;
         refEvent.style.setProperty('--event-start-time', eventStartTime.toString());
@@ -392,6 +393,7 @@ export class BjWeekView {
         if (!isDateRangeOverlap(this.dateRangesDisplayed, event.dateRange)) return;
 
         const refAllDayEvent = document.createElement('button');
+        refAllDayEvent.id = event._id;
         refAllDayEvent.type = 'button';
         refAllDayEvent.className = ALL_DAY_EVENT_CLASS;
         refAllDayEvent.disabled = event.disabled;
@@ -400,8 +402,26 @@ export class BjWeekView {
         const indexEnd = event.dateRange.end > this.dateRangesDisplayed.end ? this.datesDisplayed.length : getDaysBetween(this.dateRangesDisplayed.start, event.dateRange.end) + 1;
         refAllDayEvent.style.setProperty('--index-start', indexStart.toString());
         refAllDayEvent.style.setProperty('--index-end', indexEnd > this.#nbDaysDisplayed ? this.#nbDaysDisplayed.toString() : indexEnd.toString());
-        refAllDayEvent.style.setProperty('--number-of-columns', this.#nbDaysDisplayed.toString());
         
+        if (!event?._overlapped) {
+            refAllDayEvent.style.setProperty('--row-number', '1');
+        } else {
+            if (!event._position) {
+                let currentPosition = event?._overlapped.eventIds.indexOf(event._id);
+                const overlappedEvents = event?._overlapped.eventIds.map(id => this.#weekEvents.find(we => we._id === id))
+                overlappedEvents.forEach((oe, index) => {
+                    if (oe._position && oe._position === currentPosition.toString()) {
+                        currentPosition = index;
+                    }
+                })
+                event._position = currentPosition.toString();
+            }
+
+            refAllDayEvent.style.setProperty('--row-number', (Number(event._position) + 1).toString());
+        }
+
+
+
         refAllDayEvent.append(this.#getTitleAreaTemplate(event, ALL_DAY_EVENT_CLASS));
 
         refAllDayEvent.addEventListener('click', this.#eventOnClick.bind(this, event));
@@ -534,7 +554,9 @@ export class BjWeekView {
     #getBodyTemplate(): HTMLElement {
         this.refBody = document.createElement('div');
         this.refBody.className = BODY_CLASS;
-        this.refBody.classList.add(this.#classNames?.body);
+        if (this.#classNames?.body) {
+            this.refBody.classList.add(this.#classNames?.body);
+        }
         this.refBody.append(this.#getHourRowsTemplate());
         this.refBody.append(this.#getDayColumnsTemplate());
         return this.refBody;

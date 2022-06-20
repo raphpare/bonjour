@@ -21,9 +21,9 @@ export interface BjEvent {
 export interface BjInternalEvent extends BjEvent {
     _id?: string, 
     _overlapped?: {
-        index: number
         eventIds?: string[],
     }
+    _position?: string
 }
 
 export interface BjEventClassName { 
@@ -45,7 +45,15 @@ export const isTodayDate = (someDate: Date) => {
 }
 
 export const isDateRangeOverlap = (dateRangeA: BjDateRange, dateRangeB: BjDateRange): boolean => {
-    return (dateRangeA.start >= dateRangeB.start && dateRangeA.start <= dateRangeB.end || dateRangeB.start >= dateRangeA.start && dateRangeB.start <= dateRangeA.end)
+    const timeRangeA = {
+        start: dateRangeA.start.getTime(),
+        end: dateRangeA.end.getTime(),
+    }
+    const timeRangeB = {
+        start: dateRangeB.start.getTime(),
+        end: dateRangeB.end.getTime(),
+    }
+    return (timeRangeA.start >= timeRangeB.start && timeRangeA.start <= timeRangeB.end || timeRangeB.start >= timeRangeA.start && timeRangeB.start <= timeRangeA.end)
 };
 
 export const getDaysBetween = (dateA, dateB) => {

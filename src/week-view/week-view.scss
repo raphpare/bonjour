@@ -146,14 +146,11 @@
     }
 
     &__all-day-area {
-        display: flex;
-        flex-direction: column;
+        display: grid;
+        grid-template-columns: repeat(var(--number-of-columns), 1fr);
+        gap: 1px 2px;
         width: 100%;
         padding-left: var(--time-area-width);
-
-        > :not(:first-child) {
-            margin-top: 2px;
-        }
     }
 
     &__all-day-event, 
@@ -180,17 +177,9 @@
         --index-end: 0;
         
         position: relative;
-        left: calc((var(--index-start) * 100% / var(--number-of-columns)) + 1px);
-        width: calc(100% / var(--number-of-columns) * (var(--index-end) - var(--index-start)) - 2px);
+        grid-column: calc(var(--index-start) + 1) / span calc(var(--index-end) - var(--index-start));
+        grid-row: var(--row-number);
         min-height: 22px;
-
-        &:first-child {
-            margin-top: 8px;
-        }
-
-        &:last-child {
-            margin-bottom: 1px;
-        }
     }
 
     &__event {

@@ -156,20 +156,11 @@ export const EVENTS_MOCK = [
         }
     },
     {
-        id: '18',
-        title: 'Event 18',
-        allDay: true,
-        dateRange: {
-            start: generateDateFromNow(-4, 0),
-            end: generateDateFromNow(-8, 0)
-        }
-    },
-    {
         id: '19',
         title: 'Event 19',
         allDay: true,
         dateRange: {
-            start: generateDateFromNow(-4, 0),
+            start: generateDateFromNow(-8, 0),
             end: generateDateFromNow(-4, 0)
         }
     },
@@ -179,19 +170,63 @@ export const EVENTS_MOCK = [
         allDay: true,
         dateRange: {
             start: generateDateFromNow(-4, 0),
+            end: generateDateFromNow(-4, 0)
+        }
+    },
+    {
+        id: '21',
+        title: 'Event 21',
+        allDay: true,
+        dateRange: {
+            start: generateDateFromNow(-4, 0),
             end: generateDateFromNow(-3, 0)
         }
     },
-     {
-        id: '21',
-        title: 'Event 21',
+    {
+        id: '22',
+        title: 'Event 22',
         allDay: true,
         dateRange: {
             start: generateDateFromNow(-3, 0),
             end: generateDateFromNow(-3, 0)
         }
     },
-    
+    {
+        id: '23',
+        title: 'Event 23',
+        allDay: true,
+        dateRange: {
+            start: generateDateFromNow(-3, 0),
+            end: generateDateFromNow(-3, 0)
+        }
+    },
+    {
+        id: '24',
+        title: 'Event 24',
+        allDay: true,
+        dateRange: {
+            start: generateDateFromNow(-4, 0),
+            end: generateDateFromNow(-3, 0)
+        }
+    },
+    {
+        id: '25',
+        title: 'Event 25',
+        allDay: true,
+        dateRange: {
+            start: generateDateFromNow(-6, 0),
+            end: generateDateFromNow(-5, 0)
+        }
+    },
+    {
+        id: '26',
+        title: 'Event 26',
+        allDay: true,
+        dateRange: {
+            start: generateDateFromNow(-3, 0),
+            end: generateDateFromNow(-3, 0)
+        }
+    },
 ];
 
 export const EVENTS_MOCK_2 = [
