@@ -188,7 +188,7 @@ export const EVENTS_MOCK = [
         allDay: true,
         dateRange: {
             start: generateDateFromNow(-3, 0),
-            end: generateDateFromNow(-3, 0)
+            end: generateDateFromNow(-2, 0)
         }
     },
     {
@@ -227,6 +227,59 @@ export const EVENTS_MOCK = [
             end: generateDateFromNow(-3, 0)
         }
     },
+    {
+        id: '27',
+        title: 'Event 27',
+        allDay: true,
+        dateRange: {
+            start: generateDateFromNow(-6, 0),
+            end: generateDateFromNow(-6, 0)
+        }
+    },
+    {
+        id: '28',
+        title: 'Event 28',
+        allDay: true,
+        dateRange: {
+            start: generateDateFromNow(-7, 0),
+            end: generateDateFromNow(-6, 0)
+        }
+    },
+    {
+        id: '29',
+        title: 'Event 29',
+        allDay: true,
+        dateRange: {
+            start: generateDateFromNow(-5, 0),
+            end: generateDateFromNow(-5, 0)
+        }
+    },
+    {
+        id: '30',
+        title: 'Event 30',
+        allDay: true,
+        dateRange: {
+            start: generateDateFromNow(-5, 0),
+            end: generateDateFromNow(-4, 0)
+        }
+    },
+    {
+        id: '31',
+        title: 'Event 31',
+        allDay: true,
+        dateRange: {
+            start: generateDateFromNow(-5, 0),
+            end: generateDateFromNow(-5, 0)
+        }
+    },
+    {
+        id: '32',
+        title: 'Event 32',
+        dateRange: {
+            start: generateDateFromNow(20, 0),
+            end: generateDateFromNow(300, 0)
+        }
+    }
 ];
 
 export const EVENTS_MOCK_2 = [
