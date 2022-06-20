@@ -1,69 +1,21 @@
 import { BjWeekView } from '../../../../lib/week-view.esm.js';
+import { EVENTS_MOCK } from '../../mocks/events.mocks.js';
 
-// Variable: Initial week options
 const refModeInitialOption = document.getElementById('modeInitialOption');
 const refCurrentDate = document.getElementById('currentDate');
 const refCode = document.getElementById('code');
 const refCustomCSSPropertiesInit = document.querySelectorAll('.custom-properties-init');
 
-// Variable: Methods
 const refPreviousButton = document.getElementById('previousButton');
 const refNextButton = document.getElementById('nextButton');
 const refTodayButton = document.getElementById('todayButton');
-const refEventsExample =  document.getElementById('eventsExemple');
+const refEventsData =  document.getElementById('eventsData');
 const refSetEventsButton = document.getElementById('setEventsButton');
 const refDestoyButton = document.getElementById('destoyButton');
 
 const refModeAttribute =  document.getElementById('modeAttribute');
 const refLocalAttribute =  document.getElementById('localAttribute');
 const refDatesDisplayedAttribute = document.getElementById('datesDisplayedAttribute');
-
-const eventsExemple = [
-    {
-        id: '1',
-        title: 'Event 1',
-        subtitle: 'Subtitle',
-        dateRange: {
-            start: new Date(),
-            end: new Date(new Date().setHours(new Date().getHours() + 1))
-        },
-    },
-    {
-        id: '2',
-        title: 'Event 2',
-        dateRange: {
-            start: new Date(new Date().setHours(new Date().getHours())),
-            end: new Date(new Date().setHours(new Date().getHours() + 3))
-        }
-    },
-    {
-        id: '3',
-        title: 'Event 3',
-        dateRange: {
-            start: new Date(new Date().setHours(new Date().getHours() + 2)),
-            end: new Date(new Date().setHours(new Date().getHours() + 4))
-        }
-    },
-    {
-        id: '4',
-        title: 'Event 4',
-        subtitle: 'subtitle',
-        dateRange: {
-            start: new Date(new Date().setHours(new Date().getHours() - 9)),
-            end: new Date(new Date().setHours(new Date().getHours() - 8))
-        }
-    },
-    {
-        id: '5',
-        title: 'Event 5',
-        subtitle: 'subtitle',
-        dateRange: {
-            start: new Date(new Date().setDate(new Date().getDate() - 1)),
-            end: new Date(new Date().setHours(new Date().getHours() - 20))
-        }
-    },
-    
-];
 
 let weekView = null;
 
@@ -104,7 +56,7 @@ const updateWeekView = () => {
     };
     
     document.getElementById('weekView').removeAttribute('style');
-    
+
     refCode.innerHTML = `const weekView = new BjWeekView(
     document.getElementById('weekView'), ${cleanIt(options)
         .replace('callbacks: {}',`callbacks: {
@@ -141,18 +93,12 @@ const disabledInitialWeekOptions = (callback) => {
     callback;
 }
 
-const setEvent = () => {
-    weekView.setEvents(eventsExemple).then(() => {
-        console.log('Events are displayed');
-    });
-}
-
 
 updateWeekView();
 refModeInitialOption.addEventListener('change', () => setOptionMode(refModeInitialOption.value));
 refCurrentDate.addEventListener('change', () => setOptionCurrentDate(refCurrentDate.value));
 
-refSetEventsButton.addEventListener('click', () => disabledInitialWeekOptions(weekView.setEvents(eventsExemple)));
+refSetEventsButton.addEventListener('click', () => disabledInitialWeekOptions(weekView.setEvents(EVENTS_MOCK)));
 refTodayButton.addEventListener('click', () => disabledInitialWeekOptions(weekView.goToToday()));
 refPreviousButton.addEventListener('click', () => disabledInitialWeekOptions(weekView.goToPreviousDate()));
 refNextButton.addEventListener('click', () => disabledInitialWeekOptions(weekView.goToNextDate()));
@@ -185,6 +131,6 @@ refModeAttribute.addEventListener('change', () => {
 });
 refModeAttribute.value = weekView.mode;
 
-refEventsExample.innerHTML = `weekView.setEvents(${cleanIt(eventsExemple)});`;
+refEventsData.innerHTML = `weekView.setEvents(${cleanIt(EVENTS_MOCK)});`;
 
 setDatesDisplayed();
