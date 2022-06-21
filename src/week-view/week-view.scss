@@ -183,16 +183,17 @@
     }
 
     &__event {
-        --event-start-time: 0;
-        --event-end-time: 1;
-        --number-overlapped-events: 1;
-        --index-overlapped-events: 0;
+        --start-time: 0;
+        --end-time: 1;
+        --index-start: 0;
+        --index-end: 1;
+        --number-overlapping-events: 1;
        
         position: absolute;
-        top: calc(var(--event-start-time) * var(--day-height) + 1px);
-        left: calc(100% / var(--number-overlapped-events) * var(--index-overlapped-events) + 1px);
-        width: calc(100% / var(--number-overlapped-events) - 2px);
-        height: calc((var(--event-end-time) - var(--event-start-time)) * var(--day-height) - 2px);
+        top: calc(var(--start-time) * var(--day-height) + 1px);
+        left: calc(100% / var(--number-overlapping-events) * var(--index-start) + 1px);
+        width: calc(100% * ((var(--index-end) - var(--index-start)) / var(--number-overlapping-events)) - 2px);
+        height: calc((var(--end-time) - var(--start-time)) * var(--day-height) - 2px);
         text-align: left;
     }
 

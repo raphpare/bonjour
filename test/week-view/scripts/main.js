@@ -49,7 +49,9 @@ function cleanIt(obj) {
 
 const setDatesDisplayed = () => {
     refCurrentDateAttribute.value = weekView.currentDate.toISOString();
-    refDatesDisplayedAttribute.innerHTML = cleanIt(weekView.datesDisplayed);
+    refDatesDisplayedAttribute.innerHTML = cleanIt(weekView.datesDisplayed).replace(/"[A-z0-9\.\:\-]{1,}"/g, 
+        (match) => `new Date('${match.replace(/"/g , '')}')`
+    );
 }
 
 const updateWeekView = () => {
@@ -104,8 +106,8 @@ refCurrentDate.addEventListener('change', () => setOptionCurrentDate(refCurrentD
 
 refSetEventsButton.addEventListener('click', () => disabledInitialWeekOptions(weekView.setEvents(EVENTS_MOCK)));
 refTodayButton.addEventListener('click', () => disabledInitialWeekOptions(weekView.goToToday()));
-refPreviousButton.addEventListener('click', () => disabledInitialWeekOptions(weekView.goToPreviousDate()));
-refNextButton.addEventListener('click', () => disabledInitialWeekOptions(weekView.goToNextDate()));
+refPreviousButton.addEventListener('click', () => disabledInitialWeekOptions(weekView.previous()));
+refNextButton.addEventListener('click', () => disabledInitialWeekOptions(weekView.next()));
 refDestoyButton.addEventListener('click', () => disabledInitialWeekOptions(weekView.destroy()));
 
 Array.from(refCustomCSSPropertiesInit).forEach((el) => {
@@ -140,6 +142,9 @@ refModeAttribute.addEventListener('change', () => {
 });
 refModeAttribute.value = weekView.mode;
 
-refEventsData.innerHTML = `weekView.setEvents(${cleanIt(EVENTS_MOCK)});`;
+refEventsData.innerHTML = `weekView.setEvents(${cleanIt(EVENTS_MOCK)
+    .replace(/"[0-9]{4}-[0-9]{2}-[0-9]{2}[A-z0-9\.\:\-]{1,}"/g, (match) => `new Date('${match.replace(/"/g, '')}')`)
+    .replace(/"/g , `'`)
+});`;
 
 setDatesDisplayed();

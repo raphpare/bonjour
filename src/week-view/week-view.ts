@@ -18,7 +18,7 @@ export class BjWeekView {
     #classNames: BjWeekClassName = null;
     #datesDisplayed: Date[] = [];
     #currentDate: Date = new Date();
-    #weekEvents: BjInternalEvent[] = [];
+    #internalEvents: BjInternalEvent[] = [];
     #callbacks: BjWeekCallbacks;
 
     constructor(
@@ -100,7 +100,83 @@ export class BjWeekView {
         }
     }
 
-    set weekEvents(events: BjEvent[]) {
+    get dayOfWeek(): string[] {
+        return this.#datesDisplayed.map(d => 
+            d.toLocaleString(this.local, { weekday: 'short', day: 'numeric'})
+        );   
+    }
+
+    get dayOfWeekAriaLabel(): string[] {
+        return this.#datesDisplayed.map(d => 
+            d.toLocaleString(this.local, {  day: 'numeric', month: 'long', year: 'numeric'})
+        );   
+    }
+
+    get datesOfWeek(): string[] {
+        return this.#datesDisplayed.map(d => 
+            d.toLocaleString(this.local, { year: 'numeric', month: '2-digit', day: '2-digit' })
+        );   
+    }
+
+    setEvents(events: BjEvent[] = []): Promise<void> {
+        return new Promise<void>((resolve) => {
+            this.deleteAllEvents();
+            if (events !== this.#events) {
+                this.#events = events;
+            }
+            this.#createAllEvents();
+            resolve();
+        })
+    }
+
+    async updateView(): Promise<void> {
+        if (!this.refRoot) return;
+        this.refRoot.querySelector(`.${HEADER_CLASS} .${COLUMNS_CLASS}`).innerHTML = this.#getHeaderColumnsContainTemplate();
+        await this.setEvents(this.#events);
+        this.#updateBackgroundTemplate();
+        this.#updated();
+    }
+
+    goToToday(): Promise<Date> {
+        return new Promise<Date>((resolve) => {
+            this.currentDate = new Date();
+            resolve(this.currentDate);
+        })
+    }
+
+    next(): Promise<Date[]> {
+        return new Promise<Date[]>((resolve) => {
+            this.currentDate = new Date(this.currentDate.setDate(this.currentDate.getDate() + this.#nbDaysDisplayed));
+            resolve(this.datesDisplayed);
+        });
+    }
+
+    previous(): Promise<Date[]> {
+        return new Promise<Date[]>((resolve) => {
+            this.currentDate = new Date(this.currentDate.setDate(this.currentDate.getDate() - this.#nbDaysDisplayed));
+            resolve(this.datesDisplayed);
+        });
+    }
+
+    deleteAllEvents(): void {
+        if (this.refEvents) {
+            let indexEvent = this.refEvents.length;
+            while (indexEvent--) {
+                const refEvent = this.refEvents[indexEvent];
+                const event: BjEvent = this.#events.find(we => we._id === refEvent.id);
+                refEvent.removeEventListener('click', this.#eventOnClick.bind(this, event));
+                refEvent.remove();
+            }
+        }
+    }
+
+    destroy(): void {
+        this.deleteAllEvents();
+        this.refRoot.innerHTML = '';
+        this.refRoot.classList.remove(ROOT_CLASS);
+    }
+
+    set #events(events: BjEvent[]) {
         this.events = events;
         const initEvents: BjInternalEvent[] = events;
 
@@ -164,11 +240,12 @@ export class BjWeekView {
         }
             
         const sortEvents: BjInternalEvent[] = initEvents.sort((a, b) => 
-            a.dateRange.start.getTime() - b.dateRange.start.getTime() 
-            || a.dateRange.end.getTime() - b.dateRange.end.getTime()
+            (b.dateRange.end.getTime() - b.dateRange.start.getTime()) - (a.dateRange.end.getTime() - a.dateRange.start.getTime())
+        ).sort((a, b) => 
+            a.dateRange.start.getTime() - b.dateRange.start.getTime()
         );
 
-        this.#weekEvents = sortEvents.map(((event) => {
+        this.#internalEvents = sortEvents.map(((event) => {
             let eventsOverlapped = [];
             if (event.allDay) {
                 eventsOverlapped = sortEvents.filter(
@@ -182,6 +259,7 @@ export class BjWeekView {
             
             if (eventsOverlapped.length > 1) {
                 event._overlapped = {
+                    index: eventsOverlapped.indexOf(event._id),
                     eventIds: eventsOverlapped.map(e => e._id),
                 };
             }
@@ -190,91 +268,22 @@ export class BjWeekView {
         }))
     }
 
-    get weekEvents(): BjInternalEvent[] {
-        return this.#weekEvents;
+    get #events(): BjInternalEvent[] {
+        return this.#internalEvents;
     }
 
-    get dayOfWeek(): string[] {
-        return this.#datesDisplayed.map(d => 
-            d.toLocaleString(this.local, { weekday: 'short', day: 'numeric'})
-        );   
-    }
-
-    get dayOfWeekAriaLabel(): string[] {
-        return this.#datesDisplayed.map(d => 
-            d.toLocaleString(this.local, {  day: 'numeric', month: 'long', year: 'numeric'})
-        );   
-    }
-
-    get datesOfWeek(): string[] {
-        return this.#datesDisplayed.map(d => 
-            d.toLocaleString(this.local, { year: 'numeric', month: '2-digit', day: '2-digit' })
-        );   
-    }
-
-    setEvents(events: BjEvent[] = []): Promise<void> {
-        return new Promise<void>((resolve) => {
-            this.deleteAllEvents();
-            if (events !== this.weekEvents) {
-                this.weekEvents = events;
-            }
-            this.#createAllEvents();
-            resolve();
-        })
-    }
-
-    async updateView(): Promise<void> {
-        if (!this.refRoot) return;
-        this.refRoot.querySelector(`.${HEADER_CLASS} .${COLUMNS_CLASS}`).innerHTML = this.#getHeaderColumnsContainTemplate();
-        await this.setEvents(this.weekEvents);
-        this.#updateBackgroundTemplate();
-        this.#updated();
-    }
-
-    goToToday(): Promise<Date> {
-        return new Promise<Date>((resolve) => {
-            this.currentDate = new Date();
-            resolve(this.currentDate);
-        })
-    }
-
-    goToNextDate(): Promise<Date[]> {
-        return new Promise<Date[]>((resolve) => {
-            this.currentDate = new Date(this.currentDate.setDate(this.currentDate.getDate() + this.#nbDaysDisplayed));
-            resolve(this.datesDisplayed);
-        });
-    }
-
-    goToPreviousDate(): Promise<Date[]> {
-        return new Promise<Date[]>((resolve) => {
-            this.currentDate = new Date(this.currentDate.setDate(this.currentDate.getDate() - this.#nbDaysDisplayed));
-            resolve(this.datesDisplayed);
-        });
-    }
-
-    deleteAllEvents(): void {
-        if (this.refEvents) {
-            let indexEvent = this.refEvents.length;
-            while (indexEvent--) {
-                const refEvent = this.refEvents[indexEvent];
-                const event: BjEvent = this.weekEvents.find(we => we._id === refEvent.id);
-                refEvent.removeEventListener('click', this.#eventOnClick.bind(this, event));
-                refEvent.remove();
-            }
-        }
-    }
-
-    destroy(): void {
-        this.deleteAllEvents();
-        this.refRoot.innerHTML = '';
-        this.refRoot.classList.remove(ROOT_CLASS);
+    get #allDayEventsDisplayed(): BjInternalEvent[] {
+        return this.#events.filter((event) => 
+            isDateRangeOverlap(this.dateRangesDisplayed, event.dateRange)
+            && event?.allDay === true
+        );
     }
 
     #setDatesDisplayed(currentDate: Date): void {
         this.#datesDisplayed = [];
         
         
-        for (let i = 0; i <= this.#nbDaysDisplayed; i++) {
+        for (let i = 0; i < this.#nbDaysDisplayed; i++) {
             let date = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
 
             if (this.#nbDaysDisplayed === 7) {
@@ -285,7 +294,6 @@ export class BjWeekView {
             
             this.#datesDisplayed.push(date);
         }
-        
     }
 
     #createTemplate(element?: HTMLElement): void {
@@ -322,10 +330,14 @@ export class BjWeekView {
             const refCurrentColumn = this.refDayColumns[columnIndex];
         
             let eventIndex = 0;
-            while (eventIndex < this.weekEvents.length) {
-                const event = this.weekEvents[eventIndex];
+            while (eventIndex < this.#events.length) {
+                const event = this.#events[eventIndex];
 
                 if (isDateRangeOverlap(this.dateRangesDisplayed, event.dateRange)) {
+                    if (event._position) {
+                        delete event._position;
+                    }
+
                     if (event?.allDay === true && columnIndex === 0) {
                         this.#createAllDayEvent(event);
                     } else {
@@ -371,23 +383,41 @@ export class BjWeekView {
 
         refEvent.type = 'button';
         refEvent.disabled = event.disabled;
-        refEvent.style.setProperty('--event-start-time', eventStartTime.toString());
-        refEvent.style.setProperty('--event-end-time', eventEndTime.toString());
+        refEvent.style.setProperty('--start-time', eventStartTime.toString());
+        refEvent.style.setProperty('--end-time', eventEndTime.toString());
 
 
         if (event._overlapped) {
-            const maxEventIds = event._overlapped.eventIds.reduce((acc, cur) => {
-                const currentEvent = this.#weekEvents.find((e) => e._id === cur);
+            const numberOverlappingEvents = event._overlapped.eventIds.reduce((acc, cur) => {
+                const currentEvent = this.#events.find((e) => e._id === cur);
 
-                if (currentEvent?._overlapped?.eventIds?.length > acc.length) {
-                    acc = currentEvent._overlapped.eventIds;
+                if (currentEvent?._overlapped?.eventIds?.length > acc?.eventIds?.length) {
+                    const eventIds = currentEvent._overlapped.eventIds;
+                    acc = {
+                        columnNumber: Math.max(...eventIds.filter(id => id !== currentEvent._id).map(id => this.#events.find(e => e._id === id)._overlapped.eventIds.length)),
+                        eventIds
+                    };
                 }
                 
                 return acc;
-            }, []);
+            }, { columnNumber: 0, eventIds: [] }).columnNumber - 1;
 
-            refEvent.style.setProperty('--number-overlapped-events', maxEventIds.length.toString());
-            refEvent.style.setProperty('--index-overlapped-events', maxEventIds.indexOf(event._id).toString());
+            const eventIds = event?._overlapped.eventIds;
+            const isLastEvent = event._id == eventIds[eventIds.length -1];
+            let currentPosition = eventIds.indexOf(event._id);
+            const idlastEventAdd = eventIds[currentPosition - 1];
+
+            if (idlastEventAdd) {
+                const positionLastEventAdd = this.#events.find(e => e._id === idlastEventAdd)._position;
+                if (Number(positionLastEventAdd)) {
+                    currentPosition = Number(positionLastEventAdd) + 1;
+                }
+            }
+            event._position = currentPosition.toString();
+
+            refEvent.style.setProperty('--index-start', currentPosition.toString());
+            refEvent.style.setProperty('--index-end', isLastEvent ? numberOverlappingEvents.toString() : (currentPosition + 1).toString());
+            refEvent.style.setProperty('--number-overlapping-events', numberOverlappingEvents.toString());
         }
 
         refEvent.append(this.#getTitleAreaTemplate(event, EVENT_CLASS));
@@ -416,16 +446,17 @@ export class BjWeekView {
         const indexStart = event.dateRange.start < this.dateRangesDisplayed.start ? 0 : getDaysBetween(this.dateRangesDisplayed.start, event.dateRange.start);
         const indexEnd = event.dateRange.end > this.dateRangesDisplayed.end ? this.datesDisplayed.length : getDaysBetween(this.dateRangesDisplayed.start, event.dateRange.end) + 1;
         refAllDayEvent.style.setProperty('--index-start', indexStart.toString());
-        refAllDayEvent.style.setProperty('--index-end', indexEnd > this.#nbDaysDisplayed ? this.#nbDaysDisplayed.toString() : indexEnd.toString());
+        refAllDayEvent.style.setProperty('--index-end', indexEnd >= this.#nbDaysDisplayed ? this.#nbDaysDisplayed.toString() : indexEnd.toString());
         
         if (!event?._overlapped) {
             refAllDayEvent.style.setProperty('--row-number', '1');
         } else {
             if (!event._position) {
-                let currentPosition = event?._overlapped.eventIds.indexOf(event._id);
-                const overlappedEvents = event?._overlapped.eventIds.map(id => this.#weekEvents.find(we => we._id === id))
+                const eventIds = event?._overlapped.eventIds.filter(event => this.#allDayEventsDisplayed.find(e => e._id === event)?._overlapped.eventIds.filter(e => e === event));
+                let currentPosition = eventIds.indexOf(event._id);
+                const overlappedEvents = eventIds.map(id => this.#events.find(we => we._id === id))
                 overlappedEvents.forEach((oe, index) => {
-                    if (oe._position && oe._position === currentPosition.toString()) {
+                    if (oe?._position === currentPosition.toString()) {
                         currentPosition = index;
                     }
                 })
@@ -434,8 +465,6 @@ export class BjWeekView {
 
             refAllDayEvent.style.setProperty('--row-number', (Number(event._position) + 1).toString());
         }
-
-
 
         refAllDayEvent.append(this.#getTitleAreaTemplate(event, ALL_DAY_EVENT_CLASS));
 

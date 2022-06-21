@@ -188,7 +188,7 @@ export const EVENTS_MOCK = [
         allDay: true,
         dateRange: {
             start: generateDateFromNow(-3, 0),
-            end: generateDateFromNow(-2, 0)
+            end: generateDateFromNow(2, 0)
         }
     },
     {
@@ -278,6 +278,78 @@ export const EVENTS_MOCK = [
         dateRange: {
             start: generateDateFromNow(20, 0),
             end: generateDateFromNow(300, 0)
+        }
+    },
+    {
+        id: '33',
+        title: 'Event 33',
+        dateRange: {
+            start: generateDateFromNow(0, 9),
+            end: generateDateFromNow(0, 18)
+        }
+    },
+    {
+        id: '34',
+        title: 'Event 34',
+        dateRange: {
+            start: generateDateFromNow(0, 14),
+            end: generateDateFromNow(0, 15, 30)
+        }
+    },
+    {
+        id: '35',
+        title: 'Event 35',
+        dateRange: {
+           start: generateDateFromNow(0, 14),
+            end: generateDateFromNow(0, 15, 30)
+        }
+    },
+    {
+        id: '36',
+        title: 'Event 36',
+        dateRange: {
+            start: generateDateFromNow(0, 11),
+            end: generateDateFromNow(0, 14, 30)
+        }
+    },
+      {
+        id: '37',
+        title: 'Event 37',
+        dateRange: {
+            start: generateDateFromNow(0, 14),
+            end: generateDateFromNow(0, 15, 30)
+        }
+    },
+      {
+        id: '38',
+        title: 'Event 38',
+        dateRange: {
+            start: generateDateFromNow(0, 14),
+            end: generateDateFromNow(0, 15, 30)
+        }
+    },
+    {
+        id: '39',
+        title: 'Event 39',
+        dateRange: {
+            start: generateDateFromNow(0, 11),
+            end: generateDateFromNow(0, 12, 30)
+        }
+    },
+    {
+        id: '40',
+        title: 'Event 40',
+        dateRange: {
+            start: generateDateFromNow(0, 17),
+            end: generateDateFromNow(0, 18, 30)
+        }
+    },
+    {
+        id: '41',
+        title: 'Event 41',
+        dateRange: {
+            start: generateDateFromNow(0, 16, 45),
+            end: generateDateFromNow(0, 17, 30)
         }
     }
 ];
