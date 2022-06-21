@@ -283,7 +283,7 @@ export class BjWeekView {
         this.#datesDisplayed = [];
         
         
-        for (let i = 0; i <= this.#nbDaysDisplayed; i++) {
+        for (let i = 0; i < this.#nbDaysDisplayed; i++) {
             let date = new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate());
 
             if (this.#nbDaysDisplayed === 7) {
@@ -427,6 +427,7 @@ export class BjWeekView {
 
     #createAllDayEvent(event: BjInternalEvent): void {
         if (!isDateRangeOverlap(this.dateRangesDisplayed, event.dateRange)) return;
+        console.log(this.dateRangesDisplayed);
 
         const refAllDayEvent = document.createElement('button');
         refAllDayEvent.id = event._id;
@@ -437,7 +438,7 @@ export class BjWeekView {
         const indexStart = event.dateRange.start < this.dateRangesDisplayed.start ? 0 : getDaysBetween(this.dateRangesDisplayed.start, event.dateRange.start);
         const indexEnd = event.dateRange.end > this.dateRangesDisplayed.end ? this.datesDisplayed.length : getDaysBetween(this.dateRangesDisplayed.start, event.dateRange.end) + 1;
         refAllDayEvent.style.setProperty('--index-start', indexStart.toString());
-        refAllDayEvent.style.setProperty('--index-end', indexEnd > this.#nbDaysDisplayed ? this.#nbDaysDisplayed.toString() : indexEnd.toString());
+        refAllDayEvent.style.setProperty('--index-end', indexEnd >= this.#nbDaysDisplayed ? this.#nbDaysDisplayed.toString() : indexEnd.toString());
         
         if (!event?._overlapped) {
             refAllDayEvent.style.setProperty('--row-number', '1');
