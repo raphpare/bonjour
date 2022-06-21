@@ -21,7 +21,8 @@ export interface BjEvent {
 export interface BjInternalEvent extends BjEvent {
     _id?: string, 
     _overlapped?: {
-        eventIds?: string[],
+        index: number,
+        eventIds: string[],
     }
     _position?: string
 }
