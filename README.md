@@ -12,10 +12,16 @@ $ yarn add bonjour
 ## Contribution
 ### Build projet
 ```
+$ yarn install
+```
+```
 $ yarn run build
 ```
 
 ### Local development
+```
+$ yarn install
+```
 ```
 $ yarn run dev
 ```
