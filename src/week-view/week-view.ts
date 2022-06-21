@@ -1,7 +1,6 @@
 import { LOCAL_FR_CA, DAY_MS, isDateRangeOverlap, getDaysBetween, generateUuid, BjEvent, BjInternalEvent, BjDateRange,  isTodayDate, } from '../utils/index';
 import { ALL_DAY_AREA_CLASS, ALL_DAY_EVENT_CLASS, BACKGROUND_CLASS, DEFAULT_OPTIONS, BJ_WEEK_VIEW_STYLE_ID, BjWeekCallbacks, BjWeekClassName, BjWeekCustomCSSProperties, BjWeekOptions, BjWeekViewMode, BODY_CLASS, COLUMNS_CLASS, COLUMN_CLASS, COLUMN_TODAY_CLASS, COLUMN_WEEKEND_CLASS, DAY_COLUMN_CLASS, EVENT_CLASS, HEADER_CLASS, HEADER_COLUMN_CLASS, HEADER_DAY_CLASS, HEADER_MONTH_CLASS, ROOT_CLASS } from './week-view.utils';
 import cssText from './week-view.css';
- 
 export class BjWeekView {
     events: BjEvent[] = [];
     refRoot: HTMLElement = null;
@@ -177,7 +176,13 @@ export class BjWeekView {
     }
 
     set #events(events: BjEvent[]) {
-        this.events = events;
+        this.events = JSON.parse(JSON.stringify(events)).map((e) => ({
+            ...e, dateRange: {
+                start: e.dateRange.start ? new Date(e.dateRange.start) : undefined,
+                end: e.dateRange.end ? new Date(e.dateRange.end) : undefined
+            }
+        }));
+
         const initEvents: BjInternalEvent[] = events;
 
         let index = events.length;
@@ -520,11 +525,7 @@ export class BjWeekView {
 
     #eventOnClick(currentEvent: BjInternalEvent, pointerEvent: PointerEvent): void {
         if (!this.#callbacks.eventOnClick) return;
-        currentEvent = {...currentEvent};
-
-        delete currentEvent._id;
-        delete currentEvent._overlapped;
-        delete currentEvent._position;
+        currentEvent = this.events.find(e => e.id === currentEvent.id);
 
         this.#callbacks.eventOnClick(pointerEvent, currentEvent);
     }
