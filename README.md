@@ -4,6 +4,7 @@
 ```
 $ npm i bonjour --save
 ```
+or
 ```
 $ yarn add bonjour
 ```
@@ -14,7 +15,10 @@ $ yarn add bonjour
 $ yarn run build
 ```
 
-### Build on change
+### Local development
 ```
-$ yarn run watch
+$ yarn run dev
+```
+```
+http://localhost:3000/
 ```

@@ -1,4 +1,4 @@
-import { BjWeekView } from '../../../../lib/week-view.esm.js';
+import { BjWeekView } from '../../../lib/week-view.esm.js';
 import { EVENTS_MOCK } from '../../mocks/events.mocks.js';
 
 const refModeInitialOption = document.getElementById('modeInitialOption');
