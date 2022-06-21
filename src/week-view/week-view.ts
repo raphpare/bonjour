@@ -427,7 +427,6 @@ export class BjWeekView {
 
     #createAllDayEvent(event: BjInternalEvent): void {
         if (!isDateRangeOverlap(this.dateRangesDisplayed, event.dateRange)) return;
-        console.log(this.dateRangesDisplayed);
 
         const refAllDayEvent = document.createElement('button');
         refAllDayEvent.id = event._id;
