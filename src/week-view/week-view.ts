@@ -358,6 +358,7 @@ export class BjWeekView {
         const eventStartTime: Number = dateStart.getHours() + dateStart.getMinutes() / 60;
         const eventEndTime: Number = dateEnd.getHours() + dateEnd.getMinutes() / 60;
         const refEvent = document.createElement('button');
+        refEvent.id = event._id;
         refEvent.className = EVENT_CLASS;
         
         if (this.#classNames?.event?.root) {
@@ -368,7 +369,6 @@ export class BjWeekView {
             refEvent.classList.add(event.classNames.root);
         }
 
-        refEvent.id = event._id;
         refEvent.type = 'button';
         refEvent.disabled = event.disabled;
         refEvent.style.setProperty('--event-start-time', eventStartTime.toString());
@@ -400,8 +400,17 @@ export class BjWeekView {
 
         const refAllDayEvent = document.createElement('button');
         refAllDayEvent.id = event._id;
-        refAllDayEvent.type = 'button';
         refAllDayEvent.className = ALL_DAY_EVENT_CLASS;
+
+        if (this.#classNames?.event?.root) {
+            refAllDayEvent.classList.add(this.#classNames.event.root);
+        }
+        
+        if (event?.classNames?.root) {
+            refAllDayEvent.classList.add(event.classNames.root);
+        }
+
+        refAllDayEvent.type = 'button';
         refAllDayEvent.disabled = event.disabled;
         
         const indexStart = event.dateRange.start < this.dateRangesDisplayed.start ? 0 : getDaysBetween(this.dateRangesDisplayed.start, event.dateRange.start);
@@ -486,6 +495,7 @@ export class BjWeekView {
 
         delete currentEvent._id;
         delete currentEvent._overlapped;
+        delete currentEvent._position;
 
         this.#callbacks.eventOnClick(pointerEvent, currentEvent);
     }
