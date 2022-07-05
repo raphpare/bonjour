@@ -1,9 +1,9 @@
-import { BjEvent, BjEventClassName, LOCAL_FR_CA } from '../utils/index';
+import { BjEvent, BjEventClassName, LOCALE_FR_CA } from '../utils/index';
 
 export interface BjWeekOptions {
     mode?: BjWeekViewMode;
     currentDate?: Date, 
-    local?:  string,
+    locale?:  string,
     classNames?: BjWeekClassName,
     customCSSProperties?: BjWeekCustomCSSProperties,
     callbacks?: BjWeekCallbacks,
@@ -64,7 +64,7 @@ export const BACKGROUND_CLASS = `${ROOT_CLASS}__background`;
 export const DEFAULT_OPTIONS: BjWeekOptions = { 
     mode: BjWeekViewMode.SevenDays,
     currentDate: new Date(),
-    local:  LOCAL_FR_CA
+    locale:  LOCALE_FR_CA
 }
 
 export const BJ_WEEK_VIEW_STYLE_ID = 'BjWeekViewStyle';

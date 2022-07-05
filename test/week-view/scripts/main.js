@@ -14,7 +14,7 @@ const refSetEventsButton = document.getElementById('setEventsButton');
 const refDestoyButton = document.getElementById('destoyButton');
 
 const refModeAttribute =  document.getElementById('modeAttribute');
-const refLocalAttribute =  document.getElementById('localAttribute');
+const refLocaleAttribute =  document.getElementById('localeAttribute');
 const refCurrentDateAttribute =  document.getElementById('currentDateAttribute');
 const refDatesDisplayedAttribute = document.getElementById('datesDisplayedAttribute');
 
@@ -127,10 +127,10 @@ Array.from(refCustomCSSPropertiesInit).forEach((el) => {
     });
 });
 
-refLocalAttribute.addEventListener('change', () => {
-   weekView.local = refLocalAttribute.value;
+refLocaleAttribute.addEventListener('change', () => {
+   weekView.locale = refLocaleAttribute.value;
 });
-refLocalAttribute.value = weekView.local;
+refLocaleAttribute.value = weekView.locale;
 
 refCurrentDateAttribute.addEventListener('change', () => {
     weekView.currentDate = new Date(refCurrentDateAttribute.value);

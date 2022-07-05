@@ -1,4 +1,4 @@
-import { LOCAL_FR_CA, DAY_MS, isDateRangeOverlap, getDaysBetween, generateUuid, BjEvent, BjInternalEvent, BjDateRange,  isTodayDate, } from '../utils/index';
+import { LOCALE_FR_CA, DAY_MS, isDateRangeOverlap, getDaysBetween, generateUuid, BjEvent, BjInternalEvent, BjDateRange,  isTodayDate, } from '../utils/index';
 import { ALL_DAY_AREA_CLASS, ALL_DAY_EVENT_CLASS, BACKGROUND_CLASS, DEFAULT_OPTIONS, BJ_WEEK_VIEW_STYLE_ID, BjWeekCallbacks, BjWeekClassName, BjWeekCustomCSSProperties, BjWeekOptions, BjWeekViewMode, BODY_CLASS, COLUMNS_CLASS, COLUMN_CLASS, COLUMN_TODAY_CLASS, COLUMN_WEEKEND_CLASS, DAY_COLUMN_CLASS, EVENT_CLASS, HEADER_CLASS, HEADER_COLUMN_CLASS, HEADER_DAY_CLASS, HEADER_MONTH_CLASS, ROOT_CLASS } from './week-view.utils';
 import cssText from './week-view.css';
 
@@ -14,7 +14,7 @@ export class BjWeekView {
     refDayColumns: HTMLElement[] = [];
     #mode: BjWeekViewMode = BjWeekViewMode.SevenDays;
     #nbDaysDisplayed: number = 7;
-    #local: string = LOCAL_FR_CA;
+    #locale: string = LOCALE_FR_CA;
     #classNames: BjWeekClassName = null;
     #datesDisplayed: Date[] = [];
     #currentDate: Date = new Date();
@@ -34,7 +34,7 @@ export class BjWeekView {
         }
         this.mode = options.mode;
         this.currentDate = options.currentDate;
-        this.#local = options.local;
+        this.#locale = options.locale;
         this.#classNames = options.classNames;
         this.#createTemplate(element);
         this.#setCustomCSSProperties(options?.customCSSProperties);
@@ -79,13 +79,13 @@ export class BjWeekView {
         return this.#currentDate;
     }
 
-    set local(local: string) {
-        this.#local = local;
+    set locale(locale: string) {
+        this.#locale = locale;
         this.updateView();
     }
 
-    get local(): string {
-        return this.#local;
+    get locale(): string {
+        return this.#locale;
     }
 
     get datesDisplayed(): Date[] {
@@ -102,19 +102,19 @@ export class BjWeekView {
 
     get dayOfWeek(): string[] {
         return this.#datesDisplayed.map(d => 
-            d.toLocaleString(this.local, { weekday: 'short', day: 'numeric'})
+            d.toLocaleString(this.locale, { weekday: 'short', day: 'numeric'})
         );   
     }
 
     get dayOfWeekAriaLabel(): string[] {
         return this.#datesDisplayed.map(d => 
-            d.toLocaleString(this.local, {  day: 'numeric', month: 'long', year: 'numeric'})
+            d.toLocaleString(this.locale, {  day: 'numeric', month: 'long', year: 'numeric'})
         );   
     }
 
     get datesOfWeek(): string[] {
         return this.#datesDisplayed.map(d => 
-            d.toLocaleString(this.local, { year: 'numeric', month: '2-digit', day: '2-digit' })
+            d.toLocaleString(this.locale, { year: 'numeric', month: '2-digit', day: '2-digit' })
         );   
     }
 
@@ -365,7 +365,7 @@ export class BjWeekView {
         const dateStart: Date = event.dateRange.start;
         const currentColumnDate: string = this.datesOfWeek[indexColumn].replace(/-/g, '');
         const currentEventDate: string = dateStart.toLocaleString(
-            this.local, 
+            this.locale, 
             { year: 'numeric', month: '2-digit', day: '2-digit' }
         ).replace(/-/g, '');
         

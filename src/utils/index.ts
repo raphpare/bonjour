@@ -1,4 +1,4 @@
-export const LOCAL_FR_CA = 'fr-CA';
+export const LOCALE_FR_CA = 'fr-CA';
 export const SECOND_MS = 1000;
 export const MINUTE_MS = SECOND_MS * 60;
 export const HOUR_MS = MINUTE_MS * 60;
