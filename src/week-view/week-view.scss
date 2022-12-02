@@ -1,9 +1,9 @@
-.bj-week {
+.b5r-week {
     --time-area-width: 26px;
     --day-height: 40px;
     --border-color: #ccc;
-    --background-weekend: rgb(245, 245, 245);
-    --background-today: rgb(221, 245, 255);
+    --weekend-background: rgb(245, 245, 245);
+    --today-background: rgb(221, 245, 255);
 
     position: relative;
     display: grid;
@@ -32,7 +32,7 @@
         position: relative;
         grid-area: body;
 
-        .bj-week__columns {
+        .b5r-week__columns {
             position: absolute;
             top: 0;
             right: 0;
@@ -86,12 +86,12 @@
             width: 1px;
         }
 
-        &.bj-week__column--weekend {
-            background: var(--background-weekend);
+        &.b5r-week__column--weekend {
+            background: var(--weekend-background);
         }
 
-        &.bj-week__column--today {
-            background: var(--background-today);
+        &.b5r-week__column--today {
+            background: var(--today-background);
         }
     }
 
@@ -100,7 +100,7 @@
         min-height: var(--day-height);
         width: 100%;
 
-        .bj-week__event-subtitle {
+        .b5r-week__event-subtitle {
             display: block;
             text-overflow: ellipsis;
             white-space: nowrap;
@@ -133,7 +133,7 @@
             font-size: 0.75rem;
         }
 
-        + .bj-week__hour-row::after {
+        + .b5r-week__hour-row::after {
             position: absolute;
             top: 0;
             right: 0;
@@ -153,7 +153,7 @@
         padding-left: var(--time-area-width);
     }
 
-    &__all-day-event, 
+    &__all-day-event,
     &__event {
         --event-background-color: rgb(94, 182, 255);
         --event-text-color: #000;
@@ -175,9 +175,10 @@
     &__all-day-event {
         --index-start: 0;
         --index-end: 0;
-        
+
         position: relative;
-        grid-column: calc(var(--index-start) + 1) / span calc(var(--index-end) - var(--index-start));
+        grid-column: calc(var(--index-start) + 1) / span
+            calc(var(--index-end) - var(--index-start));
         grid-row: var(--row-number);
         min-height: 22px;
     }
@@ -188,12 +189,22 @@
         --index-start: 0;
         --index-end: 1;
         --number-overlapping-events: 1;
-       
+
         position: absolute;
         top: calc(var(--start-time) * var(--day-height) + 1px);
-        left: calc(100% / var(--number-overlapping-events) * var(--index-start) + 1px);
-        width: calc(100% * ((var(--index-end) - var(--index-start)) / var(--number-overlapping-events)) - 2px);
-        height: calc((var(--end-time) - var(--start-time)) * var(--day-height) - 2px);
+        left: calc(
+            100% / var(--number-overlapping-events) * var(--index-start) + 1px
+        );
+        width: calc(
+            100% *
+                (
+                    (var(--index-end) - var(--index-start)) /
+                        var(--number-overlapping-events)
+                ) - 2px
+        );
+        height: calc(
+            (var(--end-time) - var(--start-time)) * var(--day-height) - 2px
+        );
         text-align: left;
     }
 
@@ -222,4 +233,3 @@
         padding: 4px;
     }
 }
-

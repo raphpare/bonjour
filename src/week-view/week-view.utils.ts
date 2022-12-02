@@ -1,51 +1,51 @@
-import { BjEvent, BjEventClassName, LOCALE_FR_CA } from '../utils/index';
+import { B5rEvent, B5rEventClassName } from '../models/event';
+import { LOCALE_FR_CA } from '../utils/locales';
 
-export interface BjWeekOptions {
-    mode?: BjWeekViewMode;
-    currentDate?: Date, 
-    locale?:  string,
-    classNames?: BjWeekClassName,
-    customCSSProperties?: BjWeekCustomCSSProperties,
-    callbacks?: BjWeekCallbacks,
+export interface B5rWeekOptions {
+    mode?: B5rWeekViewMode;
+    currentDate?: Date;
+    locale?: string;
+    classNames?: B5rWeekClassName;
+    designTokens?: B5rWeekDesignTokens;
+    callbacks?: B5rWeekCallbacks;
 }
 
-export enum BjWeekViewMode {
+export enum B5rWeekViewMode {
     SevenDays = '7-days',
     ThreeDays = '3-days',
-    OneDay = '1-day'
+    OneDay = '1-day',
 }
 
-export interface BjWeekClassName {
-    event?: BjEventClassName,
-    body?: string,
-    header?: string,
-    headerColumn?: string,
-    headerDay?: string,
-    headerMonth?: string,
-    columnWeekend?: string,
-    columnToday?: string,
+export interface B5rWeekClassName {
+    event?: B5rEventClassName;
+    body?: string;
+    header?: string;
+    headerColumn?: string;
+    headerDay?: string;
+    headerMonth?: string;
+    columnWeekend?: string;
+    columnToday?: string;
     today?: {
-        headerColumn?: string,
-        headerDay?: string,
-        headerMonth?: string,
-    }
+        headerColumn?: string;
+        headerDay?: string;
+        headerMonth?: string;
+    };
 }
 
-export interface BjWeekCustomCSSProperties {
-    ['--time-area-width']?: string,
-    ['--day-height']?: string,
+export interface B5rWeekDesignTokens {
+    ['--time-area-width']?: string;
+    ['--day-height']?: string;
     ['--border-color']?: string;
-    ['--background-weekend']?: string;
-    ['--background-today']?: string;
+    ['--weekend-background']?: string;
+    ['--today-background']?: string;
 }
 
-export interface BjWeekCallbacks {
-    updated: () => void,
-    eventOnClick: (PointerEvent: PointerEvent, currentEvent: BjEvent) => void,
+export interface B5rWeekCallbacks {
+    updated: () => void;
+    eventOnClick: (PointerEvent: PointerEvent, currentEvent: B5rEvent) => void;
 }
 
-
-export const ROOT_CLASS = 'bj-week'
+export const ROOT_CLASS = 'b5r-week';
 export const HEADER_CLASS = `${ROOT_CLASS}__header`;
 export const HEADER_DAY_CLASS = `${ROOT_CLASS}__header-day`;
 export const HEADER_MONTH_CLASS = `${ROOT_CLASS}__header-month`;
@@ -61,10 +61,10 @@ export const COLUMN_TODAY_CLASS = `${COLUMN_CLASS}--today`;
 export const DAY_COLUMN_CLASS = `${ROOT_CLASS}__day-column`;
 export const BACKGROUND_CLASS = `${ROOT_CLASS}__background`;
 
-export const DEFAULT_OPTIONS: BjWeekOptions = { 
-    mode: BjWeekViewMode.SevenDays,
+export const DEFAULT_OPTIONS: B5rWeekOptions = {
+    mode: B5rWeekViewMode.SevenDays,
     currentDate: new Date(),
-    locale:  LOCALE_FR_CA
-}
+    locale: LOCALE_FR_CA,
+};
 
-export const BJ_WEEK_VIEW_STYLE_ID = 'BjWeekViewStyle';
+export const B5R_WEEK_VIEW_STYLE_ID = 'B5rWeekViewStyle';

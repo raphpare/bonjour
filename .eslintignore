@@ -1,0 +1,6 @@
+node_modules
+lib
+conf
+tsconfig.json
+.eslintrc.js
+esbuild.config.js

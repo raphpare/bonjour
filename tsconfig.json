@@ -5,12 +5,12 @@
         "emitDeclarationOnly": true,
         "declarationMap": true,
         "target": "es6",
-        "moduleResolution": "node",
+        "moduleResolution": "node"
     },
     "typedocOptions": {
-        "entryPoints": ["src/week-view/week-view.ts"],
+        "entryPoints": ["src/index.ts"],
         "out": "docs"
     },
-    "include": ["src/**/*", "test/mocks"],
+    "include": ["src/**/*"],
     "exclude": ["node_modules"]
 }

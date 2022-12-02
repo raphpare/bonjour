@@ -1,2 +1,2 @@
-export { BjWeekView } from './week-view/week-view';
-
+export { B5rWeekView } from './week-view';
+export { B5rMonthView } from './month-view';

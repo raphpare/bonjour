@@ -1,4 +1,4 @@
-# Bonjour.js
+# Bonjour.js | B5R
 
 ## Install
 ```

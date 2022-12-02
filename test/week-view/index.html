@@ -1,53 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Week view | Bonjour.js</title>
-    <!-- <link rel="stylesheet" href="../../lib/week-view/index.css"> -->
-    <style>
-        body {
-            display: flex;
-        }
-        main {
-            flex: auto;
-        }
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Week view | Bonjour.js</title>
+        <!-- <link rel="stylesheet" href="../../lib/week-view/index.css"> -->
+        <style>
+            body {
+                display: flex;
+            }
+            main {
+                flex: auto;
+            }
 
-        aside {
-            width: 380px;
-            padding: 32px 24px;
-        }
-        aside ul {
-            list-style: none;
-            padding: 0;
-        }
+            aside {
+                width: 380px;
+                padding: 32px 24px;
+            }
+            aside ul {
+                list-style: none;
+                padding: 0;
+            }
 
-        aside li  {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            width: 100%;
-        }
+            aside li {
+                display: flex;
+                justify-content: space-between;
+                flex-wrap: wrap;
+                width: 100%;
+            }
 
-        aside li + li  {
-            margin-top: 16px;
-            border-top: 1px solid rgb(241, 241, 241);
-            padding-top: 16px;
-        }
+            aside li + li {
+                margin-top: 16px;
+                border-top: 1px solid rgb(241, 241, 241);
+                padding-top: 16px;
+            }
 
-
-        pre {
-            padding: 8px;
-            border-radius: 6px;
-            background: rgb(237, 237, 237);
-            overflow: auto;
-            min-height: 80px;
-            height: 160px;
-            width: 100%;
-            resize: vertical;
-        }
-        /* .style-body {
+            pre {
+                padding: 8px;
+                border-radius: 6px;
+                background: rgb(237, 237, 237);
+                overflow: auto;
+                min-height: 80px;
+                height: 160px;
+                width: 100%;
+                resize: vertical;
+            }
+            /* .style-body {
             max-height: 600px;
             overflow: auto;
         }
@@ -71,116 +70,118 @@
             background-color: black;
             color: #fff;
         } */
-    </style>
-</head>
-<body>
-    <main>
-        <div id="weekView"></div>
-    </main>
-    <aside>
-        <h2>Initial week options</h2>
-        <div id="initialWeekOptions">
+        </style>
+    </head>
+    <body>
+        <main>
+            <div id="weekView"></div>
+        </main>
+        <aside>
+            <h2>Initial Week Options</h2>
+            <div id="initialWeekOptions">
+                <ul>
+                    <li>
+                        <label for="idRootElement">Id root element</label>
+                        weekView
+                    </li>
+                    <li>
+                        <label for="modeInitialOption">mode</label>
+                        <select id="modeInitialOption">
+                            <option value="">undefined</option>
+                            <option value="1-day">1-day</option>
+                            <option value="3-days">3-days</option>
+                            <option value="7-days">7-days</option>
+                        </select>
+                    </li>
+                    <li>
+                        <label for="currentDate">currentDate</label>
+                        <input type="date" id="currentDate" />
+                    </li>
+                </ul>
+                <p><strong>Design Tokens</strong></p>
+                <ul>
+                    <li class="design-tokens-init">
+                        <label for="timeAreaWidth">--time-area-width</label>
+                        <input type="text" id="timeAreaWidth" />
+                    </li>
+                    <li class="design-tokens-init">
+                        <label for="dayHeight">--day-height</label>
+                        <input type="text" id="dayHeight" />
+                    </li>
+                    <li class="design-tokens-init">
+                        <label for="borderColor">--border-color</label>
+                        <input type="text" id="borderColor" />
+                    </li>
+                    <li class="design-tokens-init">
+                        <label for="backgroundToday">--today-background</label>
+                        <input type="text" id="backgroundToday" />
+                    </li>
+                    <li class="design-tokens-init">
+                        <label for="backgroundWeekend">
+                            --weekend-background
+                        </label>
+                        <input type="text" id="backgroundWeekend" />
+                    </li>
+                </ul>
+            </div>
+
+            <h3>Instantiation Code</h3>
+            <pre id="code"></pre>
+
+            <h2>Methods</h2>
             <ul>
                 <li>
-                    <label for="idRootElement">Id root element</label>
-                    weekView
+                    <span style="width: 100%">setEvents()</span>
+                    <pre id="eventsData"></pre>
+                    <button id="setEventsButton">setEvents()</button>
                 </li>
                 <li>
-                    <label for="modeInitialOption">mode</label>
-                    <select id="modeInitialOption">
-                        <option value="">undefined</option>
+                    today()
+                    <button id="todayButton">Today</button>
+                </li>
+                <li>
+                    previous()
+                    <button id="previousButton">Previous</button>
+                </li>
+                <li>
+                    next()
+                    <button id="nextButton">Next</button>
+                </li>
+                <li>
+                    destroy()
+                    <button id="destoyButton">Destroy</button>
+                </li>
+            </ul>
+
+            <h2>Attributes</h2>
+            <ul>
+                <li>
+                    <label for="modeAttribute">mode</label>
+                    <select id="modeAttribute">
                         <option value="1-day">1-day</option>
                         <option value="3-days">3-days</option>
                         <option value="7-days">7-days</option>
                     </select>
                 </li>
                 <li>
-                    <label for="currentDate">currentDate</label>
-                    <input type="date" id="currentDate" >
-                    
+                    <label for="localeAttribute">locale</label>
+                    <input type="text" id="localeAttribute" />
+                </li>
+                <li>
+                    <label for="currentDateAttribute">currentDate</label>
+                    <span>
+                        new Date('
+                        <input type="text" id="currentDateAttribute" />
+                        ')
+                    </span>
+                </li>
+                <li>
+                    datesDisplayed
+                    <pre type="text" id="datesDisplayedAttribute"></pre>
                 </li>
             </ul>
-            <p><strong>customCSSProperties</strong></p>
-            <ul>
-                <li class="custom-properties-init">
-                    <label for="timeAreaWidth">--time-area-width</label>
-                    <input type="text" id="timeAreaWidth" >
-                </li>
-                <li class="custom-properties-init">
-                    <label for="dayHeight">--day-height</label>
-                    <input type="text" id="dayHeight" >
-                </li>
-                <li class="custom-properties-init">
-                    <label for="borderColor">--border-color</label>
-                    <input type="text" id="borderColor" >
-                </li>
-                <li class="custom-properties-init">
-                    <label for="backgroundToday">--background-today</label>
-                    <input type="text" id="backgroundToday">
-                </li>
-                <li class="custom-properties-init">
-                    <label for="backgroundWeekend">--background-weekend</label>
-                    <input type="text" id="backgroundWeekend">
-                </li>
-            </ul>
-        </div>
-            
-        <h3>Instantiation Code</h3>
-        <pre id="code"></pre>
+        </aside>
 
-        <h2>Methods</h2>
-        <ul>
-            <li >
-                <span style="width: 100%;">setEvents()</span>
-                <pre id="eventsData" ></pre>
-                <button id="setEventsButton">setEvents()</button>
-            </li>
-            <li>
-                goToToday()
-                <button id="todayButton">Today</button>
-            </li>
-            <li>
-                previous()
-                <button id="previousButton">Previous</button>
-            </li>
-            <li>
-                next()
-                <button id="nextButton">Next</button>
-            </li>
-            <li>
-                destroy()
-                <button id="destoyButton">Destroy</button>
-            </li>
-        </ul>
-
-        <h2>Attributes</h2>
-        <ul>
-            <li>
-                <label for="modeAttribute">mode</label>
-                <select id="modeAttribute">
-                    <option value="1-day">1-day</option>
-                    <option value="3-days">3-days</option>
-                    <option value="7-days">7-days</option>
-                </select>
-            </li>
-            <li>
-                <label for="localeAttribute">locale</label>
-                <input type="text" id="localeAttribute">
-            </li>
-            <li>
-                <label for="currentDateAttribute">currentDate</label>
-                <span>new Date('<input type="text" id="currentDateAttribute">')</span>
-            </li>
-            <li>
-                datesDisplayed
-                <pre type="text" id="datesDisplayedAttribute"></pre>
-            </li>
-            
-        </ul>
-        
-        
-    </aside>
-
-    <script type="module" src="./scripts/main.js"></script>
-</body>
+        <script type="module" src="./scripts/main.js"></script>
+    </body>
 </html>
