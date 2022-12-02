@@ -28,8 +28,9 @@
         "watch": "rimraf lib && node esbuild.config.js --watch",
         "typedoc": "rimraf docs && typedoc --out docs ./src",
         "clean": "rimraf node_modules && rimraf lib && rimraf docs",
-        "serve": "nodemon server.js",
-        "dev": "concurrently \"yarn run watch\" \"yarn run serve\""
+        "serve": "nodemon test/server.mjs",
+        "open-browser": "node test/open-browser.mjs",
+        "dev": "yarn open-browser && concurrently \"yarn run watch\" \"yarn run serve\""
     },
     "devDependencies": {
         "@typescript-eslint/eslint-plugin": "^5.45.0",
@@ -42,7 +43,8 @@
         "eslint-config-prettier": "^8.5.0",
         "eslint-plugin-prettier": "^4.2.1",
         "express": "^4.18.1",
-        "nodemon": "^2.0.16",
+        "nodemon": "^2.0.20",
+        "open": "^8.4.0",
         "postcss": "^8.4.14",
         "postcss-preset-env": "^7.7.1",
         "prettier": "^2.8.0",

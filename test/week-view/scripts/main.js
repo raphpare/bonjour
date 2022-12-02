@@ -108,6 +108,7 @@ const disabledInitialWeekOptions = (callback) => {
 };
 
 updateWeekView();
+
 refModeInitialOption.addEventListener('change', () =>
     setOptionMode(refModeInitialOption.value)
 );

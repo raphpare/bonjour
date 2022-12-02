@@ -4,3 +4,4 @@ conf
 tsconfig.json
 .eslintrc.js
 esbuild.config.js
+test/*
