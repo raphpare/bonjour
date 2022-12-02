@@ -5,6 +5,7 @@ export interface B5rWeekOptions {
     mode?: B5rWeekViewMode;
     currentDate?: Date;
     locale?: string;
+    timeZone?: string;
     classNames?: B5rWeekClassName;
     designTokens?: B5rWeekDesignTokens;
     callbacks?: B5rWeekCallbacks;

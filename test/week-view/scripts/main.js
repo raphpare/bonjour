@@ -32,6 +32,7 @@ const options = {
             console.log(ponterEvent, event);
         },
     },
+    timeZone: 'America/Toronto',
 };
 
 const setOptionMode = (mode) => {

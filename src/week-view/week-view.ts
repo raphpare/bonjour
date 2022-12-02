@@ -31,6 +31,7 @@ import cssText from './week-view.css';
 import { LOCALE_FR_CA } from '../utils/locales';
 import { DAY_MS } from '../utils/milliseconds';
 import { getDaysBetween, isTodayDate } from '../utils/date';
+import { newDate } from '../utils/date/date.utils';
 
 export class B5rWeekView {
     events: B5rEvent[] = [];
@@ -42,13 +43,14 @@ export class B5rWeekView {
     refAllDayArea: HTMLElement = null;
     refBody: HTMLElement = null;
     refDayColumns: HTMLElement[] = [];
+    timeZone?: string;
 
     #mode: B5rWeekViewMode = B5rWeekViewMode.SevenDays;
     #nbDaysDisplayed = 7;
     #locale: string = LOCALE_FR_CA;
     #classNames: B5rWeekClassName = null;
     #datesDisplayed: Date[] = [];
-    #currentDate: Date = new Date();
+    #currentDate: Date;
     #internalEvents: B5rInternalEvent[] = [];
     #callbacks: B5rWeekCallbacks;
 
@@ -64,7 +66,9 @@ export class B5rWeekView {
             ...options,
         };
         this.mode = options.mode;
-        this.currentDate = options.currentDate;
+        this.timeZone = options.timeZone;
+        this.currentDate =
+            options.currentDate || newDate({ timeZone: options.timeZone });
         this.#locale = options.locale;
         this.#classNames = options.classNames;
         this.#createTemplate(element);
@@ -187,7 +191,7 @@ export class B5rWeekView {
 
     today(): Promise<Date> {
         return new Promise<Date>((resolve) => {
-            this.currentDate = new Date();
+            this.currentDate = newDate({ timeZone: this.timeZone });
             resolve(this.currentDate);
         });
     }
@@ -757,7 +761,10 @@ export class B5rWeekView {
 
             const todayClassNames = this.#classNames?.today;
 
-            if (isTodayDate(this.datesDisplayed[i]) && todayClassNames) {
+            if (
+                isTodayDate(this.datesDisplayed[i], this.timeZone) &&
+                todayClassNames
+            ) {
                 if (todayClassNames?.headerColumn) {
                     headerColumnClass += ` ${todayClassNames.headerColumn}`;
                 }
@@ -818,7 +825,7 @@ export class B5rWeekView {
                 refColumn.classList.add(COLUMN_WEEKEND_CLASS);
             }
 
-            if (isTodayDate(this.datesDisplayed[day])) {
+            if (isTodayDate(this.datesDisplayed[day], this.timeZone)) {
                 refColumn.classList.add(COLUMN_TODAY_CLASS);
             }
 
@@ -843,7 +850,7 @@ export class B5rWeekView {
                     refColumn.classList.remove(COLUMN_WEEKEND_CLASS);
                 }
 
-                if (isTodayDate(this.datesDisplayed[i])) {
+                if (isTodayDate(this.datesDisplayed[i], this.timeZone)) {
                     refColumn.classList.add(COLUMN_TODAY_CLASS);
                 } else {
                     refColumn.classList.remove(COLUMN_TODAY_CLASS);
