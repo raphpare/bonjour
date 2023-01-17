@@ -28,8 +28,8 @@ const options = {
             console.log('view update');
             setDatesDisplayed();
         },
-        eventOnClick: (ponterEvent, event) => {
-            console.log(ponterEvent, event);
+        eventOnClick: (pointerEvent, event) => {
+            console.log(pointerEvent, event);
         },
     },
     timeZone: 'America/Toronto',
@@ -77,8 +77,8 @@ const updateWeekView = () => {
         updated: () => {
             console.log('view update');
         },
-        eventOnClick: (ponterEvent, event) => {
-            console.log(ponterEvent, event);
+        eventOnClick: (pointerEvent, event) => {
+            console.log(pointerEvent, event);
         }
     }`
         )

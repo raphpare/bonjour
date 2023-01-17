@@ -13,9 +13,11 @@ function fromDir(startPath, filter, callback) {
     }
 
     const files = fs.readdirSync(startPath);
+
     for (var i = 0; i < files.length; i++) {
         const filename = path.join(startPath, files[i]);
         const stat = fs.lstatSync(filename);
+
         if (stat.isDirectory()) {
             fromDir(filename, filter, callback); //recurse
         } else if (filter.test(filename))
@@ -120,4 +122,5 @@ async function build(watchChange) {
         });
     });
 }
+
 build(watchChange);
