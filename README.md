@@ -35,17 +35,20 @@ const CalendarWeekView = new B5rWeekView(document.getElementById('calendar'), {
     mode: '7-days'
 });
 
-document.getElementById('btnToday').addEventListener('click', () => {
-    CalendarWeekView.today();
-});
+document.getElementById('btnToday').addEventListener(
+    'click',
+    CalendarWeekView.today
+);
 
-document.getElementById('btnPrevious').addEventListener('click', () => {
-    CalendarWeekView.previous();
-});
+document.getElementById('btnPrevious').addEventListener(
+    'click',
+    CalendarWeekView.previous
+);
 
-document.getElementById('btnNext').addEventListener('click', () => {
-    CalendarWeekView.next();
-});
+document.getElementById('btnNext').addEventListener(
+    'click',
+    CalendarWeekView.next
+);
 
 document.getElementById('btnAdd').addEventListener('click', () => {
     CalendarWeekView.setEvents([
