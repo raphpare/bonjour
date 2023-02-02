@@ -18,7 +18,7 @@ $ yarn add b5r-bonjour
 
 ```HTML
 <!-- Calendar -->
-<div id="calendar"></div>
+<div id="calendarWeekView"></div>
 
 
 <!-- Your UI controls -->
@@ -31,24 +31,24 @@ $ yarn add b5r-bonjour
 ```TS
 import { B5rWeekView } from 'b5r-bonjour';
 
-const CalendarWeekView = new B5rWeekView(document.getElementById('calendar'), {
-    mode: '7-days'
-});
-
-document.getElementById('btnToday').addEventListener(
-    'click',
-    CalendarWeekView.today
+const CalendarWeekView = new B5rWeekView(
+    document.getElementById('calendarWeekView'),
+    {
+        mode: '7-days',
+    }
 );
 
-document.getElementById('btnPrevious').addEventListener(
-    'click',
-    CalendarWeekView.previous
-);
+document
+    .getElementById('btnToday')
+    .addEventListener('click', CalendarWeekView.today);
 
-document.getElementById('btnNext').addEventListener(
-    'click',
-    CalendarWeekView.next
-);
+document
+    .getElementById('btnPrevious')
+    .addEventListener('click', CalendarWeekView.previous);
+
+document
+    .getElementById('btnNext')
+    .addEventListener('click', CalendarWeekView.next);
 
 document.getElementById('btnAdd').addEventListener('click', () => {
     CalendarWeekView.setEvents([
@@ -63,7 +63,6 @@ document.getElementById('btnAdd').addEventListener('click', () => {
         },
     ]);
 });
-
 ```
 
 ## Contribution
