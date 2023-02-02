@@ -1,15 +1,22 @@
 {
-    "name": "bonjour",
-    "version": "0.0.0-beta.1",
-    "description": "Week calendar",
+    "name": "b5r-bonjour",
+    "version": "0.0.0-beta.2",
+    "description": "Accessible, dependency-free calendar JavaScript library: import the code you need.",
     "keywords": [
         "calendar",
+        "bonjour",
+        "event",
         "agenda",
         "day",
         "week",
         "month",
-        "year"
+        "year",
+        "date"
     ],
+    "homepage": "https://raphpare.github.io/bonjour",
+    "bug": {
+        "url": "https://github.com/raphpare/bonjour/issues"
+    },
     "license": "ISC",
     "author": "Raphaël Paré <raph.pare@outlook.com> (https://github.com/raphpare)",
     "files": [
@@ -20,7 +27,7 @@
     "types": "lib/index.d.ts",
     "repository": {
         "type": "git",
-        "url": "https://github.com/raphpare/bonjour.git"
+        "url": "git+https://github.com/raphpare/bonjour.git"
     },
     "scripts": {
         "lint": "eslint",
@@ -53,5 +60,13 @@
     },
     "browserslist": {
         "browsers": "last 4 versions, > 1%"
-    }
+    },
+    "bugs": {
+        "url": "https://github.com/raphpare/bonjour/issues"
+    },
+    "directories": {
+        "lib": "lib",
+        "test": "test"
+    },
+    "dependencies": {}
 }
