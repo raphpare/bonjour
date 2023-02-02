@@ -54,7 +54,7 @@ export class B5rWeekView {
     #internalEvents: B5rInternalEvent[] = [];
     #callbacks: B5rWeekCallbacks;
 
-    constructor(element: HTMLElement, options: B5rWeekOptions) {
+    constructor(element: HTMLElement, options?: B5rWeekOptions) {
         if (!document.getElementById(B5R_WEEK_VIEW_STYLE_ID)) {
             document.head.insertAdjacentHTML(
                 'beforeend',

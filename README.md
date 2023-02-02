@@ -1,6 +1,6 @@
 # Bonjour.js – B5R
 
-Accessible, dependency-free calendar JavaScript library: import the code you need.
+Accessible, dependency-free calendar JavaScript library: import the code you need and use your UI controls.
 
 ## Install
 
@@ -14,9 +14,59 @@ or
 $ yarn add b5r-bonjour
 ```
 
+## WeekView Example
+
+```HTML
+<!-- Calendar -->
+<div id="calendar"></div>
+
+
+<!-- Your UI controls -->
+<button id="btnToday">Today</button>
+<button id="btnPrevious">Previous</button>
+<button id="btnNext">Next</button>
+<button id="btnAdd">Add event</button>
+```
+
+```TS
+import { B5rWeekView } from 'b5r-bonjour';
+
+const CalendarWeekView = new B5rWeekView(document.getElementById('calendar'), {
+    mode: '7-days'
+});
+
+document.getElementById('btnToday').addEventListener('click', () => {
+    CalendarWeekView.today();
+});
+
+document.getElementById('btnPrevious').addEventListener('click', () => {
+    CalendarWeekView.previous();
+});
+
+document.getElementById('btnNext').addEventListener('click', () => {
+    CalendarWeekView.next();
+});
+
+document.getElementById('btnAdd').addEventListener('click', () => {
+    const dateNow = new Date();
+    CalendarWeekView.setEvent([
+        {
+            id: '1',
+            title: 'Event 1',
+            subtitle: 'Subtitle',
+            dateRange: {
+                start: dateNow,
+                end: new Date(dateNow.setHours(dateNow.setHours() + 2)),
+            },
+        },
+    ]);
+});
+
+```
+
 ## Contribution
 
-### Build projet
+### Build project
 
 ```
 $ yarn install
@@ -24,6 +74,20 @@ $ yarn install
 
 ```
 $ yarn run build
+```
+
+### Storybook
+
+```
+$ yarn install
+```
+
+```
+$ yarn run storybook
+```
+
+```
+http://localhost:6006/
 ```
 
 ### Local development
