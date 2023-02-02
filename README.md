@@ -1,6 +1,6 @@
 # Bonjour.js – B5R
 
-Accessible, dependency-free calendar JavaScript library: import the code you need and use your UI controls.
+Accessible and dependency-free calendar JavaScript library: import the code you need and use your UI controls.
 
 ## Install
 

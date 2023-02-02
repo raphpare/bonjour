@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Demo - Calendrier</title>
+    </head>
+    <body>
+        <main>
+            <select id="langueSelect">
+                <option value="fr-CA">Français</option>
+                <option value="en">English</option>
+            </select>
+            <header style="display: flex; justify-content: space-between">
+                <div>
+                    <button id="previousButton">Previous</button>
+                    <button id="nextButton">Next</button>
+                </div>
+                <h1 id="currentDateRange"></h1>
+                <button id="todayButton">Today</button>
+            </header>
+
+            <div id="calendar"></div>
+        </main>
+        <script type="module" src="scripts/main.js"></script>
+    </body>
+</html>
