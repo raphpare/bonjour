@@ -48,15 +48,14 @@ document.getElementById('btnNext').addEventListener('click', () => {
 });
 
 document.getElementById('btnAdd').addEventListener('click', () => {
-    const dateNow = new Date();
-    CalendarWeekView.setEvent([
+    CalendarWeekView.setEvents([
         {
             id: '1',
             title: 'Event 1',
             subtitle: 'Subtitle',
             dateRange: {
-                start: dateNow,
-                end: new Date(dateNow.setHours(dateNow.setHours() + 2)),
+                start: new Date(),
+                end: new Date(new Date().setHours(new Date().getHours() + 2)),
             },
         },
     ]);
