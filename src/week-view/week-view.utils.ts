@@ -35,7 +35,7 @@ export interface B5rWeekClassName {
 
 export interface B5rWeekDesignTokens {
     ['--time-area-width']?: string;
-    ['--day-height']?: string;
+    ['--hour-height']?: string;
     ['--border-color']?: string;
     ['--weekend-background']?: string;
     ['--today-background']?: string;

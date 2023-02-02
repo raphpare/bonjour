@@ -1,6 +1,6 @@
 .b5r-week {
     --time-area-width: 26px;
-    --day-height: 40px;
+    --hour-height: 40px;
     --border-color: #ccc;
     --weekend-background: rgb(245, 245, 245);
     --today-background: rgb(221, 245, 255);
@@ -97,7 +97,7 @@
 
     &__day-column {
         position: relative;
-        min-height: var(--day-height);
+        min-height: var(--hour-height);
         width: 100%;
 
         .b5r-week__event-subtitle {
@@ -122,7 +122,7 @@
 
     &__hour-row {
         position: relative;
-        height: var(--day-height);
+        height: var(--hour-height);
 
         &[data-hour]::before {
             content: attr(data-hour);
@@ -191,7 +191,7 @@
         --number-overlapping-events: 1;
 
         position: absolute;
-        top: calc(var(--start-time) * var(--day-height) + 1px);
+        top: calc(var(--start-time) * var(--hour-height) + 1px);
         left: calc(
             100% / var(--number-overlapping-events) * var(--index-start) + 1px
         );
@@ -203,7 +203,7 @@
                 ) - 2px
         );
         height: calc(
-            (var(--end-time) - var(--start-time)) * var(--day-height) - 2px
+            (var(--end-time) - var(--start-time)) * var(--hour-height) - 2px
         );
         text-align: left;
     }

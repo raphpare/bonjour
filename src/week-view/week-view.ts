@@ -219,19 +219,19 @@ export class B5rWeekView {
     }
 
     deleteAllEvents(): void {
-        if (this.refEvents) {
-            let indexEvent = this.refEvents.length;
-            while (indexEvent--) {
-                const refEvent = this.refEvents[indexEvent];
-                const event: B5rEvent = this.#events.find(
-                    (we) => we._id === refEvent.id
-                );
-                refEvent.removeEventListener(
-                    'click',
-                    this.#eventOnClick.bind(this, event)
-                );
-                refEvent.remove();
-            }
+        if (!this.refEvents) return;
+
+        let indexEvent = this.refEvents.length;
+        while (indexEvent--) {
+            const refEvent = this.refEvents[indexEvent];
+            const event: B5rEvent = this.#events.find(
+                (we) => we._id === refEvent.id
+            );
+            refEvent.removeEventListener(
+                'click',
+                this.#eventOnClick.bind(this, event)
+            );
+            refEvent.remove();
         }
     }
 
