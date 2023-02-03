@@ -31,7 +31,7 @@
     },
     "scripts": {
         "lint": "eslint",
-        "build": "rimraf lib && node esbuild.config.js && tsc && yarn lint",
+        "build": "rimraf lib && node esbuild.config.js && yarn lint && tsc",
         "watch": "rimraf lib && node esbuild.config.js --watch",
         "typedoc": "rimraf docs && typedoc --out docs ./src",
         "clean": "rimraf node_modules && rimraf lib && rimraf docs",
