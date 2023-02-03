@@ -19,8 +19,8 @@ function fromDir(startPath, filter, callback) {
         const stat = fs.lstatSync(filename);
 
         if (stat.isDirectory()) {
-            fromDir(filename, filter, callback); //recurse
-        } else if (filter.test(filename))
+            fromDir(filename, filter, callback); // recurse
+        } else if (filter.test(filename) && !/stories.ts/.test(filename))
             callback(filename.replace(/\\/g, '/'));
     }
 }
@@ -71,27 +71,10 @@ async function build(watchChange) {
             if (/\/models\//.test(entryPoint)) return;
 
             const extension = format == 'cjs' ? '.js' : `.${format}.js`;
-            const path = entryPoint.replace(
-                /[a-z\-]+(\.((utils)|(mocks)))?\.ts$/,
-                ''
-            );
 
-            const fileName = entryPoint
-                .replace(path, '')
+            const outfile = entryPoint
+                .replace(/src\//, 'lib/')
                 .replace(/\.ts$/, extension);
-
-            let outfile = '';
-
-            if (
-                /\/utils\//.test(entryPoint) ||
-                /\.utils\.ts/.test(entryPoint)
-            ) {
-                outfile = `lib/utils/${fileName}`;
-            } else if (/\/mocks\//.test(entryPoint)) {
-                outfile = `lib/mocks/${fileName}`;
-            } else {
-                outfile = `lib/${fileName}`;
-            }
 
             esbuild
                 .build({

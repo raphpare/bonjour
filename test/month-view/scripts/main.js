@@ -1,4 +1,4 @@
-import { B5rMonthView } from '../../../lib/month-view.esm.js';
+import { B5rMonthView } from '../../../lib/month-view/month-view.esm.js';
 import { EVENTS_MOCKS } from '../../../lib/mocks/events.mocks.esm.js';
 
 console.log(EVENTS_MOCKS);
