@@ -12,7 +12,7 @@ const argsTypeMode = {
 };
 
 export default {
-    title: 'week-view/options',
+    title: 'week-view/Constructor Options',
 } as Meta<B5rWeekOptions>;
 
 const dateNow = new Date();

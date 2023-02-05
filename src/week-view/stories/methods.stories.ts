@@ -4,7 +4,7 @@ import { B5rWeekView } from '../week-view';
 import { B5rWeekOptions } from '../week-view.utils';
 
 export default {
-    title: 'week-view/methods',
+    title: 'week-view/Methods',
 } as Meta;
 
 const getDefaultTemplate = (options: {
