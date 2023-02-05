@@ -114,7 +114,7 @@ const TemplateToday: StoryFn = (args): HTMLElement => {
 export const Today = TemplateToday.bind({});
 Today.storyName = 'today()';
 
-const TemplateOnViewUpdate: StoryFn = (args): HTMLElement => {
+const TemplateOnUpdate: StoryFn = (args): HTMLElement => {
     const { refRoot, refHeader, weekView } = getDefaultTemplate({
         showBtnToday: true,
         showBtnNext: true,
@@ -128,7 +128,7 @@ const TemplateOnViewUpdate: StoryFn = (args): HTMLElement => {
 
     refHeader.append(refCurrentdate);
 
-    weekView.onViewUpdate(() => {
+    weekView.onUpdate(() => {
         console.log('The week view is updated');
         refCurrentdate.innerText = weekView.currentDate.toLocaleDateString();
     });
@@ -136,8 +136,8 @@ const TemplateOnViewUpdate: StoryFn = (args): HTMLElement => {
     return refRoot;
 };
 
-export const OnViewUpdate = TemplateOnViewUpdate.bind({});
-OnViewUpdate.storyName = 'onViewUpdate()';
+export const OnUpdate = TemplateOnUpdate.bind({});
+OnUpdate.storyName = 'onUpdate()';
 
 const TemplateOnEventClick: StoryFn = (args): HTMLElement => {
     const { refRoot, weekView } = getDefaultTemplate({

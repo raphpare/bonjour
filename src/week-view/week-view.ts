@@ -25,7 +25,7 @@ import { cloneEvents, sortEvents } from '../utils/event';
 import {
     B5rCallbacks,
     B5rEventClickCallback,
-    B5rViewUpdateCallbacks,
+    B5rUpdateCallback,
 } from '../models/callbacks';
 import { B5rEvent, B5rInternalEvent } from '../models/event';
 import { B5rDateRange } from '../models/date-range';
@@ -57,7 +57,7 @@ export class B5rWeekView {
     #currentDate: Date;
     #internalEvents: B5rInternalEvent[] = [];
     #callbacks: B5rCallbacks = {
-        viewUpdateCallbacks: [],
+        updateCallbacks: [],
         eventClickCallbacks: [],
     };
 
@@ -244,8 +244,8 @@ export class B5rWeekView {
         this.refRoot.classList.remove(ROOT_CLASS);
     }
 
-    onViewUpdate(callback: B5rViewUpdateCallbacks): void {
-        this.#callbacks.viewUpdateCallbacks.push(callback);
+    onUpdate(callback: B5rUpdateCallback): void {
+        this.#callbacks.updateCallbacks.push(callback);
     }
 
     onEventClick(callback: B5rEventClickCallback): void {
@@ -416,9 +416,9 @@ export class B5rWeekView {
     }
 
     #updated(): void {
-        if (!this.#callbacks.viewUpdateCallbacks) return;
+        if (!this.#callbacks.updateCallbacks) return;
 
-        this.#callbacks.viewUpdateCallbacks.forEach((callback) => callback());
+        this.#callbacks.updateCallbacks.forEach((callback) => callback());
     }
 
     #createAllEvents(): void {

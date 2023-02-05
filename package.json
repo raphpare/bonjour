@@ -35,7 +35,7 @@
         "build-cleaner": "rimraf lib/mocks && rimraf lib/month-view",
         "watch": "rimraf lib && node esbuild.config.js --watch",
         "typedoc": "rimraf docs && typedoc --out docs ./src",
-        "clean": "rimraf node_modules && rimraf lib && rimraf docs",
+        "clean": "rimraf node_modules && rimraf lib",
         "serve": "nodemon test/server.mjs",
         "open-browser": "node test/open-browser.mjs",
         "dev": "yarn open-browser && concurrently \"yarn run watch\" \"yarn run serve\"",
@@ -69,7 +69,7 @@
         "postcss": "^8.4.14",
         "postcss-preset-env": "^7.7.1",
         "prettier": "^2.8.0",
-        "rimraf": "^3.0.2",
+        "rimraf": "^4.1.2",
         "typescript": "^4.9.3"
     },
     "browserslist": {
