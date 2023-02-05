@@ -3,7 +3,7 @@ import { B5rEvent, B5rInternalEvent } from '../models/event';
 import { getDaysBetween } from '../utils/date';
 import { isDateRangeOverlap } from '../utils/date-range';
 import { cloneEvents, sortEvents } from '../utils/event';
-import { LOCALE_FR_CA } from '../utils/locales';
+import { LOCALE_EN } from '../utils/locales';
 
 export class B5rMonthView {
     events: B5rEvent[] = [];
@@ -13,7 +13,7 @@ export class B5rMonthView {
     refAllDayArea: HTMLElement = null;
     refDayColumns: HTMLElement[] = [];
 
-    #locale: string = LOCALE_FR_CA;
+    #locale: string = LOCALE_EN;
     #fullDatesOfMonth: Date[] = [];
     #currentDate: Date = new Date();
     #internalEvents: B5rEvent[] = [];
@@ -24,7 +24,7 @@ export class B5rMonthView {
         refRoot: HTMLElement,
         options = {
             currentDate: new Date(),
-            locale: LOCALE_FR_CA,
+            locale: LOCALE_EN,
         }
     ) {
         this.refRoot = refRoot;

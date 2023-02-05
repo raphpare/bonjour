@@ -1,1 +1,1 @@
-export const LOCALE_FR_CA = 'fr-CA';
+export const LOCALE_EN = 'en';

@@ -46,7 +46,7 @@ CurrentDate.args = {
 
 export const Locale = Template.bind({});
 Locale.args = {
-    locale: 'en',
+    locale: 'ja',
 };
 
 export const TimeZone = Template.bind({});

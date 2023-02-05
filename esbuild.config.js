@@ -20,7 +20,11 @@ function fromDir(startPath, filter, callback) {
 
         if (stat.isDirectory()) {
             fromDir(filename, filter, callback); // recurse
-        } else if (filter.test(filename) && !/stories.ts/.test(filename))
+        } else if (
+            filter.test(filename) &&
+            !/stories.ts/.test(filename) &&
+            !/global.d.ts/.test(filename)
+        )
             callback(filename.replace(/\\/g, '/'));
     }
 }

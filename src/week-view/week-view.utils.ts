@@ -1,5 +1,5 @@
-import { B5rEvent, B5rEventClassName } from '../models/event';
-import { LOCALE_FR_CA } from '../utils/locales';
+import { B5rEventClassName } from '../models/event';
+import { LOCALE_EN } from '../utils/locales';
 
 export interface B5rWeekOptions {
     mode?: B5rWeekViewMode;
@@ -8,7 +8,6 @@ export interface B5rWeekOptions {
     timeZone?: string;
     classNames?: B5rWeekClassName;
     designTokens?: B5rWeekDesignTokens;
-    callbacks?: B5rWeekCallbacks;
 }
 
 export enum B5rWeekViewMode {
@@ -41,11 +40,6 @@ export interface B5rWeekDesignTokens {
     ['--today-background']?: string;
 }
 
-export interface B5rWeekCallbacks {
-    updated: () => void;
-    eventOnClick: (PointerEvent: PointerEvent, currentEvent: B5rEvent) => void;
-}
-
 export const ROOT_CLASS = 'b5r-week';
 export const HEADER_CLASS = `${ROOT_CLASS}__header`;
 export const HEADER_DAY_CLASS = `${ROOT_CLASS}__header-day`;
@@ -65,7 +59,7 @@ export const BACKGROUND_CLASS = `${ROOT_CLASS}__background`;
 export const DEFAULT_OPTIONS: B5rWeekOptions = {
     mode: B5rWeekViewMode.SevenDays,
     currentDate: new Date(),
-    locale: LOCALE_FR_CA,
+    locale: LOCALE_EN,
 };
 
 export const B5R_WEEK_VIEW_STYLE_ID = 'B5rWeekViewStyle';

@@ -1,1 +1,1 @@
-export { LOCALE_FR_CA } from './locales.utils';
+export { LOCALE_EN } from './locales.utils';

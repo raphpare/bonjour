@@ -4,7 +4,6 @@ import {
     BACKGROUND_CLASS,
     DEFAULT_OPTIONS,
     B5R_WEEK_VIEW_STYLE_ID,
-    B5rWeekCallbacks,
     B5rWeekClassName,
     B5rWeekDesignTokens,
     B5rWeekOptions,
@@ -23,12 +22,17 @@ import {
     ROOT_CLASS,
 } from './week-view.utils';
 import { cloneEvents, sortEvents } from '../utils/event';
+import {
+    B5rCallbacks,
+    B5rEventClickCallback,
+    B5rViewUpdateCallbacks,
+} from '../models/callbacks';
 import { B5rEvent, B5rInternalEvent } from '../models/event';
 import { B5rDateRange } from '../models/date-range';
 import { generateUuid } from '../utils/uuid';
 import { isDateRangeOverlap } from '../utils/date-range';
 import cssText from './week-view.css';
-import { LOCALE_FR_CA } from '../utils/locales';
+import { LOCALE_EN } from '../utils/locales';
 import { DAY_MS } from '../utils/milliseconds';
 import { getDaysBetween, isTodayDate } from '../utils/date';
 import { newDate } from '../utils/date/date.utils';
@@ -47,12 +51,15 @@ export class B5rWeekView {
 
     #mode: B5rWeekViewMode = B5rWeekViewMode.SevenDays;
     #nbDaysDisplayed = 7;
-    #locale: string = LOCALE_FR_CA;
+    #locale: string = LOCALE_EN;
     #classNames: B5rWeekClassName = null;
     #datesDisplayed: Date[] = [];
     #currentDate: Date;
     #internalEvents: B5rInternalEvent[] = [];
-    #callbacks: B5rWeekCallbacks;
+    #callbacks: B5rCallbacks = {
+        viewUpdateCallbacks: [],
+        eventClickCallbacks: [],
+    };
 
     constructor(element: HTMLElement, options?: B5rWeekOptions) {
         if (!document.getElementById(B5R_WEEK_VIEW_STYLE_ID)) {
@@ -73,10 +80,6 @@ export class B5rWeekView {
         this.#classNames = options.classNames;
         this.#createTemplate(element);
         this.#setDesignTokens(options?.designTokens);
-
-        if (options.callbacks) {
-            this.#callbacks = options.callbacks;
-        }
     }
 
     set mode(mode: B5rWeekViewMode) {
@@ -239,6 +242,14 @@ export class B5rWeekView {
         this.deleteAllEvents();
         this.refRoot.innerHTML = '';
         this.refRoot.classList.remove(ROOT_CLASS);
+    }
+
+    onViewUpdate(callback: B5rViewUpdateCallbacks): void {
+        this.#callbacks.viewUpdateCallbacks.push(callback);
+    }
+
+    onEventClick(callback: B5rEventClickCallback): void {
+        this.#callbacks.eventClickCallbacks.push(callback);
     }
 
     set #events(events: B5rEvent[]) {
@@ -405,8 +416,9 @@ export class B5rWeekView {
     }
 
     #updated(): void {
-        if (!this.#callbacks.updated) return;
-        this.#callbacks.updated();
+        if (!this.#callbacks.viewUpdateCallbacks) return;
+
+        this.#callbacks.viewUpdateCallbacks.forEach((callback) => callback());
     }
 
     #createAllEvents(): void {
@@ -711,13 +723,16 @@ export class B5rWeekView {
     }
 
     #eventOnClick(
-        currentEvent: B5rInternalEvent,
+        eventClicked: B5rInternalEvent,
         pointerEvent: PointerEvent
     ): void {
-        if (!this.#callbacks.eventOnClick) return;
-        currentEvent = this.events.find((e) => e.id === currentEvent.id);
+        if (this.#callbacks.eventClickCallbacks.length === 0) return;
+        eventClicked = this.events.find((e) => e.id === eventClicked.id);
 
-        this.#callbacks.eventOnClick(pointerEvent, currentEvent);
+        this.#callbacks.eventClickCallbacks.forEach(
+            (callback: B5rEventClickCallback) =>
+                callback(pointerEvent, eventClicked)
+        );
     }
 
     #getHeaderTemplate(): HTMLElement {
