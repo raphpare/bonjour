@@ -162,4 +162,4 @@ const TemplateOnEventClick: StoryFn = (args): HTMLElement => {
 };
 
 export const OnEventClick = TemplateOnEventClick.bind({});
-OnEventClick.storyName = 'onEventClick()';
+OnEventClick.storyName = 'onEventClick(pointerEvent, eventClicked)';

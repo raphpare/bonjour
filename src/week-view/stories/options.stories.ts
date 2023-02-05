@@ -19,7 +19,9 @@ const dateNow = new Date();
 
 const Template: StoryFn<B5rWeekOptions> = (args): HTMLElement => {
     const refRoot = document.createElement('div');
+
     new B5rWeekView(refRoot, args);
+
     return refRoot;
 };
 
