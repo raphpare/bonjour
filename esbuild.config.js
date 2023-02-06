@@ -22,8 +22,7 @@ function fromDir(startPath, filter, callback) {
             fromDir(filename, filter, callback); // recurse
         } else if (
             filter.test(filename) &&
-            !/stories.ts/.test(filename) &&
-            !/global.d.ts/.test(filename)
+            !/((stories)|(global.d)|(types)|(.utils)).ts/.test(filename)
         )
             callback(filename.replace(/\\/g, '/'));
     }

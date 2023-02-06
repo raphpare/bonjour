@@ -15,16 +15,18 @@
     ],
     "homepage": "https://raphpare.github.io/bonjour",
     "bug": {
-        "url": "https://github.com/raphpare/bonjour/issues"
+        "url": "https://gith ub.com/raphpare/bonjour/issues"
     },
     "license": "ISC",
     "author": "Raphaël Paré <raph.pare@outlook.com> (https://github.com/raphpare)",
     "files": [
-        "lib"
+        "lib",
+        "src/**/*.ts",
+        "src/**/*.css"
     ],
     "main": "lib/index.js",
     "module": "lib/index.esm.js",
-    "types": "lib/index.d.ts",
+    "types": "lib/types.d.ts",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/raphpare/bonjour.git"
@@ -32,7 +34,7 @@
     "scripts": {
         "lint": "eslint",
         "build": "rimraf lib && node esbuild.config.js && yarn lint && tsc && yarn build-cleaner",
-        "build-cleaner": "rimraf lib/mocks && rimraf lib/month-view",
+        "build-cleaner": "rimraf lib/mocks && rimraf lib/month-view && rimraf lib/utils && rimraf lib/week-view/stories",
         "watch": "rimraf lib && node esbuild.config.js --watch",
         "typedoc": "rimraf docs && typedoc --out docs ./src",
         "clean": "rimraf node_modules && rimraf lib",

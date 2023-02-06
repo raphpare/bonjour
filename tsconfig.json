@@ -11,6 +11,13 @@
         "entryPoints": ["src/index.ts"],
         "out": "docs"
     },
-    "include": ["src/*.d.ts", "src/index.ts", "src/week-view/week-view.ts"],
-    "exclude": ["node_modules"]
+    "include": ["src/**/*"],
+    "exclude": [
+        "node_modules",
+        "**/*.ignore.ts",
+        "src/**/*.spec.*",
+        "src/**/*.stories.*",
+        "src/mocks/**/*",
+        "src/utils/**/*"
+    ]
 }
