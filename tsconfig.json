@@ -17,6 +17,7 @@
         "**/*.ignore.ts",
         "src/**/*.spec.*",
         "src/**/*.stories.*",
+        "src/**/*.utils.ts",
         "src/mocks/**/*",
         "src/utils/**/*"
     ]

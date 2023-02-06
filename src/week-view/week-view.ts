@@ -4,10 +4,6 @@ import {
     BACKGROUND_CLASS,
     DEFAULT_OPTIONS,
     B5R_WEEK_VIEW_STYLE_ID,
-    B5rWeekClassName,
-    B5rWeekDesignTokens,
-    B5rWeekOptions,
-    B5rWeekViewMode,
     BODY_CLASS,
     COLUMNS_CLASS,
     COLUMN_CLASS,
@@ -21,6 +17,12 @@ import {
     HEADER_MONTH_CLASS,
     ROOT_CLASS,
 } from './week-view.utils';
+import {
+    B5rWeekClassName,
+    B5rWeekDesignTokens,
+    B5rWeekOptions,
+    B5rWeekViewMode,
+} from './week-view.def';
 import { cloneEvents, sortEvents } from '../utils/event';
 import {
     B5rCallbacks,
