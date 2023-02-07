@@ -29,7 +29,7 @@ $ yarn add b5r-bonjour
 ```
 
 ```TS
-import { B5rWeekView } from 'b5r-bonjour';
+import { B5rWeekView } from 'b5r-bonjour/lib/week-view';
 
 const CalendarWeekView = new B5rWeekView(
     document.getElementById('calendarWeekView'),
