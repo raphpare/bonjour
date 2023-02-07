@@ -1,7 +1,7 @@
 import { B5rWeekView } from '../week-view';
 import { B5rWeekOptions } from '../week-view.def';
 
-export const getDefaultTemplate = (options: {
+export const getWeekViewDefaultTemplate = (options: {
     showBtnToday?: boolean;
     showBtnNext?: Boolean;
     showBtnPrevious?: boolean;

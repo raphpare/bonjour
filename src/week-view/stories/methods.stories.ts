@@ -1,13 +1,13 @@
 import { Meta, StoryFn } from '@storybook/html';
 import { EVENTS_MOCKS } from '../../mocks/events.mocks';
-import { getDefaultTemplate } from './commons';
+import { getWeekViewDefaultTemplate } from './commons';
 
 export default {
     title: 'week-view/Methods',
 } as Meta;
 
 const TemplateSetEvents: StoryFn = (args): HTMLElement => {
-    const { refRoot, weekView } = getDefaultTemplate({
+    const { refRoot, weekView } = getWeekViewDefaultTemplate({
         weekOptions: args,
     });
 
@@ -19,10 +19,10 @@ const TemplateSetEvents: StoryFn = (args): HTMLElement => {
 export const SetEvents = TemplateSetEvents.bind({});
 SetEvents.storyName = 'setEvent()';
 
-const TemplatePrevious: StoryFn = (args): HTMLElement => {
-    const { refRoot, weekView } = getDefaultTemplate({
+const TemplatePrevious: StoryFn = (weekOptions): HTMLElement => {
+    const { refRoot, weekView } = getWeekViewDefaultTemplate({
         showBtnPrevious: true,
-        weekOptions: args,
+        weekOptions,
     });
 
     weekView.previous();
@@ -34,7 +34,7 @@ export const Previous = TemplatePrevious.bind({});
 Previous.storyName = 'previous()';
 
 const TemplateNext: StoryFn = (args): HTMLElement => {
-    const { refRoot, weekView } = getDefaultTemplate({
+    const { refRoot, weekView } = getWeekViewDefaultTemplate({
         showBtnNext: true,
         weekOptions: args,
     });
@@ -48,7 +48,7 @@ export const Next = TemplateNext.bind({});
 Next.storyName = 'next()';
 
 const TemplateToday: StoryFn = (args): HTMLElement => {
-    const { refRoot, weekView } = getDefaultTemplate({
+    const { refRoot, weekView } = getWeekViewDefaultTemplate({
         showBtnToday: true,
         showBtnNext: true,
         showBtnPrevious: true,
@@ -64,7 +64,7 @@ export const Today = TemplateToday.bind({});
 Today.storyName = 'today()';
 
 const TemplateOnUpdate: StoryFn = (args): HTMLElement => {
-    const { refRoot, refHeader, weekView } = getDefaultTemplate({
+    const { refRoot, refHeader, weekView } = getWeekViewDefaultTemplate({
         showBtnToday: true,
         showBtnNext: true,
         showBtnPrevious: true,
@@ -89,7 +89,7 @@ export const OnUpdate = TemplateOnUpdate.bind({});
 OnUpdate.storyName = 'onUpdate()';
 
 const TemplateOnEventClick: StoryFn = (args): HTMLElement => {
-    const { refRoot, weekView } = getDefaultTemplate({
+    const { refRoot, weekView } = getWeekViewDefaultTemplate({
         showBtnToday: true,
         showBtnNext: true,
         showBtnPrevious: true,
