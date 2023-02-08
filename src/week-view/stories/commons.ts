@@ -27,8 +27,12 @@ export const getWeekViewDefaultTemplate = (options: {
 
     options.weekOptions = {
         ...options.weekOptions,
-        currentDate: new Date(),
     };
+
+    const currentDate = options.weekOptions.currentDate;
+    options.weekOptions.currentDate = currentDate
+        ? new Date(currentDate)
+        : new Date();
 
     const weekView = new B5rWeekView(refWeekView, options.weekOptions);
 
