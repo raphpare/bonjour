@@ -11,8 +11,10 @@ import {
     DAY_BUTTON_TODAY_CLASS,
     DAY_CLASS,
     DEFAULT_OPTIONS,
+    EVENT_BUTTON_CLASS,
     EVENT_CLASS,
     HEADER_CLASS,
+    HIDDEN_CLASS,
     LIST_EVENTS_CLASS,
     ROOT_CLASS,
 } from './month-view.utils';
@@ -85,40 +87,6 @@ export class B5rMonthView implements CalendarView {
 
     get monthEvents(): B5rEvent[] {
         return this.#monthEvents;
-    }
-
-    get title(): string {
-        const dateArray = [];
-        dateArray.push(
-            this.dateRangesDisplayed.start.toLocaleString(this.locale, {
-                day: 'numeric',
-                month: 'short',
-            })
-        );
-        dateArray.push(
-            this.dateRangesDisplayed.end.toLocaleString(this.locale, {
-                day: 'numeric',
-                month: 'short',
-                year: 'numeric',
-            })
-        );
-        return dateArray.join(' – ');
-    }
-
-    get dayOfWeek(): string[] {
-        return this.#fullDatesOfMonth.map((d) =>
-            d.toLocaleString(this.locale, { weekday: 'short', day: 'numeric' })
-        );
-    }
-
-    get datesOfWeek(): string[] {
-        return this.#fullDatesOfMonth.map((d) =>
-            d.toLocaleString(this.locale, {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-            })
-        );
     }
 
     updateView(): void {
@@ -202,6 +170,14 @@ export class B5rMonthView implements CalendarView {
         return this.#internalEvents;
     }
 
+    get #weekdays(): string[] {
+        return [...this.#visibleDates].splice(0, 7).map((d) =>
+            d.toLocaleString(this.locale, {
+                weekday: 'short',
+            })
+        );
+    }
+
     #createTemplate(): HTMLElement {
         this.refRoot = document.createElement('div');
         this.refRoot.className = ROOT_CLASS;
@@ -218,8 +194,18 @@ export class B5rMonthView implements CalendarView {
         if (this.refHeader) {
             this.refHeader.remove();
         }
+
         this.refHeader = document.createElement('ul');
         this.refHeader.className = HEADER_CLASS;
+        this.refHeader.setAttribute('aria-hidden', 'true');
+
+        // TODO
+        this.#weekdays.forEach((text) => {
+            const refHeaderTitle = document.createElement('li');
+            refHeaderTitle.innerText = text;
+
+            this.refHeader.append(refHeaderTitle);
+        });
 
         this.refRoot.prepend(this.refHeader);
         return this.refHeader;
@@ -298,13 +284,15 @@ export class B5rMonthView implements CalendarView {
     #createDayButton(refDay: HTMLElement, date: Date): void {
         const refButton = document.createElement('button');
         refButton.innerText = date.getDate().toString();
+
         refButton.className = DAY_BUTTON_CLASS;
         refButton.setAttribute('data-date', date.toISOString());
-        refButton.addEventListener('click', this.#onDayClick.bind(this, date));
+        refButton.setAttribute(
+            'aria-label',
+            date.toLocaleString(this.#locale, { day: 'numeric', month: 'long' })
+        );
 
-        if (isTodayDate(date, this.timeZone)) {
-            refButton.classList.add(DAY_BUTTON_TODAY_CLASS);
-        }
+        refButton.addEventListener('click', this.#onDayClick.bind(this, date));
 
         if (isTodayDate(date, this.timeZone)) {
             refButton.classList.add(DAY_BUTTON_TODAY_CLASS);
@@ -320,6 +308,13 @@ export class B5rMonthView implements CalendarView {
         for (let index = 0; index < 2; index++) {
             const refEvent = document.createElement('li');
             refEvent.className = EVENT_CLASS;
+
+            const refEventButton = document.createElement('button');
+            refEventButton.className = EVENT_BUTTON_CLASS;
+
+            refEventButton.innerHTML = `<span class="${HIDDEN_CLASS}">#Event Name</soan>`;
+
+            refEvent.append(refEventButton);
             refListEvents.append(refEvent);
         }
 

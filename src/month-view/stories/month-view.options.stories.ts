@@ -26,7 +26,7 @@ const Template: StoryFn = (args): HTMLElement => {
     refBtnNext.innerText = '>';
     refBtnNext.title = 'Next';
 
-    const monthView = new B5rMonthView(refMonthView);
+    const monthView = new B5rMonthView(refMonthView, args);
 
     refBtnToday.addEventListener('click', () => {
         monthView.today();
@@ -55,3 +55,6 @@ const Template: StoryFn = (args): HTMLElement => {
 };
 
 export const Default = Template.bind({});
+Default.args = {
+    locale: 'fr',
+};
