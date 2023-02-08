@@ -24,6 +24,17 @@ export const EVENTS_MOCKS: B5rEvent[] = [
             start: generateDateFromNow(0, 10, 15),
             end: generateDateFromNow(0, 12, 15),
         },
+        designTokens: {
+            '--color': '#fff',
+            '--color-hover': 'red',
+            '--color-focus': 'blue',
+            '--color-active': '#ccc',
+            '--background': 'red',
+            '--background-hover': 'blue',
+            '--background-focus': 'green',
+            '--background-active': '#000',
+            '--border-radius': '20px',
+        },
     },
     {
         id: '2',

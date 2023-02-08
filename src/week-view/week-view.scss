@@ -155,20 +155,43 @@
 
     &__all-day-event,
     &__event {
-        --event-background-color: rgb(94, 182, 255);
-        --event-text-color: #000;
+        --color: #000;
+        --color-hover: var(--color);
+        --color-focus: var(--color-hover);
+        --color-active: var(--color-hover);
+        --background: rgb(94, 182, 255);
+        --background-hover: var(--background);
+        --background-focus: var(--background-hover);
+        --background-active: var(--background-hover);
+        --border-radius: 0;
 
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        transition: color 0.3s ease, background 0.3s ease;
         appearance: none;
         overflow: hidden;
-        background: var(--event-background-color);
+        background: var(--background);
         padding: 0;
         border: none;
         font-family: inherit;
-        color: var(--event-text-color);
+        color: var(--color);
+        border-radius: var(--border-radius);
 
         &:not(:disabled) {
             cursor: pointer;
+
+            &:hover {
+                color: var(--color-hover);
+                background: var(--background-hover);
+            }
+
+            &:focus {
+                color: var(--color-focus);
+                background: var(--background-focus);
+            }
+
+            &:active {
+                color: var(--color-active);
+                background: var(--background-active);
+            }
         }
     }
 

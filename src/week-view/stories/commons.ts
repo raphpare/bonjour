@@ -3,7 +3,7 @@ import { B5rWeekOptions } from '../week-view.def';
 
 export const getWeekViewDefaultTemplate = (options: {
     showBtnToday?: boolean;
-    showBtnNext?: Boolean;
+    showBtnNext?: boolean;
     showBtnPrevious?: boolean;
     weekOptions: B5rWeekOptions;
 }) => {
@@ -32,9 +32,17 @@ export const getWeekViewDefaultTemplate = (options: {
 
     const weekView = new B5rWeekView(refWeekView, options.weekOptions);
 
-    refBtnToday.addEventListener('click', () => weekView.today());
-    refBtnPrevious.addEventListener('click', () => weekView.previous());
-    refBtnNext.addEventListener('click', () => weekView.next());
+    refBtnToday.addEventListener('click', () => {
+        weekView.today();
+    });
+
+    refBtnPrevious.addEventListener('click', () => {
+        weekView.previous();
+    });
+
+    refBtnNext.addEventListener('click', () => {
+        weekView.next();
+    });
 
     if (options.showBtnToday) refHeader.append(refBtnToday);
     if (options.showBtnPrevious) refHeader.append(refBtnPrevious);

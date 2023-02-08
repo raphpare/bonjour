@@ -13,9 +13,12 @@ import {
     EVENT_CLASS,
     HEADER_CLASS,
     HEADER_COLUMN_CLASS,
-    HEADER_DAY_CLASS,
-    HEADER_MONTH_CLASS,
+    HEADER_DAY_NUMBER_CLASS,
+    HEADER_DAY_NAME_CLASS,
     ROOT_CLASS,
+    addClassOnElement,
+    removeClassOnElement,
+    addDesignTokenOnElement,
 } from './week-view.utils';
 import {
     B5rWeekClassName,
@@ -411,10 +414,10 @@ export class B5rWeekView {
     }
 
     #setDesignTokens(designTokens?: B5rWeekDesignTokens): void {
-        if (!designTokens) return;
-        for (const propertie in designTokens) {
-            this.refRoot.style.setProperty(propertie, designTokens[propertie]);
-        }
+        addDesignTokenOnElement(
+            this.refRoot,
+            designTokens as Record<string, string>
+        );
     }
 
     #updated(): void {
@@ -498,18 +501,18 @@ export class B5rWeekView {
         refEvent.id = event._id;
         refEvent.className = EVENT_CLASS;
 
-        if (this.#classNames?.event?.root) {
-            refEvent.classList.add(this.#classNames.event.root);
-        }
-
-        if (event?.classNames?.root) {
-            refEvent.classList.add(event.classNames.root);
-        }
+        addClassOnElement(refEvent, this.#classNames?.event?.root);
+        addClassOnElement(refEvent, event?.classNames?.root);
 
         refEvent.type = 'button';
         refEvent.disabled = event.disabled;
         refEvent.style.setProperty('--start-time', eventStartTime.toString());
         refEvent.style.setProperty('--end-time', eventEndTime.toString());
+
+        addDesignTokenOnElement(
+            refEvent,
+            event?.designTokens as Record<string, string>
+        );
 
         if (event._overlapped) {
             const numberOverlappingEvents =
@@ -591,13 +594,8 @@ export class B5rWeekView {
         refAllDayEvent.id = event._id;
         refAllDayEvent.className = ALL_DAY_EVENT_CLASS;
 
-        if (this.#classNames?.event?.root) {
-            refAllDayEvent.classList.add(this.#classNames.event.root);
-        }
-
-        if (event?.classNames?.root) {
-            refAllDayEvent.classList.add(event.classNames.root);
-        }
+        addClassOnElement(refAllDayEvent, this.#classNames?.event?.root);
+        addClassOnElement(refAllDayEvent, event?.classNames?.root);
 
         refAllDayEvent.type = 'button';
         refAllDayEvent.disabled = event.disabled;
@@ -654,6 +652,11 @@ export class B5rWeekView {
             );
         }
 
+        addDesignTokenOnElement(
+            refAllDayEvent,
+            event?.designTokens as Record<string, string>
+        );
+
         refAllDayEvent.append(
             this.#getTitleAreaTemplate(event, ALL_DAY_EVENT_CLASS)
         );
@@ -694,13 +697,8 @@ export class B5rWeekView {
         refTitle.className = className;
         refTitle.innerHTML = event.title;
 
-        if (this.#classNames?.event?.title) {
-            refTitle.classList.add(this.#classNames.event.title);
-        }
-
-        if (event?.classNames?.title) {
-            refTitle.classList.add(event.classNames.title);
-        }
+        addClassOnElement(refTitle, this.#classNames?.event?.title);
+        addClassOnElement(refTitle, event?.classNames?.title);
 
         return refTitle;
     }
@@ -713,13 +711,8 @@ export class B5rWeekView {
         refSubitle.className = className;
         refSubitle.innerHTML = event.subtitle;
 
-        if (this.#classNames?.event?.subtitle) {
-            refSubitle.classList.add(this.#classNames?.event?.subtitle);
-        }
-
-        if (event?.classNames?.subtitle) {
-            refSubitle.classList.add(event.classNames.subtitle);
-        }
+        addClassOnElement(refSubitle, this.#classNames?.event?.subtitle);
+        addClassOnElement(refSubitle, event?.classNames?.subtitle);
 
         return refSubitle;
     }
@@ -740,9 +733,9 @@ export class B5rWeekView {
     #getHeaderTemplate(): HTMLElement {
         this.refHeader = document.createElement('header');
         this.refHeader.className = HEADER_CLASS;
-        if (this.#classNames?.header) {
-            this.refHeader.classList.add(this.#classNames.header);
-        }
+
+        addClassOnElement(this.refHeader, this.#classNames?.header);
+
         this.refHeader.append(this.#getBackgroundTemplate());
         this.refHeader.append(this.#getHeaderColumnsTemplate());
         this.refHeader.append(this.#getAllDayAreaTemplate());
@@ -761,45 +754,48 @@ export class B5rWeekView {
         for (let i = 0; i < this.#nbDaysDisplayed; i++) {
             let day = this.dayOfWeek[i];
             let headerColumnClass = HEADER_COLUMN_CLASS;
-            let headerDayClass = HEADER_DAY_CLASS;
-            let headerMonthClass = HEADER_MONTH_CLASS;
+            let headerDayNumberClass = HEADER_DAY_NUMBER_CLASS;
+            let headerDayNameClass = HEADER_DAY_NAME_CLASS;
 
             if (this.#classNames?.headerColumn) {
                 headerColumnClass += ` ${this.#classNames.headerColumn}`;
             }
 
-            if (this.#classNames?.headerDay) {
-                headerDayClass += ` ${this.#classNames.headerDay}`;
+            if (this.#classNames?.headerDayNumber) {
+                headerDayNumberClass += ` ${this.#classNames.headerDayNumber}`;
             }
 
-            if (this.#classNames?.headerMonth) {
-                headerMonthClass += ` ${this.#classNames.headerMonth}`;
+            if (this.#classNames?.headerDayName) {
+                headerDayNameClass += ` ${this.#classNames.headerDayName}`;
             }
 
-            const todayClassNames = this.#classNames?.today;
+            const weekendClassName = this.#classNames?.weekendModifier;
+            const currentDay = this.datesDisplayed[i].getDay();
+
+            if (currentDay === 0 || currentDay === 6) {
+                headerColumnClass += ` ${weekendClassName}`;
+                headerDayNumberClass += ` ${weekendClassName}`;
+                headerDayNameClass += ` ${weekendClassName}`;
+            }
+
+            const todayClassName = this.#classNames?.todayModifier;
 
             if (
                 isTodayDate(this.datesDisplayed[i], this.timeZone) &&
-                todayClassNames
+                todayClassName
             ) {
-                if (todayClassNames?.headerColumn) {
-                    headerColumnClass += ` ${todayClassNames.headerColumn}`;
-                }
-
-                if (todayClassNames?.headerDay) {
-                    headerDayClass += ` ${todayClassNames.headerDay}`;
-                }
-
-                if (todayClassNames?.headerMonth) {
-                    headerMonthClass += ` ${todayClassNames.headerMonth}`;
-                }
+                headerColumnClass += ` ${todayClassName}`;
+                headerDayNumberClass += ` ${todayClassName}`;
+                headerDayNameClass += ` ${todayClassName}`;
             }
             day = day
                 .split(' ')
                 .map(
                     (d) =>
                         `<span class="${
-                            parseInt(d, 10) ? headerDayClass : headerMonthClass
+                            parseInt(d, 10)
+                                ? headerDayNumberClass
+                                : headerDayNameClass
                         }">${d}</span>`
                 )
                 .join(' ');
@@ -818,9 +814,9 @@ export class B5rWeekView {
     #getBodyTemplate(): HTMLElement {
         this.refBody = document.createElement('div');
         this.refBody.className = BODY_CLASS;
-        if (this.#classNames?.body) {
-            this.refBody.classList.add(this.#classNames?.body);
-        }
+
+        addClassOnElement(this.refBody, this.#classNames?.body);
+
         this.refBody.append(this.#getHourRowsTemplate());
         this.refBody.append(this.#getDayColumnsTemplate());
         return this.refBody;
@@ -836,14 +832,20 @@ export class B5rWeekView {
             refColumn.className = COLUMN_CLASS;
             refColumn.ariaHidden = 'true';
 
+            addClassOnElement(refColumn, this.#classNames?.bodyColumn);
+
             const currentDay = this.datesDisplayed[day].getDay();
 
             if (currentDay === 0 || currentDay === 6) {
                 refColumn.classList.add(COLUMN_WEEKEND_CLASS);
+
+                addClassOnElement(refColumn, this.#classNames?.weekendModifier);
             }
 
             if (isTodayDate(this.datesDisplayed[day], this.timeZone)) {
                 refColumn.classList.add(COLUMN_TODAY_CLASS);
+
+                addClassOnElement(refColumn, this.#classNames?.todayModifier);
             }
 
             refBackground.append(refColumn);
@@ -861,16 +863,37 @@ export class B5rWeekView {
         [refHeaderColumn, refBodyColumn].forEach((refColumns) => {
             refColumns.forEach((refColumn, i) => {
                 const currentDay = this.datesDisplayed[i].getDay();
+
                 if (currentDay === 0 || currentDay === 6) {
                     refColumn.classList.add(COLUMN_WEEKEND_CLASS);
+
+                    addClassOnElement(
+                        refColumn,
+                        this.#classNames?.weekendModifier
+                    );
                 } else {
                     refColumn.classList.remove(COLUMN_WEEKEND_CLASS);
+
+                    removeClassOnElement(
+                        refColumn,
+                        this.#classNames?.weekendModifier
+                    );
                 }
 
                 if (isTodayDate(this.datesDisplayed[i], this.timeZone)) {
                     refColumn.classList.add(COLUMN_TODAY_CLASS);
+
+                    addClassOnElement(
+                        refColumn,
+                        this.#classNames?.todayModifier
+                    );
                 } else {
                     refColumn.classList.remove(COLUMN_TODAY_CLASS);
+
+                    removeClassOnElement(
+                        refColumn,
+                        this.#classNames?.todayModifier
+                    );
                 }
             });
         });

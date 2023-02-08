@@ -17,18 +17,14 @@ export enum B5rWeekViewMode {
 
 export interface B5rWeekClassName {
     event?: B5rEventClassName;
-    body?: string;
     header?: string;
+    body?: string;
     headerColumn?: string;
-    headerDay?: string;
-    headerMonth?: string;
-    columnWeekend?: string;
-    columnToday?: string;
-    today?: {
-        headerColumn?: string;
-        headerDay?: string;
-        headerMonth?: string;
-    };
+    headerDayNumber?: string;
+    headerDayName?: string;
+    bodyColumn?: string;
+    todayModifier?: string;
+    weekendModifier?: string;
 }
 
 export interface B5rWeekDesignTokens {

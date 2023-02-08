@@ -1,10 +1,11 @@
 import { Meta, StoryFn } from '@storybook/html';
-import { B5rWeekView } from '../week-view';
 import {
+    B5rWeekClassName,
     B5rWeekOptions,
     B5rWeekViewMode,
-    DEFAULT_OPTIONS,
-} from '../week-view.utils';
+} from '../week-view.def';
+import { DEFAULT_OPTIONS } from '../week-view.utils';
+import { getWeekViewDefaultTemplate } from './commons';
 
 const argsTypeMode = {
     control: 'select',
@@ -18,9 +19,9 @@ export default {
 const dateNow = new Date();
 
 const Template: StoryFn<B5rWeekOptions> = (args): HTMLElement => {
-    const refRoot = document.createElement('div');
-
-    new B5rWeekView(refRoot, args);
+    const { refRoot } = getWeekViewDefaultTemplate({
+        weekOptions: args,
+    });
 
     return refRoot;
 };
@@ -61,8 +62,99 @@ DesignTokens.args = {
     designTokens: {
         ['--time-area-width']: '50px',
         ['--hour-height']: '10px',
-        ['--border-color']: '#ccc',
+        ['--border-color']: 'blue',
         ['--weekend-background']: 'yellow',
         ['--today-background']: 'red',
     },
+};
+
+const TemplateClassNames: StoryFn<B5rWeekOptions> = (args): HTMLElement => {
+    const { refRoot } = getWeekViewDefaultTemplate({
+        showBtnToday: true,
+        showBtnNext: true,
+        showBtnPrevious: true,
+        weekOptions: args,
+    });
+
+    const cssText = `
+        .test-class__header {
+            transform: translate(0, -10px);
+        }
+
+        .test-class__body {
+            max-height: 280px;
+            overflow: auto;
+        }
+
+        .test-class__header-column {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #eefff9;
+        }
+
+        .test-class__header-column.test-class--today,
+        .test-class__header-column.test-class--weekend  {
+            flex-direction: column;
+        }
+
+        .test-class__header-column.test-class--today {
+            background: #ffeef7;
+        }
+
+        .test-class__header-day-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 34px;
+            height: 34px;
+            border: 1px solid #868686;
+        }
+
+        .test-class__header-day-number.test-class--weekend  {
+            border-radius: 3px;
+            transform: rotate(20deg);
+        }
+
+        .test-class__header-day-number.test-class--today {
+            border-color: #000;
+            border-radius: 50%;
+            background: #000;
+            color: #fff;
+        }
+
+        .test-class__header-day-week.test-class--today {
+            border: 1px solid #868686;
+        }
+
+        .test-class__body-column {
+            background: #c0ffe8;
+        }
+
+        .test-class__body-column.test-class--today {
+            background: #fcd6ea;
+        }
+
+        .test-class__body-column.test-class--weekend {
+            background: #b8b8b8;
+        }
+    `;
+
+    document.head.insertAdjacentHTML('beforeend', `<style>${cssText}</style>`);
+
+    return refRoot;
+};
+
+export const ClassNames = TemplateClassNames.bind({});
+ClassNames.args = {
+    classNames: {
+        header: 'test-class__header',
+        body: 'test-class__body',
+        headerColumn: 'test-class__header-column',
+        headerDayNumber: 'test-class__header-day-number',
+        headerDayName: 'test-class__header-day-name',
+        bodyColumn: 'test-class__body-column',
+        todayModifier: 'test-class--today',
+        weekendModifier: 'test-class--weekend',
+    } as B5rWeekClassName,
 };

@@ -34,15 +34,22 @@ const CalendarWeekView = new B5rWeekView(
 
 document
     .getElementById('btnToday')
-    .addEventListener('click', () => CalendarWeekView.today());
+    .addEventListener('click', () => {
+        CalendarWeekView.today()
+    });
+
 
 document
     .getElementById('btnPrevious')
-    .addEventListener('click', () => CalendarWeekView.previous());
+    .addEventListener('click', () => {
+        CalendarWeekView.previous()
+    });
 
 document
     .getElementById('btnNext')
-    .addEventListener('click', () => CalendarWeekView.next());
+    .addEventListener('click', () => {
+        CalendarWeekView.next()
+    });
 
 document.getElementById('btnAdd').addEventListener('click', () => {
     CalendarWeekView.setEvents([
