@@ -1,6 +1,6 @@
 {
     "name": "b5r-bonjour",
-    "version": "0.0.0-beta.12",
+    "version": "0.0.0-beta.13",
     "description": "Accessible and dependency-free calendar JavaScript library: import the code you need and use your UI controls.",
     "keywords": [
         "calendar",

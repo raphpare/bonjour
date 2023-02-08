@@ -102,6 +102,10 @@ const TemplateClassNames: StoryFn<B5rWeekOptions> = (args): HTMLElement => {
             background: #ffeef7;
         }
 
+        .test-class__header-column.test-class--weekend  {
+            background: #dadada;
+        }
+
         .test-class__header-day-number {
             display: flex;
             align-items: center;
@@ -123,6 +127,16 @@ const TemplateClassNames: StoryFn<B5rWeekOptions> = (args): HTMLElement => {
             color: #fff;
         }
 
+        .test-class__header-day-name.test-class--weekend {
+            font-weight: bold;
+            transform: rotate(-5deg);
+        }
+
+        .test-class__header-day-name.test-class--today {
+            font-weight: bold;
+            font-family: sans-serif;
+        }
+
         .test-class__header-day-week.test-class--today {
             border: 1px solid #868686;
         }
@@ -140,7 +154,13 @@ const TemplateClassNames: StoryFn<B5rWeekOptions> = (args): HTMLElement => {
         }
     `;
 
-    document.head.insertAdjacentHTML('beforeend', `<style>${cssText}</style>`);
+    const styleTagId = 'styleTagTestClassWeekView';
+    if (!document.getElementById(styleTagId)) {
+        document.head.insertAdjacentHTML(
+            'beforeend',
+            `<style id="${styleTagId}">${cssText}</style>`
+        );
+    }
 
     return refRoot;
 };
