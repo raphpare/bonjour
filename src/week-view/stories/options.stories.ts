@@ -60,8 +60,8 @@ TimeZone.args = {
 export const DesignTokens = Template.bind({});
 DesignTokens.args = {
     designTokens: {
-        ['--time-area-width']: '50px',
-        ['--hour-height']: '10px',
+        ['--time-area-width']: '150px',
+        ['--hour-height']: '80px',
         ['--border-color']: 'blue',
         ['--weekend-background']: 'yellow',
         ['--today-background']: 'red',
