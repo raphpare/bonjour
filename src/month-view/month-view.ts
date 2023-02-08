@@ -22,6 +22,7 @@ import cssText from './month-view.css';
 import { B5rMonthOptions } from './month-view.def';
 import { CalendarView } from '../models/calendar-view';
 import { B5rUpdateCallback } from '../types';
+import { newDate } from '../utils/date/date.utils';
 
 export class B5rMonthView implements CalendarView {
     events: B5rEvent[] = [];
@@ -51,11 +52,22 @@ export class B5rMonthView implements CalendarView {
         };
 
         this.refRoot = refRoot;
-        this.#currentDate = options.currentDate;
-        this.#setFullDatesOfMonth(options.currentDate);
+        this.currentDate =
+            options.currentDate || newDate({ timeZone: options.timeZone });
+
         this.#locale = options.locale;
         this.timeZone = options.timeZone;
         this.refRoot.append(this.#createTemplate());
+    }
+
+    set currentDate(currentDate: Date) {
+        this.#currentDate = currentDate;
+        this.#setFullDatesOfMonth(currentDate);
+        this.updateView();
+    }
+
+    get currentDate(): Date {
+        return this.#currentDate;
     }
 
     set locale(locale: string) {
@@ -69,13 +81,6 @@ export class B5rMonthView implements CalendarView {
 
     get fullDatesOfMonth(): Date[] {
         return this.#fullDatesOfMonth;
-    }
-
-    get dateRangesDisplayed(): B5rDateRange {
-        return {
-            start: this.#fullDatesOfMonth[0],
-            end: this.#fullDatesOfMonth[this.#fullDatesOfMonth.length - 1],
-        };
     }
 
     set monthEvents(events: B5rEvent[]) {
@@ -105,15 +110,12 @@ export class B5rMonthView implements CalendarView {
     }
 
     today(): Promise<Date> {
-        this.#currentDate = new Date();
-        this.#setFullDatesOfMonth(this.#currentDate);
-
-        this.updateView();
-        return Promise.resolve(this.#currentDate);
+        this.currentDate = newDate({ timeZone: this.timeZone });
+        return Promise.resolve(this.currentDate);
     }
 
     next(): Promise<Date[]> {
-        this.#currentDate = new Date(
+        this.currentDate = new Date(
             this.#currentDate.getFullYear(),
             this.#currentDate.getMonth() + 1,
             1,
@@ -122,14 +124,11 @@ export class B5rMonthView implements CalendarView {
             0,
             0
         );
-        this.#setFullDatesOfMonth(this.#currentDate);
-
-        this.updateView();
         return Promise.resolve(this.fullDatesOfMonth);
     }
 
     previous(): Promise<Date[]> {
-        this.#currentDate = new Date(
+        this.currentDate = new Date(
             this.#currentDate.getFullYear(),
             this.#currentDate.getMonth(),
             0,
@@ -138,9 +137,6 @@ export class B5rMonthView implements CalendarView {
             0,
             0
         );
-        this.#setFullDatesOfMonth(this.#currentDate);
-
-        this.updateView();
         return Promise.resolve(this.fullDatesOfMonth);
     }
 
@@ -305,6 +301,7 @@ export class B5rMonthView implements CalendarView {
         const refListEvents = document.createElement('ul');
         refListEvents.className = LIST_EVENTS_CLASS;
 
+        // TODO: utiliser this.monthEvents pour faire la boucle
         for (let index = 0; index < 2; index++) {
             const refEvent = document.createElement('li');
             refEvent.className = EVENT_CLASS;
