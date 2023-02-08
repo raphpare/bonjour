@@ -1,6 +1,6 @@
 {
     "name": "b5r-bonjour",
-    "version": "0.0.0-beta.14",
+    "version": "0.0.0-beta.15",
     "description": "Accessible and dependency-free calendar JavaScript library: import the code you need and use your UI controls.",
     "keywords": [
         "calendar",
@@ -34,7 +34,7 @@
     "scripts": {
         "lint": "eslint",
         "build": "rimraf lib && node esbuild.config.js && yarn lint && tsc && yarn build-cleaner",
-        "build-cleaner": "rimraf lib/mocks && rimraf lib/month-view && rimraf lib/utils && rimraf lib/week-view/stories",
+        "build-cleaner": "rimraf lib/mocks && rimraf lib/month-view/stories && rimraf lib/week-view/stories",
         "watch": "rimraf lib && node esbuild.config.js --watch",
         "typedoc": "rimraf docs && typedoc --out docs ./src",
         "clean": "rimraf node_modules && rimraf lib",

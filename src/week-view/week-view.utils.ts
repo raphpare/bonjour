@@ -3,8 +3,8 @@ import { B5rWeekOptions, B5rWeekViewMode } from './week-view.def';
 
 export const ROOT_CLASS = 'b5r-week';
 export const HEADER_CLASS = `${ROOT_CLASS}__header`;
-export const HEADER_DAY_NUMBER_CLASS = `${ROOT_CLASS}__header-day-number`;
-export const HEADER_DAY_NAME_CLASS = `${ROOT_CLASS}__header-day-name`;
+export const HEADER_DAY_CLASS = `${ROOT_CLASS}__header-day`;
+export const HEADER_WEEKDAY_CLASS = `${ROOT_CLASS}__header-weekday`;
 export const HEADER_COLUMN_CLASS = `${ROOT_CLASS}__header-column`;
 export const BODY_CLASS = `${ROOT_CLASS}__body`;
 export const ALL_DAY_EVENT_CLASS = `${ROOT_CLASS}__all-day-event`;

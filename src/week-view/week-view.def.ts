@@ -20,8 +20,8 @@ export interface B5rWeekClassName {
     header?: string;
     body?: string;
     headerColumn?: string;
-    headerDayNumber?: string;
-    headerDayName?: string;
+    headerDay?: string;
+    headerWeekday?: string;
     bodyColumn?: string;
     todayModifier?: string;
     weekendModifier?: string;

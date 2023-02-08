@@ -107,7 +107,7 @@ const TemplateClassNames: StoryFn<B5rWeekOptions> = (args): HTMLElement => {
             background: #dadada;
         }
 
-        .test-class__header-day-number {
+        .test-class__header-day {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -116,24 +116,24 @@ const TemplateClassNames: StoryFn<B5rWeekOptions> = (args): HTMLElement => {
             border: 1px solid #868686;
         }
 
-        .test-class__header-day-number.test-class--weekend  {
+        .test-class__header-day.test-class--weekend  {
             border-radius: 3px;
             transform: rotate(20deg);
         }
 
-        .test-class__header-day-number.test-class--today {
+        .test-class__header-day.test-class--today {
             border-color: #000;
             border-radius: 50%;
             background: #000;
             color: #fff;
         }
 
-        .test-class__header-day-name.test-class--weekend {
+        .test-class__header-weekday.test-class--weekend {
             font-weight: bold;
             transform: rotate(-5deg);
         }
 
-        .test-class__header-day-name.test-class--today {
+        .test-class__header-weekday.test-class--today {
             font-weight: bold;
             font-family: sans-serif;
         }
@@ -172,8 +172,8 @@ ClassNames.args = {
         header: 'test-class__header',
         body: 'test-class__body',
         headerColumn: 'test-class__header-column',
-        headerDayNumber: 'test-class__header-day-number',
-        headerDayName: 'test-class__header-day-name',
+        headerDay: 'test-class__header-day',
+        headerWeekday: 'test-class__header-weekday',
         bodyColumn: 'test-class__body-column',
         todayModifier: 'test-class--today',
         weekendModifier: 'test-class--weekend',

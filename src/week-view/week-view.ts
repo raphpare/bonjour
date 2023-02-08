@@ -13,8 +13,8 @@ import {
     EVENT_CLASS,
     HEADER_CLASS,
     HEADER_COLUMN_CLASS,
-    HEADER_DAY_NUMBER_CLASS,
-    HEADER_DAY_NAME_CLASS,
+    HEADER_DAY_CLASS,
+    HEADER_WEEKDAY_CLASS,
     ROOT_CLASS,
     addClassOnElement,
     removeClassOnElement,
@@ -754,19 +754,19 @@ export class B5rWeekView implements CalendarView {
         for (let i = 0; i < this.#nbDaysDisplayed; i++) {
             let day = this.dayOfWeek[i];
             let headerColumnClass = HEADER_COLUMN_CLASS;
-            let headerDayNumberClass = HEADER_DAY_NUMBER_CLASS;
-            let headerDayNameClass = HEADER_DAY_NAME_CLASS;
+            let headerDayClass = HEADER_DAY_CLASS;
+            let headerWeekdayClass = HEADER_WEEKDAY_CLASS;
 
             if (this.#classNames?.headerColumn) {
                 headerColumnClass += ` ${this.#classNames.headerColumn}`;
             }
 
-            if (this.#classNames?.headerDayNumber) {
-                headerDayNumberClass += ` ${this.#classNames.headerDayNumber}`;
+            if (this.#classNames?.headerDay) {
+                headerDayClass += ` ${this.#classNames.headerDay}`;
             }
 
-            if (this.#classNames?.headerDayName) {
-                headerDayNameClass += ` ${this.#classNames.headerDayName}`;
+            if (this.#classNames?.headerWeekday) {
+                headerWeekdayClass += ` ${this.#classNames.headerWeekday}`;
             }
 
             const weekendClassName = this.#classNames?.weekendModifier;
@@ -774,8 +774,8 @@ export class B5rWeekView implements CalendarView {
 
             if (currentDay === 0 || currentDay === 6) {
                 headerColumnClass += ` ${weekendClassName}`;
-                headerDayNumberClass += ` ${weekendClassName}`;
-                headerDayNameClass += ` ${weekendClassName}`;
+                headerDayClass += ` ${weekendClassName}`;
+                headerWeekdayClass += ` ${weekendClassName}`;
             }
 
             const todayClassName = this.#classNames?.todayModifier;
@@ -785,8 +785,8 @@ export class B5rWeekView implements CalendarView {
                 todayClassName
             ) {
                 headerColumnClass += ` ${todayClassName}`;
-                headerDayNumberClass += ` ${todayClassName}`;
-                headerDayNameClass += ` ${todayClassName}`;
+                headerDayClass += ` ${todayClassName}`;
+                headerWeekdayClass += ` ${todayClassName}`;
             }
             day = day
                 .split(' ')
@@ -794,8 +794,8 @@ export class B5rWeekView implements CalendarView {
                     (d) =>
                         `<span class="${
                             parseInt(d, 10)
-                                ? headerDayNumberClass
-                                : headerDayNameClass
+                                ? headerDayClass
+                                : headerWeekdayClass
                         }">${d}</span>`
                 )
                 .join(' ');
