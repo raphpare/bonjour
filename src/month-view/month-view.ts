@@ -1,7 +1,5 @@
-import { B5rDateRange } from '../models/date-range';
 import { B5rEvent, B5rInternalEvent } from '../models/event';
-import { getDaysBetween, isTodayDate } from '../utils/date';
-import { isDateRangeOverlap } from '../utils/date-range';
+import { isTodayDate } from '../utils/date';
 import { cloneEvents, sortEvents } from '../utils/event';
 import { LOCALE_EN } from '../utils/locales';
 import { injectStyleTag } from '../utils/stylesheets';
