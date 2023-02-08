@@ -32,8 +32,10 @@ import {
     B5rEventClickCallback,
     B5rUpdateCallback,
 } from '../models/callbacks';
+import { CalendarView } from '../models/calendar-view';
 import { B5rEvent, B5rInternalEvent } from '../models/event';
 import { B5rDateRange } from '../models/date-range';
+import { injectStyleTag } from '../utils/stylesheets';
 import { generateUuid } from '../utils/uuid';
 import { isDateRangeOverlap } from '../utils/date-range';
 import cssText from './week-view.css';
@@ -42,7 +44,7 @@ import { DAY_MS } from '../utils/milliseconds';
 import { getDaysBetween, isTodayDate } from '../utils/date';
 import { newDate } from '../utils/date/date.utils';
 
-export class B5rWeekView {
+export class B5rWeekView implements CalendarView {
     events: B5rEvent[] = [];
     refRoot: HTMLElement = null;
     refEvents: HTMLElement[] = [];
@@ -67,12 +69,8 @@ export class B5rWeekView {
     };
 
     constructor(element: HTMLElement, options?: B5rWeekOptions) {
-        if (!document.getElementById(B5R_WEEK_VIEW_STYLE_ID)) {
-            document.head.insertAdjacentHTML(
-                'beforeend',
-                `<style id="${B5R_WEEK_VIEW_STYLE_ID}">${cssText}</style>`
-            );
-        }
+        injectStyleTag(B5R_WEEK_VIEW_STYLE_ID, cssText);
+
         options = {
             ...DEFAULT_OPTIONS,
             ...options,
@@ -237,10 +235,12 @@ export class B5rWeekView {
             );
             refEvent.removeEventListener(
                 'click',
-                this.#eventOnClick.bind(this, event)
+                this.#onEventClick.bind(this, event)
             );
             refEvent.remove();
         }
+
+        this.#events = [];
     }
 
     destroy(): void {
@@ -581,7 +581,7 @@ export class B5rWeekView {
         refEvent.append(this.#getTitleAreaTemplate(event, EVENT_CLASS));
         refEvent.addEventListener(
             'click',
-            this.#eventOnClick.bind(this, event)
+            this.#onEventClick.bind(this, event)
         );
         refColumn.append(refEvent);
     }
@@ -663,7 +663,7 @@ export class B5rWeekView {
 
         refAllDayEvent.addEventListener(
             'click',
-            this.#eventOnClick.bind(this, event)
+            this.#onEventClick.bind(this, event)
         );
 
         this.refAllDayArea.append(refAllDayEvent);
@@ -717,7 +717,7 @@ export class B5rWeekView {
         return refSubitle;
     }
 
-    #eventOnClick(
+    #onEventClick(
         eventClicked: B5rInternalEvent,
         pointerEvent: PointerEvent
     ): void {

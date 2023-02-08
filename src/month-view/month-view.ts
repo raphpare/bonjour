@@ -1,17 +1,36 @@
 import { B5rDateRange } from '../models/date-range';
 import { B5rEvent, B5rInternalEvent } from '../models/event';
-import { getDaysBetween } from '../utils/date';
+import { getDaysBetween, isTodayDate } from '../utils/date';
 import { isDateRangeOverlap } from '../utils/date-range';
 import { cloneEvents, sortEvents } from '../utils/event';
 import { LOCALE_EN } from '../utils/locales';
+import { injectStyleTag } from '../utils/stylesheets';
+import {
+    B5R_MONTH_VIEW_STYLE_ID,
+    DAY_BUTTON_CLASS,
+    DAY_BUTTON_TODAY_CLASS,
+    DAY_CLASS,
+    DEFAULT_OPTIONS,
+    EVENT_CLASS,
+    HEADER_CLASS,
+    LIST_EVENTS_CLASS,
+    ROOT_CLASS,
+} from './month-view.utils';
+import cssText from './month-view.css';
+import { B5rMonthOptions } from './month-view.def';
+import { CalendarView } from '../models/calendar-view';
+import { B5rUpdateCallback } from '../types';
 
-export class B5rMonthView {
+export class B5rMonthView implements CalendarView {
     events: B5rEvent[] = [];
     refRoot: HTMLElement = null;
+    refHeader: HTMLElement = null;
+    refBody: HTMLElement = null;
     eventElement = null;
     refAllDayEvents: HTMLElement[] = [];
     refAllDayArea: HTMLElement = null;
     refDayColumns: HTMLElement[] = [];
+    timeZone?: string;
 
     #locale: string = LOCALE_EN;
     #fullDatesOfMonth: Date[] = [];
@@ -19,19 +38,22 @@ export class B5rMonthView {
     #internalEvents: B5rEvent[] = [];
     #monthEvents: B5rEvent[] = [];
     #visibleDates: Date[] = [];
+    #dayClickCallback: ((event: PointerEvent, date: Date) => void)[] = [];
 
-    constructor(
-        refRoot: HTMLElement,
+    constructor(refRoot: HTMLElement, options?: B5rMonthOptions) {
+        injectStyleTag(B5R_MONTH_VIEW_STYLE_ID, cssText);
+
         options = {
-            currentDate: new Date(),
-            locale: LOCALE_EN,
-        }
-    ) {
+            ...DEFAULT_OPTIONS,
+            ...options,
+        };
+
         this.refRoot = refRoot;
         this.#currentDate = options.currentDate;
         this.#setFullDatesOfMonth(options.currentDate);
         this.#locale = options.locale;
-        this.refRoot.append(this.createTemplate());
+        this.timeZone = options.timeZone;
+        this.refRoot.append(this.#createTemplate());
     }
 
     set locale(locale: string) {
@@ -100,30 +122,29 @@ export class B5rMonthView {
     }
 
     updateView(): void {
-        this.updateEvents(this.events);
-        this.#updateDisplay();
+        this.#createBodyTemplate();
     }
 
     setEvents(events: B5rEvent[] = []): Promise<void> {
         return new Promise<void>((resolve) => {
-            // this.deleteAllEvents();
+            this.deleteAllEvents();
             if (events !== this.#events) {
                 this.#events = events;
             }
-            this.#createAllEvents();
+            this.#createBodyTemplate();
             resolve();
         });
     }
 
-    today(): Date {
+    today(): Promise<Date> {
         this.#currentDate = new Date();
         this.#setFullDatesOfMonth(this.#currentDate);
 
         this.updateView();
-        return this.#currentDate;
+        return Promise.resolve(this.#currentDate);
     }
 
-    next(): Date[] {
+    next(): Promise<Date[]> {
         this.#currentDate = new Date(
             this.#currentDate.getFullYear(),
             this.#currentDate.getMonth() + 1,
@@ -136,10 +157,10 @@ export class B5rMonthView {
         this.#setFullDatesOfMonth(this.#currentDate);
 
         this.updateView();
-        return this.fullDatesOfMonth;
+        return Promise.resolve(this.fullDatesOfMonth);
     }
 
-    previous(): Date[] {
+    previous(): Promise<Date[]> {
         this.#currentDate = new Date(
             this.#currentDate.getFullYear(),
             this.#currentDate.getMonth(),
@@ -152,66 +173,23 @@ export class B5rMonthView {
         this.#setFullDatesOfMonth(this.#currentDate);
 
         this.updateView();
-        return this.fullDatesOfMonth;
+        return Promise.resolve(this.fullDatesOfMonth);
     }
 
-    createTemplate(): HTMLElement {
-        this.refRoot = document.createElement('ul') as HTMLElement;
-
-        this.refRoot.setAttribute(
-            'style',
-            `
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        `
-        );
-
-        this.#setVisibleDatesTemplate();
-
-        return this.refRoot;
+    deleteAllEvents(): void {
+        // TODO
     }
 
-    updateEvents(events: B5rEvent[] = []): void {
-        this.deleteAllEvent();
-        this.monthEvents = events;
-        this.#createAllEvents();
+    destroy(): void {
+        // TODO
     }
 
-    deleteAllEvent() {
-        if (this.eventElement) {
-            const eventsElement = Array.prototype.slice.call(
-                this.eventElement
-            ) as HTMLElement[];
-            eventsElement.forEach((element, index) => {
-                const eventId = this.monthEvents.filter(
-                    (e) => e.allDay !== true
-                )[index].id;
-                element.removeEventListener(
-                    'click',
-                    this.#dispatchEventClick.bind(this, eventId)
-                );
-                element.remove();
-            });
-        }
+    onUpdate(_callback: B5rUpdateCallback): void {
+        // TODO
+    }
 
-        if (this.refAllDayEvents) {
-            const eventsElement = Array.prototype.slice.call(
-                this.refAllDayEvents
-            ) as HTMLElement[];
-            eventsElement.forEach((element, index) => {
-                const eventId = this.monthEvents.filter(
-                    (e) => e.allDay === true
-                )[index].id;
-                element.removeEventListener(
-                    'click',
-                    this.#dispatchEventClick.bind(this, eventId)
-                );
-                element.remove();
-            });
-        }
+    onDayClick(callback: (event: PointerEvent, Date: Date) => void): void {
+        this.#dayClickCallback.push(callback);
     }
 
     set #events(events: B5rEvent[]) {
@@ -222,6 +200,64 @@ export class B5rMonthView {
 
     get #events(): B5rInternalEvent[] {
         return this.#internalEvents;
+    }
+
+    #createTemplate(): HTMLElement {
+        this.refRoot = document.createElement('div');
+        this.refRoot.className = ROOT_CLASS;
+
+        if (!this.refHeader) {
+            this.#createHeaderTemplate();
+        }
+        this.#createBodyTemplate();
+
+        return this.refRoot;
+    }
+
+    #createHeaderTemplate(): HTMLElement {
+        if (this.refHeader) {
+            this.refHeader.remove();
+        }
+        this.refHeader = document.createElement('ul');
+        this.refHeader.className = HEADER_CLASS;
+
+        this.refRoot.prepend(this.refHeader);
+        return this.refHeader;
+    }
+
+    #createBodyTemplate(): HTMLElement {
+        if (this.refBody) {
+            this.refBody.remove();
+            document
+                .querySelectorAll(`.${DAY_BUTTON_CLASS}`)
+                .forEach((element) => {
+                    element.removeEventListener(
+                        'click',
+                        this.#onDayClick.bind(
+                            this,
+                            new Date(element.getAttribute('data-date'))
+                        )
+                    );
+                });
+        }
+
+        this.refBody = document.createElement('ul');
+        this.refBody.className = HEADER_CLASS;
+
+        this.#visibleDates.forEach((vd) => {
+            const refDay = document.createElement('li');
+            refDay.className = DAY_CLASS;
+
+            this.#createDayButton(refDay, vd);
+
+            this.#createEventForDay(refDay, vd);
+
+            this.refBody.append(refDay);
+        });
+
+        this.refRoot.append(this.refBody);
+
+        return this.refBody;
     }
 
     #setFullDatesOfMonth(currentDate: Date): void {
@@ -259,124 +295,35 @@ export class B5rMonthView {
         this.#visibleDates = visibleDates;
     }
 
-    #updateDisplay(): void {
-        this.#setVisibleDatesTemplate();
-        // const customEventDisplayUpdate = new CustomEvent(CALENDRIER_DISPLAY_UPDATE, { bubbles: true });
-        // this.refRoot.dispatchEvent(customEventDisplayUpdate);
-    }
+    #createDayButton(refDay: HTMLElement, date: Date): void {
+        const refButton = document.createElement('button');
+        refButton.innerText = date.getDate().toString();
+        refButton.className = DAY_BUTTON_CLASS;
+        refButton.setAttribute('data-date', date.toISOString());
+        refButton.addEventListener('click', this.#onDayClick.bind(this, date));
 
-    #createEvent(
-        event: B5rInternalEvent,
-        columnElement: HTMLElement,
-        indexColumnElement: number
-    ): void {
-        // const currentColumnDate = this.datesOfWeek[
-        //     indexColumnElement
-        // ].replaceAll('-', '');
-        // const currentEventDate = event.dateRange.start
-        //     .toLocaleString(this.locale, {
-        //         year: 'numeric',
-        //         month: '2-digit',
-        //         day: '2-digit',
-        //     })
-        //     .replaceAll('-', '');
-        // if (currentEventDate !== currentColumnDate || event.allDay === true) {
-        //     return;
-        // }
-        // const newEventElement = document.createElement('button');
-        // const eventStartTime =
-        //     event.dateRange.start.getHours() +
-        //     event.dateRange.start.getMinutes() / 60;
-        // const eventHeuresFin =
-        //     event.dateRange.end.getHours() +
-        //     event.dateRange.end.getMinutes() / 60;
-        // newEventElement.className = 'event';
-        // newEventElement.type = 'button';
-        // newEventElement.style.setProperty(
-        //     '--event-start-time',
-        //     eventStartTime.toString()
-        // );
-        // newEventElement.style.setProperty(
-        //     '--event-end-time',
-        //     eventHeuresFin.toString()
-        // );
-        // if (event._overlapped) {
-        //     newEventElement.style.setProperty(
-        //         '--number-overlapped-events',
-        //         event._overlapped.eventIds.length.toString()
-        //     );
-        //     newEventElement.style.setProperty(
-        //         '--index-overlapped-events',
-        //         event._overlapped.index.toString()
-        //     );
-        // }
-        // newEventElement.innerHTML = `<span class="event-data">${event.title}</span>`;
-        // newEventElement.addEventListener(
-        //     'click',
-        //     this.#dispatchEventClick.bind(this, event.id)
-        // );
-        // columnElement.append(newEventElement);
-    }
-
-    #createAllDayEvent(event: B5rEvent): void {
-        if (!isDateRangeOverlap(this.dateRangesDisplayed, event.dateRange)) {
-            return;
-        }
-        const newAllDayEvent = document.createElement('button');
-        const indexStart =
-            event.dateRange.start < this.dateRangesDisplayed.start
-                ? 0
-                : getDaysBetween(
-                      this.dateRangesDisplayed.start,
-                      event.dateRange.start
-                  );
-        const indexEnd =
-            event.dateRange.end > this.dateRangesDisplayed.end
-                ? this.fullDatesOfMonth.length
-                : getDaysBetween(
-                      this.dateRangesDisplayed.start,
-                      event.dateRange.end
-                  ) + 1;
-
-        newAllDayEvent.className = 'all-day-event';
-        newAllDayEvent.innerHTML = event.title;
-        newAllDayEvent.style.setProperty(
-            '--index-start',
-            indexStart.toString()
-        );
-        newAllDayEvent.style.setProperty('--index-end', indexEnd.toString());
-
-        newAllDayEvent.addEventListener(
-            'click',
-            this.#dispatchEventClick.bind(this, event.id)
-        );
-
-        this.refAllDayArea.append(newAllDayEvent);
-    }
-
-    #dispatchEventClick(eventId, e): void {
-        // const customEventClick = new CustomEvent(EVENT_ON_CLICK, { bubbles: true, detail: { eventId } });
-        // e.target.dispatchEvent(customEventClick);
-    }
-
-    #createAllEvents(): void {
-        if (this.refDayColumns.length === 0) {
-            return;
+        if (isTodayDate(date, this.timeZone)) {
+            refButton.classList.add(DAY_BUTTON_TODAY_CLASS);
         }
 
-        this.refDayColumns.forEach((element, index) => {
-            this.#monthEvents.forEach((event) => {
-                if (event.allDay && event.allDay === true && index === 0) {
-                    this.#createAllDayEvent(event);
-                } else {
-                    this.#createEvent(event, element, index);
-                }
-            });
-        });
-        this.refAllDayEvents = Array.from(
-            this.refRoot.querySelectorAll('.all-day-event')
-        );
-        this.eventElement = Array.from(this.refRoot.querySelectorAll('.event'));
+        if (isTodayDate(date, this.timeZone)) {
+            refButton.classList.add(DAY_BUTTON_TODAY_CLASS);
+        }
+
+        refDay.append(refButton);
+    }
+
+    #createEventForDay(refDay: HTMLElement, _date: Date): void {
+        const refListEvents = document.createElement('ul');
+        refListEvents.className = LIST_EVENTS_CLASS;
+
+        for (let index = 0; index < 2; index++) {
+            const refEvent = document.createElement('li');
+            refEvent.className = EVENT_CLASS;
+            refListEvents.append(refEvent);
+        }
+
+        refDay.append(refListEvents);
     }
 
     #getDateInMonth(date: Date): Date[] {
@@ -393,14 +340,12 @@ export class B5rMonthView {
         return dates;
     }
 
-    #setVisibleDatesTemplate(): void {
-        this.refRoot.innerHTML = '';
+    #onDayClick(event: PointerEvent, Date: Date): void {
+        if (this.#dayClickCallback.length === 0) return;
 
-        this.#visibleDates.forEach((vd) => {
-            const refLi = document.createElement('li');
-            refLi.setAttribute('style', `display: flex; min-height: 70px;`);
-            refLi.innerText = vd.getDate().toString();
-            this.refRoot.append(refLi);
-        });
+        this.#dayClickCallback.forEach(
+            (callback: (event: PointerEvent, Date: Date) => void) =>
+                callback(event, Date)
+        );
     }
 }

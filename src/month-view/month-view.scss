@@ -1,0 +1,53 @@
+.b5r-month {
+    &__header,
+    &__body {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    &__day {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        min-height: 70px;
+    }
+
+    &__day-button {
+        appearance: none;
+        border: none;
+        background: inherit;
+        padding: 4px;
+        font-family: inherit;
+        font-size: inherit;
+
+        &:not(:disabled) {
+            cursor: pointer;
+        }
+
+        &--today {
+            background: yellow;
+        }
+    }
+
+    &__list-events {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0;
+        padding: 0;
+        list-style-type: none;
+    }
+
+    &__event {
+        width: 8px;
+        height: 8px;
+        background: #ccc;
+
+        &:not(:last-child) {
+            margin-right: 2px;
+        }
+    }
+}

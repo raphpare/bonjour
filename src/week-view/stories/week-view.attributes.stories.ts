@@ -1,6 +1,4 @@
 import { Meta, StoryFn } from '@storybook/html';
-import { EVENTS_MOCKS } from '../../mocks/events.mocks';
-import { B5rWeekView } from '../week-view';
 import { B5rWeekOptions } from '../week-view.utils';
 
 export default {
