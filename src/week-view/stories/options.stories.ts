@@ -65,6 +65,7 @@ DesignTokens.args = {
         ['--border-color']: 'blue',
         ['--weekend-background']: 'yellow',
         ['--today-background']: 'red',
+        ['--background']: '#ecffd7',
     },
 };
 

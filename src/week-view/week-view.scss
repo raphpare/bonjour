@@ -4,6 +4,7 @@
     --border-color: #ccc;
     --weekend-background: rgb(245, 245, 245);
     --today-background: rgb(221, 245, 255);
+    --background: #fff;
 
     position: relative;
     display: grid;
@@ -49,7 +50,7 @@
         left: 0;
         display: flex;
         padding-left: var(--time-area-width);
-        background: #fff;
+        background: var(--background);
     }
 
     &__empty-area::before,

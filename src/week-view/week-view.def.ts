@@ -33,4 +33,5 @@ export interface B5rWeekDesignTokens {
     ['--border-color']?: string;
     ['--weekend-background']?: string;
     ['--today-background']?: string;
+    ['--background']?: string;
 }
