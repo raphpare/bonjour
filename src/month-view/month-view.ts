@@ -1,6 +1,6 @@
-import { B5rEvent, B5rInternalEvent } from '../models/event';
+import { B5rEvent } from '../models/event';
 import { isTodayDate } from '../utils/date';
-import { cloneEvents, sortEvents } from '../utils/event';
+import { cloneEvents } from '../utils/event';
 import { LOCALE_EN } from '../utils/locales';
 import { injectStyleTag } from '../utils/stylesheets';
 import {
@@ -17,26 +17,36 @@ import {
     ROOT_CLASS,
 } from './month-view.utils';
 import cssText from './month-view.css';
-import { B5rMonthOptions } from './month-view.def';
+import {
+    B5rDayClickCallback,
+    B5rMonthCallbacks,
+    B5rMonthOptions,
+} from './month-view.def';
 import { CalendarView } from '../models/calendar-view';
-import { B5rEventClickCallback, B5rUpdateCallback } from '../types';
+import { B5rEventClickCallback, B5rUpdateCallback } from '../models/callbacks';
 import { newDate } from '../utils/date/date.utils';
+import { B5rDateRange } from '../models/date-range';
 
 export class B5rMonthView implements CalendarView {
-    events: B5rEvent[] = [];
     refRoot: HTMLElement = null;
     refHeader: HTMLElement = null;
     refBody: HTMLElement = null;
+    refEvents: HTMLElement[] = [];
     timeZone?: string;
 
     #locale: string = LOCALE_EN;
-    #fullDatesOfMonth: Date[] = [];
+    #datesOfMonthDisplayed: Date[] = [];
     #currentDate: Date = new Date();
+    #eventsClone: B5rEvent[] = [];
     #internalEvents: B5rEvent[] = [];
     #visibleDates: Date[] = [];
-    #dayClickCallback: ((event: PointerEvent, date: Date) => void)[] = [];
+    #callbacks: B5rMonthCallbacks = {
+        updateCallbacks: [],
+        eventClickCallbacks: [],
+        dayClickCallbacks: [],
+    };
 
-    constructor(refRoot: HTMLElement, options?: B5rMonthOptions) {
+    constructor(element: HTMLElement, options?: B5rMonthOptions) {
         injectStyleTag(B5R_MONTH_VIEW_STYLE_ID, cssText);
 
         options = {
@@ -44,18 +54,19 @@ export class B5rMonthView implements CalendarView {
             ...options,
         };
 
-        this.refRoot = refRoot;
+        this.refRoot = element;
         this.currentDate =
             options.currentDate || newDate({ timeZone: options.timeZone });
 
         this.#locale = options.locale;
         this.timeZone = options.timeZone;
-        this.refRoot.append(this.#createTemplate());
+
+        this.#createTemplate();
     }
 
     set currentDate(currentDate: Date) {
         this.#currentDate = currentDate;
-        this.#setFullDatesOfMonth(currentDate);
+        this.#setDatesOfMonthDisplayed(currentDate);
         this.updateView();
     }
 
@@ -72,12 +83,31 @@ export class B5rMonthView implements CalendarView {
         return this.#locale;
     }
 
-    get fullDatesOfMonth(): Date[] {
-        return this.#fullDatesOfMonth;
+    get events(): B5rEvent[] {
+        return this.#eventsClone;
     }
 
-    updateView(): void {
-        this.#createBodyTemplate();
+    get datesDisplayed(): Date[] {
+        return this.#visibleDates;
+    }
+
+    get dateRangesDisplayed(): B5rDateRange {
+        const dateFin = this.datesDisplayed[this.datesDisplayed.length - 1];
+        return {
+            start: this.datesDisplayed[0],
+            end: new Date(
+                dateFin.getFullYear(),
+                dateFin.getMonth(),
+                dateFin.getDate(),
+                23,
+                59,
+                59
+            ),
+        };
+    }
+
+    get datesOfMonthDisplayed(): Date[] {
+        return this.#datesOfMonthDisplayed;
     }
 
     setEvents(events: B5rEvent[] = []): Promise<void> {
@@ -106,7 +136,7 @@ export class B5rMonthView implements CalendarView {
             0,
             0
         );
-        return Promise.resolve(this.fullDatesOfMonth);
+        return Promise.resolve(this.datesOfMonthDisplayed);
     }
 
     previous(): Promise<Date[]> {
@@ -119,31 +149,47 @@ export class B5rMonthView implements CalendarView {
             0,
             0
         );
-        return Promise.resolve(this.fullDatesOfMonth);
+        return Promise.resolve(this.datesOfMonthDisplayed);
+    }
+
+    updateView(): void {
+        this.#createBodyTemplate();
     }
 
     deleteAllEvents(): void {
-        // TODO
+        if (!this.refEvents) return;
+
+        let indexEvent = this.refEvents.length;
+        while (indexEvent--) {
+            const refEvent = this.refEvents[indexEvent];
+
+            // TODO : remove event listener
+            refEvent.remove();
+        }
+
+        this.#events = [];
     }
 
     destroy(): void {
-        // TODO
+        this.deleteAllEvents();
+        this.refRoot.innerHTML = '';
+        this.refRoot.classList.remove(ROOT_CLASS);
     }
 
-    onUpdate(_callback: B5rUpdateCallback): void {
-        // TODO
+    onUpdate(callback: B5rUpdateCallback): void {
+        this.#callbacks.updateCallbacks.push(callback);
     }
 
-    onEventClick(_callback: B5rEventClickCallback): void {
-        // TODO
+    onEventClick(callback: B5rEventClickCallback): void {
+        this.#callbacks.eventClickCallbacks.push(callback);
     }
 
-    onDayClick(callback: (event: PointerEvent, Date: Date) => void): void {
-        this.#dayClickCallback.push(callback);
+    onDayClick(callback: B5rDayClickCallback): void {
+        this.#callbacks.dayClickCallbacks.push(callback);
     }
 
     set #events(events: B5rEvent[]) {
-        this.events = cloneEvents(events);
+        this.#eventsClone = cloneEvents(events);
         this.#internalEvents = events.sort(
             (a, b) => a.dateRange.start.getTime() - b.dateRange.start.getTime()
         );
@@ -162,8 +208,11 @@ export class B5rMonthView implements CalendarView {
     }
 
     #createTemplate(): HTMLElement {
-        this.refRoot = document.createElement('div');
+        if (!this.refRoot) {
+            this.refRoot = document.createElement('div');
+        }
         this.refRoot.className = ROOT_CLASS;
+        this.refEvents = [];
 
         if (!this.refHeader) {
             this.#createHeaderTemplate();
@@ -219,7 +268,7 @@ export class B5rMonthView implements CalendarView {
 
             this.#createDayButton(refDay, vd);
 
-            this.#createEventForDay(refDay, vd);
+            this.#createEventsForDay(refDay, vd);
 
             this.refBody.append(refDay);
         });
@@ -249,7 +298,7 @@ export class B5rMonthView implements CalendarView {
         refDay.append(refButton);
     }
 
-    #createEventForDay(refDay: HTMLElement, _date: Date): void {
+    #createEventsForDay(refDay: HTMLElement, _date: Date): void {
         const refListEvents = document.createElement('ul');
         refListEvents.className = LIST_EVENTS_CLASS;
 
@@ -265,17 +314,19 @@ export class B5rMonthView implements CalendarView {
 
             refEvent.append(refEventButton);
             refListEvents.append(refEvent);
+
+            this.refEvents.push(refEvent);
         }
 
         refDay.append(refListEvents);
     }
 
-    #setFullDatesOfMonth(currentDate: Date): void {
-        this.#fullDatesOfMonth = [];
-        this.#fullDatesOfMonth = this.#getDateInMonth(currentDate);
+    #setDatesOfMonthDisplayed(currentDate: Date): void {
+        this.#datesOfMonthDisplayed = [];
+        this.#datesOfMonthDisplayed = this.#getDateInMonth(currentDate);
 
         const visibleDates: Date[] = [];
-        const firstDateOfWeek = this.fullDatesOfMonth[0];
+        const firstDateOfWeek = this.datesOfMonthDisplayed[0];
         const firstDayOfWeek = firstDateOfWeek.getDay();
 
         if (firstDayOfWeek > 0) {
@@ -287,10 +338,10 @@ export class B5rMonthView implements CalendarView {
             }
             visibleDates.reverse();
         }
-        visibleDates.push(...this.#fullDatesOfMonth);
+        visibleDates.push(...this.#datesOfMonthDisplayed);
 
         const lastDateOfWeek =
-            this.fullDatesOfMonth[this.fullDatesOfMonth.length - 1];
+            this.datesOfMonthDisplayed[this.datesOfMonthDisplayed.length - 1];
         const lastDayOfWeek = lastDateOfWeek.getDay();
 
         if (lastDayOfWeek < 6) {
@@ -320,9 +371,9 @@ export class B5rMonthView implements CalendarView {
     }
 
     #onDayClick(event: PointerEvent, Date: Date): void {
-        if (this.#dayClickCallback.length === 0) return;
+        if (this.#callbacks.dayClickCallbacks.length === 0) return;
 
-        this.#dayClickCallback.forEach(
+        this.#callbacks.dayClickCallbacks.forEach(
             (callback: (event: PointerEvent, Date: Date) => void) =>
                 callback(event, Date)
         );

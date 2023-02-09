@@ -21,17 +21,14 @@ import {
     addDesignTokenOnElement,
 } from './week-view.utils';
 import {
+    B5rWeekCallbacks,
     B5rWeekClassName,
     B5rWeekDesignTokens,
     B5rWeekOptions,
     B5rWeekViewMode,
 } from './week-view.def';
 import { cloneEvents, sortEvents } from '../utils/event';
-import {
-    B5rCallbacks,
-    B5rEventClickCallback,
-    B5rUpdateCallback,
-} from '../models/callbacks';
+import { B5rEventClickCallback, B5rUpdateCallback } from '../models/callbacks';
 import { CalendarView } from '../models/calendar-view';
 import { B5rEvent, B5rInternalEvent } from '../models/event';
 import { B5rDateRange } from '../models/date-range';
@@ -45,7 +42,6 @@ import { getDaysBetween, isTodayDate } from '../utils/date';
 import { newDate } from '../utils/date/date.utils';
 
 export class B5rWeekView implements CalendarView {
-    events: B5rEvent[] = [];
     refRoot: HTMLElement = null;
     refEvents: HTMLElement[] = [];
     refAllDayEvents: HTMLElement[] = [];
@@ -62,8 +58,9 @@ export class B5rWeekView implements CalendarView {
     #classNames: B5rWeekClassName = null;
     #datesDisplayed: Date[] = [];
     #currentDate: Date;
+    #eventsClone: B5rEvent[] = [];
     #internalEvents: B5rInternalEvent[] = [];
-    #callbacks: B5rCallbacks = {
+    #callbacks: B5rWeekCallbacks = {
         updateCallbacks: [],
         eventClickCallbacks: [],
     };
@@ -129,6 +126,10 @@ export class B5rWeekView implements CalendarView {
         return this.#locale;
     }
 
+    get events(): B5rEvent[] {
+        return this.#eventsClone;
+    }
+
     get datesDisplayed(): Date[] {
         return this.#datesDisplayed;
     }
@@ -146,32 +147,6 @@ export class B5rWeekView implements CalendarView {
                 59
             ),
         };
-    }
-
-    get dayOfWeek(): string[] {
-        return this.#datesDisplayed.map((d) =>
-            d.toLocaleString(this.locale, { weekday: 'short', day: 'numeric' })
-        );
-    }
-
-    get dayOfWeekAriaLabel(): string[] {
-        return this.#datesDisplayed.map((d) =>
-            d.toLocaleString(this.locale, {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric',
-            })
-        );
-    }
-
-    get datesOfWeek(): string[] {
-        return this.#datesDisplayed.map((d) =>
-            d.toLocaleString(this.locale, {
-                year: 'numeric',
-                month: '2-digit',
-                day: '2-digit',
-            })
-        );
     }
 
     setEvents(events: B5rEvent[] = []): Promise<void> {
@@ -261,7 +236,7 @@ export class B5rWeekView implements CalendarView {
     }
 
     set #events(events: B5rEvent[]) {
-        this.events = cloneEvents(events);
+        this.#eventsClone = cloneEvents(events);
 
         const initEvents: B5rInternalEvent[] = events;
 
@@ -381,6 +356,32 @@ export class B5rWeekView implements CalendarView {
         );
     }
 
+    get #dayOfWeek(): string[] {
+        return this.datesDisplayed.map((d) =>
+            d.toLocaleString(this.locale, { weekday: 'short', day: 'numeric' })
+        );
+    }
+
+    get #dayOfWeekAriaLabel(): string[] {
+        return this.datesDisplayed.map((d) =>
+            d.toLocaleString(this.locale, {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+            })
+        );
+    }
+
+    get #datesOfWeek(): string[] {
+        return this.#datesDisplayed.map((d) =>
+            d.toLocaleString(this.locale, {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+            })
+        );
+    }
+
     #setDatesDisplayed(currentDate: Date): void {
         this.#datesDisplayed = [];
 
@@ -480,10 +481,9 @@ export class B5rWeekView implements CalendarView {
         indexColumn: number
     ): void {
         const dateStart: Date = event.dateRange.start;
-        const currentColumnDate: string = this.datesOfWeek[indexColumn].replace(
-            /-/g,
-            ''
-        );
+        const currentColumnDate: string = this.#datesOfWeek[
+            indexColumn
+        ].replace(/-/g, '');
         const currentEventDate: string = dateStart
             .toLocaleString(this.locale, {
                 year: 'numeric',
@@ -755,7 +755,7 @@ export class B5rWeekView implements CalendarView {
     #getHeaderColumnsContainTemplate(): string {
         let html = ``;
         for (let i = 0; i < this.#nbDaysDisplayed; i++) {
-            let day = this.dayOfWeek[i];
+            let day = this.#dayOfWeek[i];
             let headerColumnClass = HEADER_COLUMN_CLASS;
             let headerDayClass = HEADER_DAY_CLASS;
             let headerWeekdayClass = HEADER_WEEKDAY_CLASS;
@@ -927,7 +927,7 @@ export class B5rWeekView implements CalendarView {
         for (let day = 0; day < this.#nbDaysDisplayed; day++) {
             const refColumn = document.createElement('div');
             refColumn.className = DAY_COLUMN_CLASS;
-            refColumn.setAttribute('aria-label', this.dayOfWeekAriaLabel[day]);
+            refColumn.setAttribute('aria-label', this.#dayOfWeekAriaLabel[day]);
             refColumn.setAttribute('tabindex', '0');
             refColumns.append(refColumn);
         }

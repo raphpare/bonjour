@@ -1,3 +1,4 @@
+import { B5rEventClickCallback, B5rUpdateCallback } from '../models/callbacks';
 import { B5rEventClassName } from '../models/event';
 
 export interface B5rWeekOptions {
@@ -34,4 +35,9 @@ export interface B5rWeekDesignTokens {
     ['--weekend-background']?: string;
     ['--today-background']?: string;
     ['--background']?: string;
+}
+
+export interface B5rWeekCallbacks {
+    updateCallbacks: B5rUpdateCallback[];
+    eventClickCallbacks: B5rEventClickCallback[];
 }
