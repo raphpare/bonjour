@@ -74,7 +74,7 @@ document.getElementById('btnAdd').addEventListener('click', () => {
 
 ## Contribution
 
-### Build project
+### Build Project
 
 ```
 $ yarn install
@@ -88,7 +88,7 @@ $ yarn install
 $ yarn run storybook
 ```
 
-### Local development
+### Local Development
 
 ```
 $ yarn install
