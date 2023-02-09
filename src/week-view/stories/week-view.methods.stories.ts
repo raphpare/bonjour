@@ -17,7 +17,23 @@ const TemplateSetEvents: StoryFn = (args): HTMLElement => {
 };
 
 export const SetEvents = TemplateSetEvents.bind({});
-SetEvents.storyName = 'setEvent()';
+SetEvents.storyName = 'setEvents()';
+
+const TemplateToday: StoryFn = (args): HTMLElement => {
+    const { refRoot, weekView } = getWeekViewDefaultTemplate({
+        showBtnToday: true,
+        showBtnNext: true,
+        showBtnPrevious: true,
+        weekOptions: args,
+    });
+
+    weekView.today();
+
+    return refRoot;
+};
+
+export const Today = TemplateToday.bind({});
+Today.storyName = 'today()';
 
 const TemplatePrevious: StoryFn = (weekOptions): HTMLElement => {
     const { refRoot, weekView } = getWeekViewDefaultTemplate({
@@ -47,7 +63,7 @@ const TemplateNext: StoryFn = (args): HTMLElement => {
 export const Next = TemplateNext.bind({});
 Next.storyName = 'next()';
 
-const TemplateToday: StoryFn = (args): HTMLElement => {
+const TemplateDeleteAllEvents: StoryFn = (args): HTMLElement => {
     const { refRoot, weekView } = getWeekViewDefaultTemplate({
         showBtnToday: true,
         showBtnNext: true,
@@ -55,13 +71,37 @@ const TemplateToday: StoryFn = (args): HTMLElement => {
         weekOptions: args,
     });
 
-    weekView.today();
+    weekView.setEvents(EVENTS_MOCKS);
+
+    setTimeout(() => {
+        weekView.deleteAllEvents();
+    }, 1000);
 
     return refRoot;
 };
 
-export const Today = TemplateToday.bind({});
-Today.storyName = 'today()';
+export const DeleteAllEvents = TemplateDeleteAllEvents.bind({});
+DeleteAllEvents.storyName = 'deleteAllEvents()';
+
+const TemplateDestroy: StoryFn = (args): HTMLElement => {
+    const { refRoot, weekView } = getWeekViewDefaultTemplate({
+        showBtnToday: true,
+        showBtnNext: true,
+        showBtnPrevious: true,
+        weekOptions: args,
+    });
+
+    weekView.setEvents(EVENTS_MOCKS);
+
+    setTimeout(() => {
+        weekView.destroy();
+    }, 1000);
+
+    return refRoot;
+};
+
+export const Destroy = TemplateDestroy.bind({});
+Destroy.storyName = 'destroy()';
 
 const TemplateOnUpdate: StoryFn = (args): HTMLElement => {
     const { refRoot, refHeader, weekView } = getWeekViewDefaultTemplate({

@@ -78,9 +78,6 @@ document.getElementById('btnAdd').addEventListener('click', () => {
 
 ```
 $ yarn install
-```
-
-```
 $ yarn run build
 ```
 
@@ -88,26 +85,12 @@ $ yarn run build
 
 ```
 $ yarn install
-```
-
-```
 $ yarn run storybook
-```
-
-```
-http://localhost:6006/
 ```
 
 ### Local development
 
 ```
 $ yarn install
-```
-
-```
 $ yarn run dev
-```
-
-```
-http://localhost:3000/
 ```

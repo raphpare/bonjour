@@ -1,5 +1,10 @@
 import { B5rWeekView } from '../week-view';
-import { B5rWeekOptions } from '../week-view.def';
+import { B5rWeekOptions, B5rWeekViewMode } from '../week-view.def';
+
+export const argsTypeMode = {
+    control: 'select',
+    options: Object.values(B5rWeekViewMode),
+};
 
 export const getWeekViewDefaultTemplate = (options: {
     showBtnToday?: boolean;

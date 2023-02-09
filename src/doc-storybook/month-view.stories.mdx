@@ -1,16 +1,16 @@
 import { Meta } from '@storybook/addon-docs';
 
-<Meta title="week-view/DOC" />
+<Meta title="month-view/DOC" />
 
-# Week View
+# Month View
 
 ## Examples
 
 ### HTML
 
 ```HTML
-<!-- Week View -->
-<div id="calendarWeekView"></div>
+<!-- Month View -->
+<div id="calendarMonthView"></div>
 
 
 <!-- Your UI controls -->
@@ -23,36 +23,33 @@ import { Meta } from '@storybook/addon-docs';
 ### TypeScript
 
 ```TS
-import { B5rWeekView } from 'b5r-bonjour/lib/week-view';
+import { B5rMonthView } from 'b5r-bonjour/lib/month-view';
 
-const CalendarWeekView = new B5rWeekView(
-    document.getElementById('calendarWeekView'),
-    {
-        mode: '7-days',
-    }
+const CalendarMonthView = new B5rMonthView(
+    document.getElementById('calendarMonthView')
 );
 
 document
     .getElementById('btnToday')
     .addEventListener('click', () => {
-        CalendarWeekView.today()
+        CalendarMonthView.today()
     });
 
 
 document
     .getElementById('btnPrevious')
     .addEventListener('click', () => {
-        CalendarWeekView.previous()
+        CalendarMonthView.previous()
     });
 
 document
     .getElementById('btnNext')
     .addEventListener('click', () => {
-        CalendarWeekView.next()
+        CalendarMonthView.next()
     });
 
 document.getElementById('btnAdd').addEventListener('click', () => {
-    CalendarWeekView.setEvents([
+    CalendarMonthView.setEvents([
         {
             id: '1',
             title: 'Event 1',

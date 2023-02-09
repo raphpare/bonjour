@@ -1,16 +1,11 @@
 import { Meta, StoryFn } from '@storybook/html';
 import {
-    B5rWeekClassName,
+    B5rWeekClassNames,
     B5rWeekOptions,
     B5rWeekViewMode,
 } from '../week-view.def';
 import { DEFAULT_OPTIONS } from '../week-view.utils';
-import { getWeekViewDefaultTemplate } from './commons';
-
-const argsTypeMode = {
-    control: 'select',
-    options: Object.values(B5rWeekViewMode),
-};
+import { argsTypeMode, getWeekViewDefaultTemplate } from './commons';
 
 export default {
     title: 'week-view/Constructor Options',
@@ -33,6 +28,25 @@ Default.argTypes = {
 Default.args = {
     ...DEFAULT_OPTIONS,
 };
+Default.storyName = 'Default Options';
+
+export const CurrentDate = Template.bind({});
+CurrentDate.args = {
+    currentDate: new Date(dateNow.setDate(dateNow.getDate() + 7)),
+};
+CurrentDate.storyName = 'options.currentDate';
+
+export const Locale = Template.bind({});
+Locale.args = {
+    locale: 'ja',
+};
+Locale.storyName = 'options.locale';
+
+export const TimeZone = Template.bind({});
+TimeZone.args = {
+    timeZone: 'America/Los_Angeles',
+};
+TimeZone.storyName = 'options.timeZone';
 
 export const Mode = Template.bind({});
 Mode.argTypes = {
@@ -41,21 +55,7 @@ Mode.argTypes = {
 Mode.args = {
     mode: B5rWeekViewMode.ThreeDays,
 };
-
-export const CurrentDate = Template.bind({});
-CurrentDate.args = {
-    currentDate: new Date(dateNow.setDate(dateNow.getDate() + 7)),
-};
-
-export const Locale = Template.bind({});
-Locale.args = {
-    locale: 'ja',
-};
-
-export const TimeZone = Template.bind({});
-TimeZone.args = {
-    timeZone: 'America/Los_Angeles',
-};
+Mode.storyName = 'options.mode';
 
 export const DesignTokens = Template.bind({});
 DesignTokens.args = {
@@ -68,6 +68,7 @@ DesignTokens.args = {
         ['--background']: '#ecffd7',
     },
 };
+DesignTokens.storyName = 'options.designTokens';
 
 const TemplateClassNames: StoryFn<B5rWeekOptions> = (args): HTMLElement => {
     const { refRoot } = getWeekViewDefaultTemplate({
@@ -177,5 +178,6 @@ ClassNames.args = {
         bodyColumn: 'test-class__body-column',
         todayModifier: 'test-class--today',
         weekendModifier: 'test-class--weekend',
-    } as B5rWeekClassName,
+    } as B5rWeekClassNames,
 };
+ClassNames.storyName = 'options.classNames';

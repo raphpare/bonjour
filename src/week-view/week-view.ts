@@ -22,7 +22,7 @@ import {
 } from './week-view.utils';
 import {
     B5rWeekCallbacks,
-    B5rWeekClassName,
+    B5rWeekClassNames,
     B5rWeekDesignTokens,
     B5rWeekOptions,
     B5rWeekViewMode,
@@ -55,7 +55,7 @@ export class B5rWeekView implements CalendarView {
     #mode: B5rWeekViewMode = B5rWeekViewMode.SevenDays;
     #nbDaysDisplayed = 7;
     #locale: string = LOCALE_EN;
-    #classNames: B5rWeekClassName = null;
+    #classNames: B5rWeekClassNames = {};
     #datesDisplayed: Date[] = [];
     #currentDate: Date;
     #eventsClone: B5rEvent[] = [];
@@ -189,6 +189,19 @@ export class B5rWeekView implements CalendarView {
         });
     }
 
+    async updateView(): Promise<void> {
+        if (!this.refRoot) return;
+
+        this.refRoot.querySelector(
+            `.${HEADER_CLASS} .${COLUMNS_CLASS}`
+        ).innerHTML = this.#getHeaderColumnsContainTemplate();
+
+        await this.setEvents(this.#events);
+
+        this.#updateBackgroundTemplate();
+        this.#updated();
+    }
+
     deleteAllEvents(): void {
         if (!this.refEvents) return;
 
@@ -212,19 +225,6 @@ export class B5rWeekView implements CalendarView {
         this.deleteAllEvents();
         this.refRoot.innerHTML = '';
         this.refRoot.classList.remove(ROOT_CLASS);
-    }
-
-    async updateView(): Promise<void> {
-        if (!this.refRoot) return;
-
-        this.refRoot.querySelector(
-            `.${HEADER_CLASS} .${COLUMNS_CLASS}`
-        ).innerHTML = this.#getHeaderColumnsContainTemplate();
-
-        await this.setEvents(this.#events);
-
-        this.#updateBackgroundTemplate();
-        this.#updated();
     }
 
     onUpdate(callback: B5rUpdateCallback): void {

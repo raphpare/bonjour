@@ -1,12 +1,12 @@
 import { B5rEventClickCallback, B5rUpdateCallback } from '../models/callbacks';
-import { B5rEventClassName } from '../models/event';
+import { B5rEventClassNames } from '../models/event';
 
 export interface B5rWeekOptions {
     mode?: B5rWeekViewMode;
     currentDate?: Date;
     locale?: string;
     timeZone?: string;
-    classNames?: B5rWeekClassName;
+    classNames?: B5rWeekClassNames;
     designTokens?: B5rWeekDesignTokens;
 }
 
@@ -16,8 +16,8 @@ export enum B5rWeekViewMode {
     OneDay = '1-day',
 }
 
-export interface B5rWeekClassName {
-    event?: B5rEventClassName;
+export interface B5rWeekClassNames {
+    event?: B5rEventClassNames;
     header?: string;
     body?: string;
     headerColumn?: string;

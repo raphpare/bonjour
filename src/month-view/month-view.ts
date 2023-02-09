@@ -20,12 +20,14 @@ import cssText from './month-view.css';
 import {
     B5rDayClickCallback,
     B5rMonthCallbacks,
+    B5rMonthDesignTokens,
     B5rMonthOptions,
 } from './month-view.def';
 import { CalendarView } from '../models/calendar-view';
 import { B5rEventClickCallback, B5rUpdateCallback } from '../models/callbacks';
 import { newDate } from '../utils/date/date.utils';
 import { B5rDateRange } from '../models/date-range';
+import { addDesignTokenOnElement } from '../week-view/week-view.utils';
 
 export class B5rMonthView implements CalendarView {
     refRoot: HTMLElement = null;
@@ -62,6 +64,7 @@ export class B5rMonthView implements CalendarView {
         this.timeZone = options.timeZone;
 
         this.#createTemplate();
+        this.#setDesignTokens(options?.designTokens);
     }
 
     set currentDate(currentDate: Date) {
@@ -211,6 +214,7 @@ export class B5rMonthView implements CalendarView {
         if (!this.refRoot) {
             this.refRoot = document.createElement('div');
         }
+
         this.refRoot.className = ROOT_CLASS;
         this.refEvents = [];
 
@@ -231,7 +235,6 @@ export class B5rMonthView implements CalendarView {
         this.refHeader.className = HEADER_CLASS;
         this.refHeader.setAttribute('aria-hidden', 'true');
 
-        // TODO
         this.#weekdays.forEach((text) => {
             const refHeaderTitle = document.createElement('li');
             refHeaderTitle.innerText = text;
@@ -319,6 +322,13 @@ export class B5rMonthView implements CalendarView {
         }
 
         refDay.append(refListEvents);
+    }
+
+    #setDesignTokens(designTokens?: B5rMonthDesignTokens): void {
+        addDesignTokenOnElement(
+            this.refRoot,
+            designTokens as Record<string, string>
+        );
     }
 
     #setDatesOfMonthDisplayed(currentDate: Date): void {

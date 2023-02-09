@@ -7,7 +7,7 @@ export interface B5rEvent {
         start: Date;
         end: Date;
     };
-    classNames?: B5rEventClassName;
+    classNames?: B5rEventClassNames;
     designTokens?: B5rEventDesignTokens;
     ariaLabel?: string;
     disabled?: boolean;
@@ -22,7 +22,7 @@ export interface B5rInternalEvent extends B5rEvent {
     _position?: string;
 }
 
-export interface B5rEventClassName {
+export interface B5rEventClassNames {
     root?: string;
     title?: string;
     subtitle?: string;

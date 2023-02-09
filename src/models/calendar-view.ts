@@ -11,10 +11,11 @@ export interface CalendarView {
     dateRangesDisplayed: B5rDateRange;
     refRoot: HTMLElement | null;
     refEvents: HTMLElement[];
+    setEvents: (events: B5rEvent[]) => Promise<void>;
     today: () => Promise<Date>;
     previous: () => Promise<Date[]>;
     next: () => Promise<Date[]>;
-    setEvents: (events: B5rEvent[]) => Promise<void>;
+    updateView: () => Promise<void> | void;
     deleteAllEvents: () => void;
     destroy: () => void;
     onUpdate: (callback: B5rUpdateCallback) => void;
