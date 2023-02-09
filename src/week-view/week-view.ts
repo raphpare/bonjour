@@ -314,7 +314,7 @@ export class B5rWeekView implements CalendarView {
         const sortedEvents: B5rInternalEvent[] = sortEvents(initEvents);
 
         this.#internalEvents = sortedEvents.map((event) => {
-            let eventsOverlapped = [];
+            let eventsOverlapped: B5rInternalEvent[] = [];
             if (event.allDay) {
                 eventsOverlapped = sortedEvents.filter(
                     (e) =>
@@ -333,7 +333,9 @@ export class B5rWeekView implements CalendarView {
 
             if (eventsOverlapped.length > 1) {
                 event._overlapped = {
-                    index: eventsOverlapped.indexOf(event._id),
+                    index: eventsOverlapped.findIndex(
+                        (e) => e._id === event._id
+                    ),
                     eventIds: eventsOverlapped.map(
                         (e: B5rInternalEvent) => e._id
                     ),
@@ -518,37 +520,36 @@ export class B5rWeekView implements CalendarView {
         );
 
         if (event._overlapped) {
-            const numberOverlappingEvents =
-                event._overlapped.eventIds.reduce(
-                    (acc, cur) => {
-                        const currentEvent = this.#events.find(
-                            (e) => e._id === cur
-                        );
+            const numberOverlappingEvents = event._overlapped.eventIds.reduce(
+                (acc, cur) => {
+                    const currentEvent = this.#events.find(
+                        (e) => e._id === cur
+                    );
 
-                        if (
-                            currentEvent?._overlapped?.eventIds?.length >
-                            acc?.eventIds?.length
-                        ) {
-                            const eventIds = currentEvent._overlapped.eventIds;
-                            acc = {
-                                columnNumber: Math.max(
-                                    ...eventIds
-                                        .filter((id) => id !== currentEvent._id)
-                                        .map(
-                                            (id) =>
-                                                this.#events.find(
-                                                    (e) => e._id === id
-                                                )._overlapped.eventIds.length
-                                        )
-                                ),
-                                eventIds,
-                            };
-                        }
+                    if (
+                        currentEvent?._overlapped?.eventIds?.length >
+                        acc?.eventIds?.length
+                    ) {
+                        const eventIds = currentEvent._overlapped.eventIds;
+                        acc = {
+                            columnNumber: Math.max(
+                                ...eventIds
+                                    .filter((id) => id !== currentEvent._id)
+                                    .map(
+                                        (id) =>
+                                            this.#events.find(
+                                                (e) => e._id === id
+                                            )._overlapped.eventIds.length
+                                    )
+                            ),
+                            eventIds,
+                        };
+                    }
 
-                        return acc;
-                    },
-                    { columnNumber: 0, eventIds: [] }
-                ).columnNumber - 1;
+                    return acc;
+                },
+                { columnNumber: 0, eventIds: [] }
+            ).columnNumber;
 
             const eventIds = event?._overlapped.eventIds;
             const isLastEvent = event._id == eventIds[eventIds.length - 1];
@@ -569,12 +570,14 @@ export class B5rWeekView implements CalendarView {
                 '--index-start',
                 currentPosition.toString()
             );
+
             refEvent.style.setProperty(
                 '--index-end',
                 isLastEvent
                     ? numberOverlappingEvents.toString()
                     : (currentPosition + 1).toString()
             );
+
             refEvent.style.setProperty(
                 '--number-overlapping-events',
                 numberOverlappingEvents.toString()

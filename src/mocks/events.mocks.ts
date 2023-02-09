@@ -395,3 +395,78 @@ export const EVENTS_MOCKS_2 = [
         },
     },
 ];
+
+export const EVENTS_MOCK_SAMEDAY: B5rEvent[] = [
+    {
+        id: '1',
+        title: 'E-1',
+        subtitle: 'Subtitle',
+        dateRange: {
+            start: generateDateFromNow(0, 10, 15),
+            end: generateDateFromNow(0, 16, 15),
+        },
+        designTokens: {
+            '--background': '#3FA8FD',
+        },
+    },
+    {
+        id: '2',
+        title: 'E-2',
+        subtitle: 'Subtitle',
+        dateRange: {
+            start: generateDateFromNow(0, 11, 15),
+            end: generateDateFromNow(0, 16, 15),
+        },
+        designTokens: {
+            '--background': '#9FE591',
+        },
+    },
+    {
+        id: '3',
+        title: 'E-3',
+        subtitle: 'Subtitle',
+        dateRange: {
+            start: generateDateFromNow(0, 12, 15),
+            end: generateDateFromNow(0, 16, 15),
+        },
+        designTokens: {
+            '--background': '#A587E0',
+        },
+    },
+    {
+        id: '4',
+        title: 'E-4',
+        subtitle: 'Subtitle',
+        dateRange: {
+            start: generateDateFromNow(0, 17, 15),
+            end: generateDateFromNow(0, 18, 15),
+        },
+        designTokens: {
+            '--background': '#F89C24',
+        },
+    },
+    {
+        id: '5',
+        title: 'E-5',
+        subtitle: 'Subtitle',
+        dateRange: {
+            start: generateDateFromNow(0, 10, 15),
+            end: generateDateFromNow(1, 10, 15),
+        },
+        designTokens: {
+            '--background': '#A8362C',
+        },
+    },
+    {
+        id: '6',
+        title: 'E-6',
+        subtitle: 'Subtitle',
+        dateRange: {
+            start: generateDateFromNow(0, 17, 0),
+            end: generateDateFromNow(1, 17, 0),
+        },
+        designTokens: {
+            '--background': '#F98181',
+        },
+    },
+];
