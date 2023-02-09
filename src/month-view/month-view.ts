@@ -19,7 +19,7 @@ import {
 import cssText from './month-view.css';
 import { B5rMonthOptions } from './month-view.def';
 import { CalendarView } from '../models/calendar-view';
-import { B5rUpdateCallback } from '../types';
+import { B5rEventClickCallback, B5rUpdateCallback } from '../types';
 import { newDate } from '../utils/date/date.utils';
 
 export class B5rMonthView implements CalendarView {
@@ -27,17 +27,12 @@ export class B5rMonthView implements CalendarView {
     refRoot: HTMLElement = null;
     refHeader: HTMLElement = null;
     refBody: HTMLElement = null;
-    eventElement = null;
-    refAllDayEvents: HTMLElement[] = [];
-    refAllDayArea: HTMLElement = null;
-    refDayColumns: HTMLElement[] = [];
     timeZone?: string;
 
     #locale: string = LOCALE_EN;
     #fullDatesOfMonth: Date[] = [];
     #currentDate: Date = new Date();
     #internalEvents: B5rEvent[] = [];
-    #monthEvents: B5rEvent[] = [];
     #visibleDates: Date[] = [];
     #dayClickCallback: ((event: PointerEvent, date: Date) => void)[] = [];
 
@@ -79,17 +74,6 @@ export class B5rMonthView implements CalendarView {
 
     get fullDatesOfMonth(): Date[] {
         return this.#fullDatesOfMonth;
-    }
-
-    set monthEvents(events: B5rEvent[]) {
-        this.events = events;
-        this.#monthEvents = events.sort(
-            (a, b) => a.dateRange.start.getTime() - b.dateRange.start.getTime()
-        );
-    }
-
-    get monthEvents(): B5rEvent[] {
-        return this.#monthEvents;
     }
 
     updateView(): void {
@@ -150,17 +134,22 @@ export class B5rMonthView implements CalendarView {
         // TODO
     }
 
+    onEventClick(_callback: B5rEventClickCallback): void {
+        // TODO
+    }
+
     onDayClick(callback: (event: PointerEvent, Date: Date) => void): void {
         this.#dayClickCallback.push(callback);
     }
 
     set #events(events: B5rEvent[]) {
         this.events = cloneEvents(events);
-
-        this.#internalEvents = sortEvents(events);
+        this.#internalEvents = events.sort(
+            (a, b) => a.dateRange.start.getTime() - b.dateRange.start.getTime()
+        );
     }
 
-    get #events(): B5rInternalEvent[] {
+    get #events(): B5rEvent[] {
         return this.#internalEvents;
     }
 
@@ -240,6 +229,47 @@ export class B5rMonthView implements CalendarView {
         return this.refBody;
     }
 
+    #createDayButton(refDay: HTMLElement, date: Date): void {
+        const refButton = document.createElement('button');
+        refButton.innerText = date.getDate().toString();
+
+        refButton.className = DAY_BUTTON_CLASS;
+        refButton.setAttribute('data-date', date.toISOString());
+        refButton.setAttribute(
+            'aria-label',
+            date.toLocaleString(this.#locale, { day: 'numeric', month: 'long' })
+        );
+
+        refButton.addEventListener('click', this.#onDayClick.bind(this, date));
+
+        if (isTodayDate(date, this.timeZone)) {
+            refButton.classList.add(DAY_BUTTON_TODAY_CLASS);
+        }
+
+        refDay.append(refButton);
+    }
+
+    #createEventForDay(refDay: HTMLElement, _date: Date): void {
+        const refListEvents = document.createElement('ul');
+        refListEvents.className = LIST_EVENTS_CLASS;
+
+        // TODO: utiliser this.#events pour faire la boucle
+        for (let index = 0; index < 2; index++) {
+            const refEvent = document.createElement('li');
+            refEvent.className = EVENT_CLASS;
+
+            const refEventButton = document.createElement('button');
+            refEventButton.className = EVENT_BUTTON_CLASS;
+
+            refEventButton.innerHTML = `<span class="${HIDDEN_CLASS}">#Event Name</soan>`;
+
+            refEvent.append(refEventButton);
+            refListEvents.append(refEvent);
+        }
+
+        refDay.append(refListEvents);
+    }
+
     #setFullDatesOfMonth(currentDate: Date): void {
         this.#fullDatesOfMonth = [];
         this.#fullDatesOfMonth = this.#getDateInMonth(currentDate);
@@ -273,47 +303,6 @@ export class B5rMonthView implements CalendarView {
         }
 
         this.#visibleDates = visibleDates;
-    }
-
-    #createDayButton(refDay: HTMLElement, date: Date): void {
-        const refButton = document.createElement('button');
-        refButton.innerText = date.getDate().toString();
-
-        refButton.className = DAY_BUTTON_CLASS;
-        refButton.setAttribute('data-date', date.toISOString());
-        refButton.setAttribute(
-            'aria-label',
-            date.toLocaleString(this.#locale, { day: 'numeric', month: 'long' })
-        );
-
-        refButton.addEventListener('click', this.#onDayClick.bind(this, date));
-
-        if (isTodayDate(date, this.timeZone)) {
-            refButton.classList.add(DAY_BUTTON_TODAY_CLASS);
-        }
-
-        refDay.append(refButton);
-    }
-
-    #createEventForDay(refDay: HTMLElement, _date: Date): void {
-        const refListEvents = document.createElement('ul');
-        refListEvents.className = LIST_EVENTS_CLASS;
-
-        // TODO: utiliser this.monthEvents pour faire la boucle
-        for (let index = 0; index < 2; index++) {
-            const refEvent = document.createElement('li');
-            refEvent.className = EVENT_CLASS;
-
-            const refEventButton = document.createElement('button');
-            refEventButton.className = EVENT_BUTTON_CLASS;
-
-            refEventButton.innerHTML = `<span class="${HIDDEN_CLASS}">#Event Name</soan>`;
-
-            refEvent.append(refEventButton);
-            refListEvents.append(refEvent);
-        }
-
-        refDay.append(refListEvents);
     }
 
     #getDateInMonth(date: Date): Date[] {

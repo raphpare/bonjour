@@ -185,16 +185,6 @@ export class B5rWeekView implements CalendarView {
         });
     }
 
-    async updateView(): Promise<void> {
-        if (!this.refRoot) return;
-        this.refRoot.querySelector(
-            `.${HEADER_CLASS} .${COLUMNS_CLASS}`
-        ).innerHTML = this.#getHeaderColumnsContainTemplate();
-        await this.setEvents(this.#events);
-        this.#updateBackgroundTemplate();
-        this.#updated();
-    }
-
     today(): Promise<Date> {
         return new Promise<Date>((resolve) => {
             this.currentDate = newDate({ timeZone: this.timeZone });
@@ -247,6 +237,19 @@ export class B5rWeekView implements CalendarView {
         this.deleteAllEvents();
         this.refRoot.innerHTML = '';
         this.refRoot.classList.remove(ROOT_CLASS);
+    }
+
+    async updateView(): Promise<void> {
+        if (!this.refRoot) return;
+
+        this.refRoot.querySelector(
+            `.${HEADER_CLASS} .${COLUMNS_CLASS}`
+        ).innerHTML = this.#getHeaderColumnsContainTemplate();
+
+        await this.setEvents(this.#events);
+
+        this.#updateBackgroundTemplate();
+        this.#updated();
     }
 
     onUpdate(callback: B5rUpdateCallback): void {
