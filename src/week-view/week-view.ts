@@ -19,6 +19,7 @@ import {
     addClassOnElement,
     removeClassOnElement,
     addDesignTokenOnElement,
+    ALL_DAY_EVENT_CLASS_KEEP_GOING,
 } from './week-view.utils';
 import {
     B5rWeekCallbacks,
@@ -619,11 +620,16 @@ export class B5rWeekView implements CalendarView {
                 : getDaysBetween(
                       this.dateRangesDisplayed.start,
                       event.dateRange.end
-                  ) + 1;
+                  );
         refAllDayEvent.style.setProperty(
             '--index-start',
             indexStart.toString()
         );
+
+        if (event.dateRange.end > this.dateRangesDisplayed.end) {
+            refAllDayEvent.classList.add(ALL_DAY_EVENT_CLASS_KEEP_GOING);
+        }
+
         refAllDayEvent.style.setProperty(
             '--index-end',
             indexEnd >= this.#nbDaysDisplayed
@@ -715,7 +721,7 @@ export class B5rWeekView implements CalendarView {
     ): HTMLElement {
         const refSubitle = document.createElement('span');
         refSubitle.className = className;
-        refSubitle.innerHTML = event.subtitle;
+        refSubitle.innerHTML = ` ${event.subtitle}`;
 
         addClassOnElement(refSubitle, this.#classNames?.event?.subtitle);
         addClassOnElement(refSubitle, event?.classNames?.subtitle);

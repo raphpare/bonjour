@@ -26,6 +26,15 @@ const TemplateSetEventsSameDay: StoryFn = (args): HTMLElement => {
 
     weekView.setEvents(EVENTS_MOCK_SAMEDAY);
 
+    weekView.onEventClick((pointerEvent, eventClicked) => {
+        console.log(
+            'Event clicked :',
+            eventClicked,
+            ' with PointerEvent: ',
+            pointerEvent
+        );
+    });
+
     return refRoot;
 };
 

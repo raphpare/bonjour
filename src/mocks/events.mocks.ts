@@ -469,4 +469,56 @@ export const EVENTS_MOCK_SAMEDAY: B5rEvent[] = [
             '--background': '#F98181',
         },
     },
+    {
+        id: '7',
+        title: 'E-7',
+        subtitle: 'Subtitle',
+        allDay: true,
+        dateRange: {
+            start: generateDateFromNow(0, 10, 0),
+            end: generateDateFromNow(0, 20, 0),
+        },
+        designTokens: {
+            '--background': '#FFC103',
+        },
+    },
+    {
+        id: '8',
+        title: 'E-8',
+        subtitle: 'Subtitle',
+        allDay: true,
+        dateRange: {
+            start: generateDateFromNow(0, 10, 0),
+            end: generateDateFromNow(1, 20, 0),
+        },
+        designTokens: {
+            '--background': '#A587E0',
+        },
+    },
+    {
+        id: '9',
+        title: 'E-9',
+        subtitle: 'Subtitle',
+        allDay: true,
+        dateRange: {
+            start: generateDateFromNow(-3, 10, 0),
+            end: generateDateFromNow(0, 20, 0),
+        },
+        designTokens: {
+            '--background': '#9FE591',
+        },
+    },
+    {
+        id: '10',
+        title: 'E-10',
+        subtitle: 'Subtitle',
+        allDay: true,
+        dateRange: {
+            start: generateDateFromNow(-4, 10, 0),
+            end: generateDateFromNow(4, 20, 0),
+        },
+        designTokens: {
+            '--background': '#505C69',
+        },
+    },
 ];
