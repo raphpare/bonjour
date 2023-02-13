@@ -22,16 +22,7 @@ SetEvents.storyName = 'setEvents()';
 
 const TemplateSetEventsSameDay: StoryFn = (args): HTMLElement => {
     const { refRoot, weekView } = getWeekViewDefaultTemplate({
-        weekOptions: {
-            ...args,
-            classNames: {
-                event: {
-                    root: 'test-event',
-                    startsOutOfViewModifier: 'test-all-day--starts-out-of-view',
-                    endsOutOfViewModifier: 'test-all-day--ends-out-of-view',
-                },
-            },
-        },
+        weekOptions: args,
     });
 
     weekView.setEvents(EVENTS_SAMEDAY_MOCK);

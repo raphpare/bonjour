@@ -2,10 +2,12 @@
     --time-area-width: 24px;
     --hour-height: 40px;
     --border-color: #ccc;
-    --weekend-background: rgb(245, 245, 245);
-    --today-background: rgb(221, 245, 255);
+    --weekend-background: #f5f5f5;
+    --today-background: #ddf5ff;
     --background: #fff;
     --out-of-view-event-indicator-size: 8px;
+    --current-time-color: #ffc400;
+    --current-time-size: 2px;
 
     position: relative;
     display: grid;
@@ -211,7 +213,7 @@
         min-height: 22px;
 
         &--starts-out-of-view {
-            padding-left: 8px;
+            padding-left: calc(var(--out-of-view-event-indicator-size) / 2);
             clip-path: polygon(
                 100% 0,
                 var(--out-of-view-event-indicator-size) 0,
