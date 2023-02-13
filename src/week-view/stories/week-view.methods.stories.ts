@@ -45,25 +45,6 @@ const TemplateSetEventsSameDay: StoryFn = (args): HTMLElement => {
         );
     });
 
-    const cssText = `
-        .test-event.test-all-day--starts-out-of-view {
-            padding-left: 8px;
-            clip-path: polygon(100% 0, 8px 0, 0 45%, 8px 100%, 100% 100%);
-
-        }
-
-        .test-event.test-all-day--ends-out-of-view {
-            clip-path: polygon(0% 0%, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0% 100%);
-        }
-
-        .test-event.test-all-day--starts-out-of-view.test-all-day--ends-out-of-view {
-            padding-left: 8px;
-            clip-path: polygon(calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 8px 100%, 0 50%, 8px 0);
-        }
-    `;
-
-    injectStyleTag('styleTagTestAllDayWeekView', cssText);
-
     return refRoot;
 };
 

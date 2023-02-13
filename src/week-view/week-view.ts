@@ -19,6 +19,8 @@ import {
     addClassOnElement,
     removeClassOnElement,
     addDesignTokenOnElement,
+    ALL_DAY_EVENT_ENDS_OUT_OF_VIEW_CLASS,
+    ALL_DAY_EVENT_STARTS_OUT_OF_VIEW_CLASS,
 } from './week-view.utils';
 import {
     B5rWeekCallbacks,
@@ -628,22 +630,14 @@ export class B5rWeekView implements CalendarView {
         if (event.dateRange.start < this.dateRangesDisplayed.start) {
             addClassOnElement(
                 refAllDayEvent,
-                this.#classNames.event?.startsOutOfViewModifier
-            );
-            addClassOnElement(
-                refAllDayEvent,
-                event?.classNames?.startsOutOfViewModifier
+                ALL_DAY_EVENT_STARTS_OUT_OF_VIEW_CLASS
             );
         }
 
         if (event.dateRange.end > this.dateRangesDisplayed.end) {
             addClassOnElement(
                 refAllDayEvent,
-                this.#classNames.event?.endsOutOfViewModifier
-            );
-            addClassOnElement(
-                refAllDayEvent,
-                event?.classNames?.endsOutOfViewModifier
+                ALL_DAY_EVENT_ENDS_OUT_OF_VIEW_CLASS
             );
         }
 

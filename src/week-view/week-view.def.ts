@@ -35,6 +35,7 @@ export interface B5rWeekDesignTokens {
     ['--weekend-background']?: string;
     ['--today-background']?: string;
     ['--background']?: string;
+    ['--out-of-view-event-indicator-size']?: string;
 }
 
 export interface B5rWeekCallbacks {

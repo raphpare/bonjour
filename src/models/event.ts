@@ -26,8 +26,6 @@ export interface B5rEventClassNames {
     root?: string;
     title?: string;
     subtitle?: string;
-    endsOutOfViewModifier?: string;
-    startsOutOfViewModifier?: string;
 }
 
 export interface B5rEventDesignTokens {
