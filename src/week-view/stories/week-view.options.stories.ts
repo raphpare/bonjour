@@ -1,4 +1,5 @@
 import { Meta, StoryFn } from '@storybook/html';
+import { injectStyleTag } from '../../utils/stylesheets';
 import {
     B5rWeekClassNames,
     B5rWeekOptions,
@@ -156,13 +157,7 @@ const TemplateClassNames: StoryFn<B5rWeekOptions> = (args): HTMLElement => {
         }
     `;
 
-    const styleTagId = 'styleTagTestClassWeekView';
-    if (!document.getElementById(styleTagId)) {
-        document.head.insertAdjacentHTML(
-            'beforeend',
-            `<style id="${styleTagId}">${cssText}</style>`
-        );
-    }
+    injectStyleTag('styleTagTestClassWeekView', cssText);
 
     return refRoot;
 };

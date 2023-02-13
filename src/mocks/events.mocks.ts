@@ -396,7 +396,7 @@ export const EVENTS_MOCKS_2 = [
     },
 ];
 
-export const EVENTS_MOCK_SAMEDAY: B5rEvent[] = [
+export const EVENTS_SAMEDAY_MOCK: B5rEvent[] = [
     {
         id: '1',
         title: 'E-1',
@@ -501,7 +501,7 @@ export const EVENTS_MOCK_SAMEDAY: B5rEvent[] = [
         subtitle: 'Subtitle',
         allDay: true,
         dateRange: {
-            start: generateDateFromNow(-3, 10, 0),
+            start: generateDateFromNow(-7, 10, 0),
             end: generateDateFromNow(0, 20, 0),
         },
         designTokens: {
@@ -514,8 +514,8 @@ export const EVENTS_MOCK_SAMEDAY: B5rEvent[] = [
         subtitle: 'Subtitle',
         allDay: true,
         dateRange: {
-            start: generateDateFromNow(-4, 10, 0),
-            end: generateDateFromNow(4, 20, 0),
+            start: generateDateFromNow(-7, 10, 0),
+            end: generateDateFromNow(7, 20, 0),
         },
         designTokens: {
             '--background': '#505C69',

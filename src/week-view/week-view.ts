@@ -19,7 +19,6 @@ import {
     addClassOnElement,
     removeClassOnElement,
     addDesignTokenOnElement,
-    ALL_DAY_EVENT_CLASS_KEEP_GOING,
 } from './week-view.utils';
 import {
     B5rWeekCallbacks,
@@ -626,8 +625,26 @@ export class B5rWeekView implements CalendarView {
             indexStart.toString()
         );
 
+        if (event.dateRange.start < this.dateRangesDisplayed.start) {
+            addClassOnElement(
+                refAllDayEvent,
+                this.#classNames.event?.startsOutOfViewModifier
+            );
+            addClassOnElement(
+                refAllDayEvent,
+                event?.classNames?.startsOutOfViewModifier
+            );
+        }
+
         if (event.dateRange.end > this.dateRangesDisplayed.end) {
-            refAllDayEvent.classList.add(ALL_DAY_EVENT_CLASS_KEEP_GOING);
+            addClassOnElement(
+                refAllDayEvent,
+                this.#classNames.event?.endsOutOfViewModifier
+            );
+            addClassOnElement(
+                refAllDayEvent,
+                event?.classNames?.endsOutOfViewModifier
+            );
         }
 
         refAllDayEvent.style.setProperty(
@@ -707,7 +724,7 @@ export class B5rWeekView implements CalendarView {
     ): HTMLElement {
         const refTitle = document.createElement('span');
         refTitle.className = className;
-        refTitle.innerHTML = event.title;
+        refTitle.innerHTML = `${event.title} `;
 
         addClassOnElement(refTitle, this.#classNames?.event?.title);
         addClassOnElement(refTitle, event?.classNames?.title);
@@ -721,7 +738,7 @@ export class B5rWeekView implements CalendarView {
     ): HTMLElement {
         const refSubitle = document.createElement('span');
         refSubitle.className = className;
-        refSubitle.innerHTML = ` ${event.subtitle}`;
+        refSubitle.innerHTML = event.subtitle || '';
 
         addClassOnElement(refSubitle, this.#classNames?.event?.subtitle);
         addClassOnElement(refSubitle, event?.classNames?.subtitle);

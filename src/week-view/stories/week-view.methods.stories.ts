@@ -1,5 +1,6 @@
 import { Meta, StoryFn } from '@storybook/html';
-import { EVENTS_MOCKS, EVENTS_MOCK_SAMEDAY } from '../../mocks/events.mocks';
+import { EVENTS_MOCKS, EVENTS_SAMEDAY_MOCK } from '../../mocks/events.mocks';
+import { injectStyleTag } from '../../utils/stylesheets';
 import { getWeekViewDefaultTemplate } from './commons';
 
 export default {
@@ -21,10 +22,19 @@ SetEvents.storyName = 'setEvents()';
 
 const TemplateSetEventsSameDay: StoryFn = (args): HTMLElement => {
     const { refRoot, weekView } = getWeekViewDefaultTemplate({
-        weekOptions: args,
+        weekOptions: {
+            ...args,
+            classNames: {
+                event: {
+                    root: 'test-event',
+                    startsOutOfViewModifier: 'test-all-day--starts-out-of-view',
+                    endsOutOfViewModifier: 'test-all-day--ends-out-of-view',
+                },
+            },
+        },
     });
 
-    weekView.setEvents(EVENTS_MOCK_SAMEDAY);
+    weekView.setEvents(EVENTS_SAMEDAY_MOCK);
 
     weekView.onEventClick((pointerEvent, eventClicked) => {
         console.log(
@@ -35,11 +45,30 @@ const TemplateSetEventsSameDay: StoryFn = (args): HTMLElement => {
         );
     });
 
+    const cssText = `
+        .test-event.test-all-day--starts-out-of-view {
+            padding-left: 8px;
+            clip-path: polygon(100% 0, 8px 0, 0 45%, 8px 100%, 100% 100%);
+
+        }
+
+        .test-event.test-all-day--ends-out-of-view {
+            clip-path: polygon(0% 0%, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0% 100%);
+        }
+
+        .test-event.test-all-day--starts-out-of-view.test-all-day--ends-out-of-view {
+            padding-left: 8px;
+            clip-path: polygon(calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 8px 100%, 0 50%, 8px 0);
+        }
+    `;
+
+    injectStyleTag('styleTagTestAllDayWeekView', cssText);
+
     return refRoot;
 };
 
 export const SetEventsSameDay = TemplateSetEventsSameDay.bind({});
-SetEventsSameDay.storyName = 'setEventsSameDay()';
+SetEventsSameDay.storyName = 'setEvents() - Same Day';
 
 const TemplateToday: StoryFn = (args): HTMLElement => {
     const { refRoot, weekView } = getWeekViewDefaultTemplate({
