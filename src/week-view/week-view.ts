@@ -898,38 +898,11 @@ export class B5rWeekView implements CalendarView {
     }
 
     #updateCurrentTimeTemplate(): void {
-        // Si n'est pas semaine courante {
-        //   Si (this.intervaleCurrenTime)
-        //       clearIntervale(this.intervaleCurrenTime);
-        //    Si (this.refCurrentTime) {
-        //        refCurrentTime.remove();
-        //    }
-        //    return;
-        //}
-        // si (!this.refCurrentTime) {
-        //      this.refCurrentTime = document.createElement('div');
-        //      this.refCurrentTime = CURRENT_TIME_CLASS;
-        //      this.refBody.append(this.refCurrentTime);
-        //}
-        // startIntervaleCurrentTime()
+        // TODO
     }
 
     #startIntervaleCurrentTime(): void {
-        // if (this.intervaleCurrenTime) return;
-        // this.intervaleCurrenTime = setInterval(() => {
-        //     this.refCurrentTime.setAttrinute(
-        //         '--current-time',
-        //         newDate(new date(), timezone)
-        //     );
-        // }, 1000);
-        //
-        // CSS
-        // position: absolute;
-        // top: 20px;
-        // right: 0;
-        // left: var(--time-area-width);
-        // height: 2px;
-        // background: red;
+        // TODO
     }
 
     #updateBackgroundTemplate(): void {
