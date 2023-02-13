@@ -1,5 +1,6 @@
 import { Meta, StoryFn } from '@storybook/html';
-import { EVENTS_MOCKS } from '../../mocks/events.mocks';
+import { EVENTS_MOCKS, EVENTS_SAMEDAY_MOCK } from '../../mocks/events.mocks';
+import { injectStyleTag } from '../../utils/stylesheets';
 import { getWeekViewDefaultTemplate } from './commons';
 
 export default {
@@ -18,6 +19,28 @@ const TemplateSetEvents: StoryFn = (args): HTMLElement => {
 
 export const SetEvents = TemplateSetEvents.bind({});
 SetEvents.storyName = 'setEvents()';
+
+const TemplateSetEventsSameDay: StoryFn = (args): HTMLElement => {
+    const { refRoot, weekView } = getWeekViewDefaultTemplate({
+        weekOptions: args,
+    });
+
+    weekView.setEvents(EVENTS_SAMEDAY_MOCK);
+
+    weekView.onEventClick((pointerEvent, eventClicked) => {
+        console.log(
+            'Event clicked :',
+            eventClicked,
+            ' with PointerEvent: ',
+            pointerEvent
+        );
+    });
+
+    return refRoot;
+};
+
+export const SetEventsSameDay = TemplateSetEventsSameDay.bind({});
+SetEventsSameDay.storyName = 'setEvents() - Same Day';
 
 const TemplateToday: StoryFn = (args): HTMLElement => {
     const { refRoot, weekView } = getWeekViewDefaultTemplate({

@@ -19,6 +19,8 @@ import {
     addClassOnElement,
     removeClassOnElement,
     addDesignTokenOnElement,
+    ALL_DAY_EVENT_ENDS_OUT_OF_VIEW_CLASS,
+    ALL_DAY_EVENT_STARTS_OUT_OF_VIEW_CLASS,
 } from './week-view.utils';
 import {
     B5rWeekCallbacks,
@@ -198,6 +200,7 @@ export class B5rWeekView implements CalendarView {
 
         await this.setEvents(this.#events);
 
+        this.#updateCurrentTimeTemplate();
         this.#updateBackgroundTemplate();
         this.#updated();
     }
@@ -530,37 +533,36 @@ export class B5rWeekView implements CalendarView {
         );
 
         if (event._overlapped) {
-            const numberOverlappingEvents =
-                event._overlapped.eventIds.reduce(
-                    (acc, cur) => {
-                        const currentEvent = this.#events.find(
-                            (e) => e._id === cur
-                        );
+            const numberOverlappingEvents = event._overlapped.eventIds.reduce(
+                (acc, cur) => {
+                    const currentEvent = this.#events.find(
+                        (e) => e._id === cur
+                    );
 
-                        if (
-                            currentEvent?._overlapped?.eventIds?.length >
-                            acc?.eventIds?.length
-                        ) {
-                            const eventIds = currentEvent._overlapped.eventIds;
-                            acc = {
-                                columnNumber: Math.max(
-                                    ...eventIds
-                                        .filter((id) => id !== currentEvent._id)
-                                        .map(
-                                            (id) =>
-                                                this.#events.find(
-                                                    (e) => e._id === id
-                                                )._overlapped.eventIds.length
-                                        )
-                                ),
-                                eventIds,
-                            };
-                        }
+                    if (
+                        currentEvent?._overlapped?.eventIds?.length >
+                        acc?.eventIds?.length
+                    ) {
+                        const eventIds = currentEvent._overlapped.eventIds;
+                        acc = {
+                            columnNumber: Math.max(
+                                ...eventIds
+                                    .filter((id) => id !== currentEvent._id)
+                                    .map(
+                                        (id) =>
+                                            this.#events.find(
+                                                (e) => e._id === id
+                                            )._overlapped.eventIds.length
+                                    )
+                            ),
+                            eventIds,
+                        };
+                    }
 
-                        return acc;
-                    },
-                    { columnNumber: 0, eventIds: [] }
-                ).columnNumber - 1;
+                    return acc;
+                },
+                { columnNumber: 0, eventIds: [] }
+            ).columnNumber;
 
             const eventIds = event?._overlapped.eventIds;
             const isLastEvent = event._id == eventIds[eventIds.length - 1];
@@ -581,12 +583,14 @@ export class B5rWeekView implements CalendarView {
                 '--index-start',
                 currentPosition.toString()
             );
+
             refEvent.style.setProperty(
                 '--index-end',
                 isLastEvent
                     ? numberOverlappingEvents.toString()
                     : (currentPosition + 1).toString()
             );
+
             refEvent.style.setProperty(
                 '--number-overlapping-events',
                 numberOverlappingEvents.toString()
@@ -643,6 +647,21 @@ export class B5rWeekView implements CalendarView {
             '--index-start',
             indexStart.toString()
         );
+
+        if (event.dateRange.start < this.dateRangesDisplayed.start) {
+            addClassOnElement(
+                refAllDayEvent,
+                ALL_DAY_EVENT_STARTS_OUT_OF_VIEW_CLASS
+            );
+        }
+
+        if (event.dateRange.end > this.dateRangesDisplayed.end) {
+            addClassOnElement(
+                refAllDayEvent,
+                ALL_DAY_EVENT_ENDS_OUT_OF_VIEW_CLASS
+            );
+        }
+
         refAllDayEvent.style.setProperty(
             '--index-end',
             indexEnd >= this.#nbDaysDisplayed
@@ -720,7 +739,7 @@ export class B5rWeekView implements CalendarView {
     ): HTMLElement {
         const refTitle = document.createElement('span');
         refTitle.className = className;
-        refTitle.innerHTML = event.title;
+        refTitle.innerHTML = `${event.title} `;
 
         addClassOnElement(refTitle, this.#classNames?.event?.title);
         addClassOnElement(refTitle, event?.classNames?.title);
@@ -734,7 +753,7 @@ export class B5rWeekView implements CalendarView {
     ): HTMLElement {
         const refSubitle = document.createElement('span');
         refSubitle.className = className;
-        refSubitle.innerHTML = event.subtitle;
+        refSubitle.innerHTML = event.subtitle || '';
 
         addClassOnElement(refSubitle, this.#classNames?.event?.subtitle);
         addClassOnElement(refSubitle, event?.classNames?.subtitle);
@@ -876,6 +895,41 @@ export class B5rWeekView implements CalendarView {
             refBackground.append(refColumn);
         }
         return refBackground;
+    }
+
+    #updateCurrentTimeTemplate(): void {
+        // Si n'est pas semaine courante {
+        //   Si (this.intervaleCurrenTime)
+        //       clearIntervale(this.intervaleCurrenTime);
+        //    Si (this.refCurrentTime) {
+        //        refCurrentTime.remove();
+        //    }
+        //    return;
+        //}
+        // si (!this.refCurrentTime) {
+        //      this.refCurrentTime = document.createElement('div');
+        //      this.refCurrentTime = CURRENT_TIME_CLASS;
+        //      this.refBody.append(this.refCurrentTime);
+        //}
+        // startIntervaleCurrentTime()
+    }
+
+    #startIntervaleCurrentTime(): void {
+        // if (this.intervaleCurrenTime) return;
+        // this.intervaleCurrenTime = setInterval(() => {
+        //     this.refCurrentTime.setAttrinute(
+        //         '--current-time',
+        //         newDate(new date(), timezone)
+        //     );
+        // }, 1000);
+        //
+        // CSS
+        // position: absolute;
+        // top: 20px;
+        // right: 0;
+        // left: var(--time-area-width);
+        // height: 2px;
+        // background: red;
     }
 
     #updateBackgroundTemplate(): void {

@@ -1,10 +1,13 @@
 .b5r-week {
-    --time-area-width: 26px;
+    --time-area-width: 24px;
     --hour-height: 40px;
     --border-color: #ccc;
-    --weekend-background: rgb(245, 245, 245);
-    --today-background: rgb(221, 245, 255);
+    --weekend-background: #f5f5f5;
+    --today-background: #ddf5ff;
     --background: #fff;
+    --out-of-view-event-indicator-size: 8px;
+    --current-time-color: #ffc400;
+    --current-time-size: 2px;
 
     position: relative;
     display: grid;
@@ -208,6 +211,27 @@
             calc(var(--index-end) - var(--index-start));
         grid-row: var(--row-number);
         min-height: 22px;
+
+        &--starts-out-of-view {
+            padding-left: calc(var(--out-of-view-event-indicator-size) / 2);
+            clip-path: polygon(
+                100% 0,
+                var(--out-of-view-event-indicator-size) 0,
+                0 45%,
+                var(--out-of-view-event-indicator-size) 100%,
+                100% 100%
+            );
+        }
+
+        &--ends-out-of-view {
+            clip-path: polygon(
+                0% 0%,
+                calc(100% - var(--out-of-view-event-indicator-size)) 0,
+                100% 50%,
+                calc(100% - var(--out-of-view-event-indicator-size)) 100%,
+                0% 100%
+            );
+        }
     }
 
     &__event {
@@ -259,4 +283,15 @@
         text-align: left;
         padding: 4px;
     }
+}
+
+.b5r-week__all-day-event--starts-out-of-view.b5r-week__all-day-event--ends-out-of-view {
+    clip-path: polygon(
+        calc(100% - var(--out-of-view-event-indicator-size)) 0,
+        100% 50%,
+        calc(100% - var(--out-of-view-event-indicator-size)) 100%,
+        var(--out-of-view-event-indicator-size) 100%,
+        0 50%,
+        var(--out-of-view-event-indicator-size) 0
+    );
 }
