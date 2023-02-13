@@ -481,9 +481,11 @@ export class B5rWeekView implements CalendarView {
         indexColumn: number
     ): void {
         const dateStart: Date = event.dateRange.start;
+
         const currentColumnDate: string = this.#datesOfWeek[
             indexColumn
         ].replace(/-/g, '');
+
         const currentEventDate: string = dateStart
             .toLocaleString(this.locale, {
                 year: 'numeric',
@@ -506,6 +508,16 @@ export class B5rWeekView implements CalendarView {
 
         addClassOnElement(refEvent, this.#classNames?.event?.root);
         addClassOnElement(refEvent, event?.classNames?.root);
+
+        refEvent.setAttribute(
+            'data-date-start',
+            event.dateRange.start.toISOString()
+        );
+
+        refEvent.setAttribute(
+            'data-date-end',
+            event.dateRange.end.toISOString()
+        );
 
         refEvent.type = 'button';
         refEvent.disabled = event.disabled;
@@ -599,6 +611,16 @@ export class B5rWeekView implements CalendarView {
 
         addClassOnElement(refAllDayEvent, this.#classNames?.event?.root);
         addClassOnElement(refAllDayEvent, event?.classNames?.root);
+
+        refAllDayEvent.setAttribute(
+            'data-date-start',
+            event.dateRange.start.toISOString()
+        );
+
+        refAllDayEvent.setAttribute(
+            'data-date-end',
+            event.dateRange.end.toISOString()
+        );
 
         refAllDayEvent.type = 'button';
         refAllDayEvent.disabled = event.disabled;
