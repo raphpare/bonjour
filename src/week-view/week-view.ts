@@ -21,6 +21,7 @@ import {
     addDesignTokenOnElement,
     ALL_DAY_EVENT_ENDS_OUT_OF_VIEW_CLASS,
     ALL_DAY_EVENT_STARTS_OUT_OF_VIEW_CLASS,
+    CURRENT_TIME_CLASS,
 } from './week-view.utils';
 import {
     B5rWeekCallbacks,
@@ -52,7 +53,9 @@ export class B5rWeekView implements CalendarView {
     refAllDayArea: HTMLElement = null;
     refBody: HTMLElement = null;
     refDayColumns: HTMLElement[] = [];
+    refCurrentTime: HTMLElement = null;
     timeZone?: string;
+    intervaleCurrenTime?: NodeJS.Timer;
 
     #mode: B5rWeekViewMode = B5rWeekViewMode.SevenDays;
     #nbDaysDisplayed = 7;
@@ -82,6 +85,7 @@ export class B5rWeekView implements CalendarView {
         this.#classNames = options.classNames;
         this.#createTemplate(element);
         this.#setDesignTokens(options?.designTokens);
+        this.#updateCurrentTimeTemplate();
     }
 
     set mode(mode: B5rWeekViewMode) {
@@ -877,38 +881,43 @@ export class B5rWeekView implements CalendarView {
     }
 
     #updateCurrentTimeTemplate(): void {
-        // Si n'est pas semaine courante {
-        //   Si (this.intervaleCurrenTime)
-        //       clearIntervale(this.intervaleCurrenTime);
-        //    Si (this.refCurrentTime) {
-        //        refCurrentTime.remove();
-        //    }
-        //    return;
-        //}
-        // si (!this.refCurrentTime) {
-        //      this.refCurrentTime = document.createElement('div');
-        //      this.refCurrentTime = CURRENT_TIME_CLASS;
-        //      this.refBody.append(this.refCurrentTime);
-        //}
-        // startIntervaleCurrentTime()
+        const todayDateRange: B5rDateRange = {
+            start: newDate({ timeZone: this.timeZone }),
+            end: newDate({ timeZone: this.timeZone }),
+        };
+
+        if (!isDateRangeOverlap(this.dateRangesDisplayed, todayDateRange)) {
+            if (this.intervaleCurrenTime) {
+                clearInterval(this.intervaleCurrenTime);
+            }
+
+            if (this.refCurrentTime) {
+                this.refCurrentTime.remove();
+            }
+            return;
+        }
+
+        if (!this.refCurrentTime) {
+            this.refCurrentTime = document.createElement('div');
+            this.refCurrentTime.classList.add(CURRENT_TIME_CLASS);
+        }
+
+        this.refBody.append(this.refCurrentTime);
+
+        this.#startIntervaleCurrentTime();
     }
 
     #startIntervaleCurrentTime(): void {
-        // if (this.intervaleCurrenTime) return;
-        // this.intervaleCurrenTime = setInterval(() => {
-        //     this.refCurrentTime.setAttrinute(
-        //         '--current-time',
-        //         newDate(new date(), timezone)
-        //     );
-        // }, 1000);
-        //
-        // CSS
-        // position: absolute;
-        // top: 20px;
-        // right: 0;
-        // left: var(--time-area-width);
-        // height: 2px;
-        // background: red;
+        if (this.intervaleCurrenTime) return;
+
+        this.intervaleCurrenTime = setInterval(() => {
+            const today = newDate({ timeZone: this.timeZone });
+            const position = today.getHours() * 60 + today.getMinutes();
+            this.refCurrentTime.style.setProperty(
+                '--current-time',
+                position.toString()
+            );
+        }, 1000);
     }
 
     #updateBackgroundTemplate(): void {

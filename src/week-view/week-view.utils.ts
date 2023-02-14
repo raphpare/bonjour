@@ -18,6 +18,7 @@ export const COLUMN_WEEKEND_CLASS = `${COLUMN_CLASS}--weekend`;
 export const COLUMN_TODAY_CLASS = `${COLUMN_CLASS}--today`;
 export const DAY_COLUMN_CLASS = `${ROOT_CLASS}__day-column`;
 export const BACKGROUND_CLASS = `${ROOT_CLASS}__background`;
+export const CURRENT_TIME_CLASS = `${ROOT_CLASS}__current-time`;
 
 export const DEFAULT_OPTIONS: B5rWeekOptions = {
     mode: B5rWeekViewMode.SevenDays,
