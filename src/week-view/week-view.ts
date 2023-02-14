@@ -488,9 +488,11 @@ export class B5rWeekView implements CalendarView {
         indexColumn: number
     ): void {
         const dateStart: Date = event.dateRange.start;
+
         const currentColumnDate: string = this.#datesOfWeek[
             indexColumn
         ].replace(/-/g, '');
+
         const currentEventDate: string = dateStart
             .toLocaleString(this.locale, {
                 year: 'numeric',
@@ -514,6 +516,16 @@ export class B5rWeekView implements CalendarView {
         addClassOnElement(refEvent, this.#classNames?.event?.root);
         addClassOnElement(refEvent, event?.classNames?.root);
 
+        refEvent.setAttribute(
+            'data-date-start',
+            event.dateRange.start.toISOString()
+        );
+
+        refEvent.setAttribute(
+            'data-date-end',
+            event.dateRange.end.toISOString()
+        );
+
         refEvent.type = 'button';
         refEvent.disabled = event.disabled;
         refEvent.style.setProperty('--start-time', eventStartTime.toString());
@@ -525,37 +537,36 @@ export class B5rWeekView implements CalendarView {
         );
 
         if (event._overlapped) {
-            const numberOverlappingEvents =
-                event._overlapped.eventIds.reduce(
-                    (acc, cur) => {
-                        const currentEvent = this.#events.find(
-                            (e) => e._id === cur
-                        );
+            const numberOverlappingEvents = event._overlapped.eventIds.reduce(
+                (acc, cur) => {
+                    const currentEvent = this.#events.find(
+                        (e) => e._id === cur
+                    );
 
-                        if (
-                            currentEvent?._overlapped?.eventIds?.length >
-                            acc?.eventIds?.length
-                        ) {
-                            const eventIds = currentEvent._overlapped.eventIds;
-                            acc = {
-                                columnNumber: Math.max(
-                                    ...eventIds
-                                        .filter((id) => id !== currentEvent._id)
-                                        .map(
-                                            (id) =>
-                                                this.#events.find(
-                                                    (e) => e._id === id
-                                                )._overlapped.eventIds.length
-                                        )
-                                ),
-                                eventIds,
-                            };
-                        }
+                    if (
+                        currentEvent?._overlapped?.eventIds?.length >
+                        acc?.eventIds?.length
+                    ) {
+                        const eventIds = currentEvent._overlapped.eventIds;
+                        acc = {
+                            columnNumber: Math.max(
+                                ...eventIds
+                                    .filter((id) => id !== currentEvent._id)
+                                    .map(
+                                        (id) =>
+                                            this.#events.find(
+                                                (e) => e._id === id
+                                            )._overlapped.eventIds.length
+                                    )
+                            ),
+                            eventIds,
+                        };
+                    }
 
-                        return acc;
-                    },
-                    { columnNumber: 0, eventIds: [] }
-                ).columnNumber - 1;
+                    return acc;
+                },
+                { columnNumber: 0, eventIds: [] }
+            ).columnNumber;
 
             const eventIds = event?._overlapped.eventIds;
             const isLastEvent = event._id == eventIds[eventIds.length - 1];
@@ -608,6 +619,16 @@ export class B5rWeekView implements CalendarView {
 
         addClassOnElement(refAllDayEvent, this.#classNames?.event?.root);
         addClassOnElement(refAllDayEvent, event?.classNames?.root);
+
+        refAllDayEvent.setAttribute(
+            'data-date-start',
+            event.dateRange.start.toISOString()
+        );
+
+        refAllDayEvent.setAttribute(
+            'data-date-end',
+            event.dateRange.end.toISOString()
+        );
 
         refAllDayEvent.type = 'button';
         refAllDayEvent.disabled = event.disabled;
