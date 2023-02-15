@@ -55,7 +55,7 @@ export class B5rWeekView implements CalendarView {
     refDayColumns: HTMLElement[] = [];
     refCurrentTime: HTMLElement = null;
     timeZone?: string;
-    intervaleCurrenTime?: NodeJS.Timer;
+    intervaleCurrentTime?: NodeJS.Timer;
 
     #mode: B5rWeekViewMode = B5rWeekViewMode.SevenDays;
     #nbDaysDisplayed = 7;
@@ -83,6 +83,7 @@ export class B5rWeekView implements CalendarView {
             options.currentDate || newDate({ timeZone: options.timeZone });
         this.#locale = options.locale;
         this.#classNames = options.classNames;
+
         this.#createTemplate(element);
         this.#setDesignTokens(options?.designTokens);
         this.#updateCurrentTimeTemplate();
@@ -908,8 +909,8 @@ export class B5rWeekView implements CalendarView {
         };
 
         if (!isDateRangeOverlap(this.dateRangesDisplayed, todayDateRange)) {
-            if (this.intervaleCurrenTime) {
-                clearInterval(this.intervaleCurrenTime);
+            if (this.intervaleCurrentTime) {
+                clearInterval(this.intervaleCurrentTime);
             }
 
             if (this.refCurrentTime) {
@@ -921,6 +922,7 @@ export class B5rWeekView implements CalendarView {
         if (!this.refCurrentTime) {
             this.refCurrentTime = document.createElement('div');
             this.refCurrentTime.classList.add(CURRENT_TIME_CLASS);
+            this.#setCurrentTime();
         }
 
         this.refBody.append(this.refCurrentTime);
@@ -929,16 +931,20 @@ export class B5rWeekView implements CalendarView {
     }
 
     #startIntervaleCurrentTime(): void {
-        if (this.intervaleCurrenTime) return;
+        if (this.intervaleCurrentTime) return;
 
-        this.intervaleCurrenTime = setInterval(() => {
-            const today = newDate({ timeZone: this.timeZone });
-            const position = today.getHours() * 60 + today.getMinutes();
-            this.refCurrentTime.style.setProperty(
-                '--current-time',
-                position.toString()
-            );
+        this.intervaleCurrentTime = setInterval(() => {
+            this.#setCurrentTime();
         }, 1000);
+    }
+
+    #setCurrentTime(): void {
+        const today = newDate({ timeZone: this.timeZone });
+        const position = today.getHours() * 60 + today.getMinutes();
+        this.refCurrentTime.style.setProperty(
+            '--current-time',
+            position.toString()
+        );
     }
 
     #updateBackgroundTemplate(): void {
