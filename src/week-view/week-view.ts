@@ -55,7 +55,7 @@ export class B5rWeekView implements CalendarView {
     refDayColumns: HTMLElement[] = [];
     refCurrentTime: HTMLElement = null;
     timeZone?: string;
-    intervaleCurrentTime?: NodeJS.Timer;
+    intervalCurrentTime?: NodeJS.Timer;
 
     #mode: B5rWeekViewMode = B5rWeekViewMode.SevenDays;
     #nbDaysDisplayed = 7;
@@ -909,8 +909,8 @@ export class B5rWeekView implements CalendarView {
         };
 
         if (!isDateRangeOverlap(this.dateRangesDisplayed, todayDateRange)) {
-            if (this.intervaleCurrentTime) {
-                clearInterval(this.intervaleCurrentTime);
+            if (this.intervalCurrentTime) {
+                clearInterval(this.intervalCurrentTime);
             }
 
             if (this.refCurrentTime) {
@@ -927,13 +927,13 @@ export class B5rWeekView implements CalendarView {
 
         this.refBody.append(this.refCurrentTime);
 
-        this.#startIntervaleCurrentTime();
+        this.#startintervalCurrentTime();
     }
 
-    #startIntervaleCurrentTime(): void {
-        if (this.intervaleCurrentTime) return;
+    #startintervalCurrentTime(): void {
+        if (this.intervalCurrentTime) return;
 
-        this.intervaleCurrentTime = setInterval(() => {
+        this.intervalCurrentTime = setInterval(() => {
             this.#setCurrentTime();
         }, 1000);
     }
