@@ -6,7 +6,7 @@
     --today-background: #ddf5ff;
     --background: #fff;
     --out-of-view-event-indicator-size: 8px;
-    --current-time-color: #ffc400;
+    --current-time-color: #ffc103;
     --current-time-size: 2px;
 
     position: relative;
@@ -66,6 +66,19 @@
         background: var(--border-color);
         width: 1px;
         transform: translate(-50%, 0);
+    }
+
+    &__current-time {
+        --current-time: 0;
+        position: absolute;
+        top: calc(
+            ((var(--current-time) * (var(--hour-height) * 24)) / 1440) -
+                var(--current-time-size) / 2
+        );
+        right: 0;
+        left: var(--time-area-width);
+        height: var(--current-time-size);
+        background: var(--current-time-color);
     }
 
     &__columns {

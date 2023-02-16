@@ -67,6 +67,8 @@ DesignTokens.args = {
         ['--weekend-background']: 'yellow',
         ['--today-background']: 'red',
         ['--background']: '#ecffd7',
+        ['--current-time-color']: 'green',
+        ['--current-time-size']: '6px',
     },
 };
 DesignTokens.storyName = 'options.designTokens';

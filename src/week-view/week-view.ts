@@ -21,6 +21,7 @@ import {
     addDesignTokenOnElement,
     ALL_DAY_EVENT_ENDS_OUT_OF_VIEW_CLASS,
     ALL_DAY_EVENT_STARTS_OUT_OF_VIEW_CLASS,
+    CURRENT_TIME_CLASS,
 } from './week-view.utils';
 import {
     B5rWeekCallbacks,
@@ -52,7 +53,9 @@ export class B5rWeekView implements CalendarView {
     refAllDayArea: HTMLElement = null;
     refBody: HTMLElement = null;
     refDayColumns: HTMLElement[] = [];
+    refCurrentTime: HTMLElement = null;
     timeZone?: string;
+    intervalCurrentTime?: NodeJS.Timer;
 
     #mode: B5rWeekViewMode = B5rWeekViewMode.SevenDays;
     #nbDaysDisplayed = 7;
@@ -80,8 +83,10 @@ export class B5rWeekView implements CalendarView {
             options.currentDate || newDate({ timeZone: options.timeZone });
         this.#locale = options.locale;
         this.#classNames = options.classNames;
+
         this.#createTemplate(element);
         this.#setDesignTokens(options?.designTokens);
+        this.#updateCurrentTimeTemplate();
     }
 
     set mode(mode: B5rWeekViewMode) {
@@ -164,7 +169,7 @@ export class B5rWeekView implements CalendarView {
 
     today(): Promise<Date> {
         return new Promise<Date>((resolve) => {
-            this.currentDate = newDate({ timeZone: this.timeZone });
+            this.currentDate = this.#todayDate;
             resolve(this.currentDate);
         });
     }
@@ -403,6 +408,10 @@ export class B5rWeekView implements CalendarView {
 
             this.#datesDisplayed.push(date);
         }
+    }
+
+    get #todayDate(): Date {
+        return newDate({ timeZone: this.timeZone });
     }
 
     #createTemplate(element?: HTMLElement): void {
@@ -898,11 +907,50 @@ export class B5rWeekView implements CalendarView {
     }
 
     #updateCurrentTimeTemplate(): void {
-        // TODO
+        const todayDateRange: B5rDateRange = {
+            start: this.#todayDate,
+            end: this.#todayDate,
+        };
+
+        if (!isDateRangeOverlap(this.dateRangesDisplayed, todayDateRange)) {
+            if (this.intervalCurrentTime) {
+                clearInterval(this.intervalCurrentTime);
+            }
+
+            if (this.refCurrentTime) {
+                this.refCurrentTime.remove();
+            }
+            return;
+        }
+
+        if (!this.refCurrentTime) {
+            this.refCurrentTime = document.createElement('div');
+            this.refCurrentTime.classList.add(CURRENT_TIME_CLASS);
+            this.#setCurrentTime();
+        }
+
+        if (!this.refBody.querySelector(`.${CURRENT_TIME_CLASS}`)) {
+            this.refBody.append(this.refCurrentTime);
+        }
+
+        this.#startIntervalCurrentTime();
     }
 
-    #startIntervaleCurrentTime(): void {
-        // TODO
+    #startIntervalCurrentTime(): void {
+        if (this.intervalCurrentTime) return;
+
+        this.intervalCurrentTime = setInterval(() => {
+            this.#setCurrentTime();
+        }, 1000);
+    }
+
+    #setCurrentTime(): void {
+        const position =
+            this.#todayDate.getHours() * 60 + this.#todayDate.getMinutes();
+        this.refCurrentTime.style.setProperty(
+            '--current-time',
+            position.toString()
+        );
     }
 
     #updateBackgroundTemplate(): void {
