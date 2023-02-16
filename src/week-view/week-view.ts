@@ -929,7 +929,9 @@ export class B5rWeekView implements CalendarView {
             this.#setCurrentTime();
         }
 
-        this.refBody.append(this.refCurrentTime);
+        if (!this.refBody.querySelector(`.${CURRENT_TIME_CLASS}`)) {
+            this.refBody.append(this.refCurrentTime);
+        }
 
         this.#startIntervalCurrentTime();
     }
