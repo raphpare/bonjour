@@ -1,1 +1,1 @@
-export { isTodayDate, getDaysBetween } from './date.utils';
+export { newDate, isTodayDate, getDaysBetween } from './date.utils';

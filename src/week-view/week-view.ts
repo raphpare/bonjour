@@ -41,8 +41,7 @@ import { isDateRangeOverlap } from '../utils/date-range';
 import cssText from './week-view.css';
 import { LOCALE_EN } from '../utils/locales';
 import { DAY_MS } from '../utils/milliseconds';
-import { getDaysBetween, isTodayDate } from '../utils/date';
-import { newDate } from '../utils/date/date.utils';
+import { newDate, getDaysBetween, isTodayDate } from '../utils/date';
 
 export class B5rWeekView implements CalendarView {
     refRoot: HTMLElement = null;

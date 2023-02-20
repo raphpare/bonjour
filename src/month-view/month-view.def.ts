@@ -1,10 +1,14 @@
 import { B5rEventClassNames } from '../models';
 import { B5rEventClickCallback, B5rUpdateCallback } from '../models/callbacks';
 
+export type B5rWeekdayFormat = 'long' | 'short' | 'narrow';
+
 export interface B5rMonthOptions {
+    selectedDate?: Date;
     currentDate?: Date;
     locale?: string;
     timeZone?: string;
+    weekdayFormat?: B5rWeekdayFormat;
     classNames?: B5rMonthClassNames;
     designTokens?: B5rMonthDesignTokens;
 }
@@ -22,17 +26,19 @@ export interface B5rMonthClassNames {
 
 export interface B5rMonthDesignTokens {
     ['--day-height']?: string;
-    ['--day-align-items']?: string;
-    ['--day-padding']?: string;
-    ['--day-button-color']?: string;
-    ['--day-button-color-hover']?: string;
-    ['--day-button-color-focus']?: string;
-    ['--day-button-color-active']?: string;
-    ['--day-button-background']?: string;
-    ['--day-button-background-hover']?: string;
-    ['--day-button-background-focus']?: string;
-    ['--day-button-background-active']?: string;
-    ['--day-button-border-radius']?: string;
+    ['--cell-align-items']?: string;
+    ['--cell-padding']?: string;
+    ['--day-number-min-width']?: string;
+    ['--day-number-min-height']?: string;
+    ['--day-number-color']?: string;
+    ['--day-number-color-hover']?: string;
+    ['--day-number-color-focus']?: string;
+    ['--day-number-color-active']?: string;
+    ['--day-number-background']?: string;
+    ['--day-number-background-hover']?: string;
+    ['--day-number-background-focus']?: string;
+    ['--day-number-background-active']?: string;
+    ['--day-number-border-radius']?: string;
     ['--today-color']?: string;
     ['--today-background']?: string;
     ['--background']?: string;

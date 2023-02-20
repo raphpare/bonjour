@@ -1,20 +1,23 @@
 import { B5rEvent } from '../models/event';
-import { isTodayDate } from '../utils/date';
+import { isTodayDate, newDate } from '../utils/date';
 import { cloneEvents } from '../utils/event';
 import { LOCALE_EN } from '../utils/locales';
 import { injectStyleTag } from '../utils/stylesheets';
 import {
     B5R_MONTH_VIEW_STYLE_ID,
-    DAY_BUTTON_CLASS,
-    DAY_BUTTON_TODAY_CLASS,
-    DAY_CLASS,
+    CELL_CLASS,
+    CELL_HEADER_CLASS,
+    CELL_TODAY_CLASS,
+    DAY_NUMBER_CLASS,
+    DAY_NUMBER_TODAY_CLASS,
     DEFAULT_OPTIONS,
     EVENT_BUTTON_CLASS,
     EVENT_CLASS,
-    HEADER_CLASS,
     HIDDEN_CLASS,
     LIST_EVENTS_CLASS,
     ROOT_CLASS,
+    ROW_CLASS,
+    ROW_HEADER_CLASS,
 } from './month-view.utils';
 import cssText from './month-view.css';
 import {
@@ -22,22 +25,26 @@ import {
     B5rMonthCallbacks,
     B5rMonthDesignTokens,
     B5rMonthOptions,
+    B5rWeekdayFormat,
 } from './month-view.def';
 import { CalendarView } from '../models/calendar-view';
 import { B5rEventClickCallback, B5rUpdateCallback } from '../models/callbacks';
-import { newDate } from '../utils/date/date.utils';
 import { B5rDateRange } from '../models/date-range';
 import { addDesignTokenOnElement } from '../week-view/week-view.utils';
+import { isDateRangeSameDate, isDateRangeSameMonth } from '../utils/date-range';
+import { DAY_MS } from '../utils/milliseconds';
 
 export class B5rMonthView implements CalendarView {
     refRoot: HTMLElement = null;
-    refHeader: HTMLElement = null;
-    refBody: HTMLElement = null;
+    refHeaderRow: HTMLElement = null;
+    refWeekRows: HTMLElement[] = [];
     refEvents: HTMLElement[] = [];
     timeZone?: string;
 
     #locale: string = LOCALE_EN;
     #datesOfMonthDisplayed: Date[] = [];
+    #selectedDate: Date = new Date();
+    #pastSelectedDate: Date = new Date();
     #currentDate: Date = new Date();
     #eventsClone: B5rEvent[] = [];
     #internalEvents: B5rEvent[] = [];
@@ -47,6 +54,7 @@ export class B5rMonthView implements CalendarView {
         eventClickCallbacks: [],
         dayClickCallbacks: [],
     };
+    #options: B5rMonthOptions = {};
 
     constructor(element: HTMLElement, options?: B5rMonthOptions) {
         injectStyleTag(B5R_MONTH_VIEW_STYLE_ID, cssText);
@@ -57,20 +65,50 @@ export class B5rMonthView implements CalendarView {
         };
 
         this.refRoot = element;
-        this.currentDate =
-            options.currentDate || newDate({ timeZone: options.timeZone });
+        this.refRoot.role = 'grid';
+
+        this.selectedDate =
+            options.selectedDate ||
+            options.currentDate ||
+            newDate({ timeZone: options.timeZone });
+
+        this.#pastSelectedDate = new Date(
+            this.#selectedDate.getMilliseconds() - DAY_MS * 365
+        );
+
+        this.currentDate = this.selectedDate;
 
         this.#locale = options.locale;
         this.timeZone = options.timeZone;
+        this.#options = options;
 
         this.#createTemplate();
         this.#setDesignTokens(options?.designTokens);
     }
 
+    set selectedDate(selectedDate: Date) {
+        this.#selectedDate = selectedDate;
+
+        if (
+            !isDateRangeSameMonth({
+                start: this.#pastSelectedDate,
+                end: selectedDate,
+            })
+        ) {
+            this.#setDatesOfMonthDisplayed(selectedDate);
+            this.updateView();
+        }
+
+        this.#pastSelectedDate = selectedDate;
+    }
+
+    get selectedDate(): Date {
+        return this.#selectedDate;
+    }
+
     set currentDate(currentDate: Date) {
+        this.selectedDate = currentDate;
         this.#currentDate = currentDate;
-        this.#setDatesOfMonthDisplayed(currentDate);
-        this.updateView();
     }
 
     get currentDate(): Date {
@@ -125,14 +163,14 @@ export class B5rMonthView implements CalendarView {
     }
 
     today(): Promise<Date> {
-        this.currentDate = newDate({ timeZone: this.timeZone });
-        return Promise.resolve(this.currentDate);
+        this.selectedDate = newDate({ timeZone: this.timeZone });
+        return Promise.resolve(this.selectedDate);
     }
 
     next(): Promise<Date[]> {
-        this.currentDate = new Date(
-            this.#currentDate.getFullYear(),
-            this.#currentDate.getMonth() + 1,
+        this.selectedDate = new Date(
+            this.#selectedDate.getFullYear(),
+            this.#selectedDate.getMonth() + 1,
             1,
             0,
             0,
@@ -143,9 +181,9 @@ export class B5rMonthView implements CalendarView {
     }
 
     previous(): Promise<Date[]> {
-        this.currentDate = new Date(
-            this.#currentDate.getFullYear(),
-            this.#currentDate.getMonth(),
+        this.selectedDate = new Date(
+            this.#selectedDate.getFullYear(),
+            this.#selectedDate.getMonth(),
             0,
             0,
             0,
@@ -202,14 +240,6 @@ export class B5rMonthView implements CalendarView {
         return this.#internalEvents;
     }
 
-    get #weekdays(): string[] {
-        return [...this.#visibleDates].splice(0, 7).map((d) =>
-            d.toLocaleString(this.locale, {
-                weekday: 'short',
-            })
-        );
-    }
-
     #createTemplate(): HTMLElement {
         if (!this.refRoot) {
             this.refRoot = document.createElement('div');
@@ -218,7 +248,7 @@ export class B5rMonthView implements CalendarView {
         this.refRoot.className = ROOT_CLASS;
         this.refEvents = [];
 
-        if (!this.refHeader) {
+        if (!this.refHeaderRow) {
             this.#createHeaderTemplate();
         }
         this.#createBodyTemplate();
@@ -227,30 +257,43 @@ export class B5rMonthView implements CalendarView {
     }
 
     #createHeaderTemplate(): HTMLElement {
-        if (this.refHeader) {
-            this.refHeader.remove();
+        if (this.refHeaderRow) {
+            this.refHeaderRow.remove();
         }
 
-        this.refHeader = document.createElement('ul');
-        this.refHeader.className = HEADER_CLASS;
-        this.refHeader.setAttribute('aria-hidden', 'true');
+        this.refHeaderRow = document.createElement('div');
+        this.refHeaderRow.className = `${ROW_CLASS} ${ROW_HEADER_CLASS}`;
+        this.refHeaderRow.role = 'row';
 
-        this.#weekdays.forEach((text) => {
-            const refHeaderTitle = document.createElement('li');
-            refHeaderTitle.innerText = text;
+        [...this.#visibleDates].splice(0, 7).forEach((date) => {
+            const refHeaderCell = document.createElement('div');
+            refHeaderCell.className = `${CELL_CLASS} ${CELL_HEADER_CLASS}`;
+            refHeaderCell.role = 'columnheader';
+            refHeaderCell.setAttribute('aria-readonly', 'true');
+            refHeaderCell.setAttribute('aria-hidden', 'columnheader');
+            refHeaderCell.setAttribute(
+                'aria-label',
+                this.#getWeekday(date, 'long')
+            );
+            refHeaderCell.innerText = this.#getWeekday(
+                date,
+                this.#options?.weekdayFormat ?? 'short'
+            );
 
-            this.refHeader.append(refHeaderTitle);
+            this.refHeaderRow.append(refHeaderCell);
         });
 
-        this.refRoot.prepend(this.refHeader);
-        return this.refHeader;
+        this.refRoot.prepend(this.refHeaderRow);
+        return this.refHeaderRow;
     }
 
-    #createBodyTemplate(): HTMLElement {
-        if (this.refBody) {
-            this.refBody.remove();
+    #createBodyTemplate(): void {
+        if (this.refWeekRows) {
+            this.refWeekRows.forEach((r) => r.remove());
+            this.refWeekRows = [];
+
             document
-                .querySelectorAll(`.${DAY_BUTTON_CLASS}`)
+                .querySelectorAll(`.${DAY_NUMBER_CLASS}`)
                 .forEach((element) => {
                     element.removeEventListener(
                         'click',
@@ -262,43 +305,75 @@ export class B5rMonthView implements CalendarView {
                 });
         }
 
-        this.refBody = document.createElement('ul');
-        this.refBody.className = HEADER_CLASS;
+        let indexDayOfWeek = 1;
+        this.refWeekRows = [this.#getWeekRowElement()];
+        let indexCurrentWeekRow = 0;
 
         this.#visibleDates.forEach((vd) => {
-            const refDay = document.createElement('li');
-            refDay.className = DAY_CLASS;
+            if (indexDayOfWeek === 8) {
+                indexCurrentWeekRow++;
+                this.refWeekRows.push(this.#getWeekRowElement());
+                indexDayOfWeek = 1;
+            }
 
-            this.#createDayButton(refDay, vd);
+            this.#createCell(this.refWeekRows[indexCurrentWeekRow], vd);
 
-            this.#createEventsForDay(refDay, vd);
+            this.refRoot.append(this.refWeekRows[indexCurrentWeekRow]);
 
-            this.refBody.append(refDay);
+            indexDayOfWeek++;
         });
-
-        this.refRoot.append(this.refBody);
-
-        return this.refBody;
     }
 
-    #createDayButton(refDay: HTMLElement, date: Date): void {
-        const refButton = document.createElement('button');
-        refButton.innerText = date.getDate().toString();
+    #getWeekRowElement(): HTMLElement {
+        const refWeekRow = document.createElement('div');
+        refWeekRow.role = 'row';
+        refWeekRow.className = ROW_CLASS;
 
-        refButton.className = DAY_BUTTON_CLASS;
-        refButton.setAttribute('data-date', date.toISOString());
-        refButton.setAttribute(
-            'aria-label',
-            date.toLocaleString(this.#locale, { day: 'numeric', month: 'long' })
+        return refWeekRow;
+    }
+
+    #createCell(refRow: HTMLElement, date: Date): void {
+        const refCell = document.createElement('div');
+        refCell.className = CELL_CLASS;
+        refCell.role = 'gridcell';
+
+        const isSelectedDate = isDateRangeSameDate({
+            start: date,
+            end: this.selectedDate,
+        });
+
+        refCell.setAttribute('tabindex', isSelectedDate ? '0' : '-1');
+        refCell.setAttribute(
+            'aria-selected',
+            isSelectedDate ? 'true' : 'false'
         );
 
-        refButton.addEventListener('click', this.#onDayClick.bind(this, date));
+        const refDayNumber = document.createElement('span');
+        refDayNumber.className = DAY_NUMBER_CLASS;
+        refDayNumber.innerText = date.getDate().toString();
+        refCell.append(refDayNumber);
+
+        refCell.className = CELL_CLASS;
+        refCell.setAttribute('data-date', date.toISOString());
+        refDayNumber.setAttribute(
+            'aria-label',
+            date.toLocaleString(this.#locale, {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric',
+            })
+        );
+
+        refCell.addEventListener('click', this.#onDayClick.bind(this, date));
 
         if (isTodayDate(date, this.timeZone)) {
-            refButton.classList.add(DAY_BUTTON_TODAY_CLASS);
+            refCell.classList.add(CELL_TODAY_CLASS);
+            refDayNumber.classList.add(DAY_NUMBER_TODAY_CLASS);
         }
 
-        refDay.append(refButton);
+        this.#createEventsForDay(refCell, date);
+
+        refRow.append(refCell);
     }
 
     #createEventsForDay(refDay: HTMLElement, _date: Date): void {
@@ -310,7 +385,7 @@ export class B5rMonthView implements CalendarView {
             const refEvent = document.createElement('li');
             refEvent.className = EVENT_CLASS;
 
-            const refEventButton = document.createElement('button');
+            const refEventButton = document.createElement('span');
             refEventButton.className = EVENT_BUTTON_CLASS;
 
             refEventButton.innerHTML = `<span class="${HIDDEN_CLASS}">#Event Name</soan>`;
@@ -322,6 +397,12 @@ export class B5rMonthView implements CalendarView {
         }
 
         refDay.append(refListEvents);
+    }
+
+    #getWeekday(date: Date, format: B5rWeekdayFormat): string {
+        return date.toLocaleString(this.locale, {
+            weekday: format,
+        });
     }
 
     #setDesignTokens(designTokens?: B5rMonthDesignTokens): void {
@@ -380,12 +461,12 @@ export class B5rMonthView implements CalendarView {
         return dates;
     }
 
-    #onDayClick(event: PointerEvent, Date: Date): void {
+    #onDayClick(event: PointerEvent, date: Date): void {
         if (this.#callbacks.dayClickCallbacks.length === 0) return;
 
         this.#callbacks.dayClickCallbacks.forEach(
-            (callback: (event: PointerEvent, Date: Date) => void) =>
-                callback(event, Date)
+            (callback: (event: PointerEvent, date: Date) => void) =>
+                callback(event, date)
         );
     }
 }

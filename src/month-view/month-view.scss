@@ -1,57 +1,68 @@
 .b5r-month {
-    --day-height: inherit;
-    --day-align-items: center;
-    --day-padding: 4px;
-    --day-button-min-width: 44px;
-    --day-button-min-height: 44px;
-    --day-button-border-radius: 0;
-    --day-button-color: currentColor;
-    --day-button-color-hover: var(--day-button-color);
-    --day-button-color-focus: var(--day-button-color-hover);
-    --day-button-color-active: var(--day-button-color-focus);
-    --day-button-background: inherit;
-    --day-button-background-hover: var(--day-button-background);
-    --day-button-background-focus: var(--day-button-background-hover);
-    --day-button-background-active: var(--day-button-background-focus);
+    --cell-height: inherit;
+    --cell-align-items: center;
+    --cell-padding: 4px;
+    --day-number-min-width: inherit;
+    --day-number-min-height: inherit;
+    --day-number-border-radius: 0;
+    --day-number-color: currentColor;
+    --day-number-color-hover: var(--day-number-color);
+    --day-number-color-focus: var(--day-number-color-hover);
+    --day-number-color-active: var(--day-number-color-focus);
+    --day-number-background: inherit;
+    --day-number-background-hover: var(--day-number-background);
+    --day-number-background-focus: var(--day-number-background-hover);
+    --day-number-background-active: var(--day-number-background-focus);
     --today-color: currentColor;
     --today-background: rgb(221, 245, 255);
     --background: rgba(0, 0, 0, 0);
 
-    &__header,
-    &__body {
+    &__header {
         display: grid;
         grid-template-columns: repeat(7, 1fr);
         list-style: none;
         padding: 0;
         margin: 0;
         background: var(--background);
-    }
-
-    &__header {
         text-align: center;
     }
 
-    &__day {
+    &__body {
         display: flex;
-        align-items: var(--day-align-items);
         flex-direction: column;
-        min-height: var(--day-height);
-        padding: var(--day-padding);
+        background: var(--background);
+        width: 100%;
     }
 
-    &__day-button {
-        --c: var(--day-button-color);
-        --b: var(--day-button-background);
+    &__row {
+        display: flex;
+        align-items: baseline;
+        flex: auto;
+    }
 
+    &__cell {
+        display: flex;
+        flex-direction: column;
+        width: calc(100% / 7);
+        align-items: var(--cell-align-items);
+        flex-direction: column;
+        min-height: var(--cell-height);
+        padding: var(--cell-padding);
+    }
+
+    &__day-number {
+        --c: var(--day-number-color);
+        --b: var(--day-number-background);
+
+        min-width: var(--day-number-min-width);
+        min-height: var(--day-number-min-height);
         transition: background 0.3s ease, color 0.3s ease;
         appearance: none;
         border: none;
-        border-radius: var(--day-button-border-radius);
+        border-radius: var(--day-number-border-radius);
         background: var(--b);
         color: var(--c);
         padding: 4px;
-        min-width: var(--day-button-min-width);
-        min-height: var(--day-button-min-height);
         font-family: inherit;
         font-size: inherit;
 
@@ -59,18 +70,18 @@
             cursor: pointer;
 
             &:hover {
-                --c: var(--day-button-color-hover);
-                --b: var(--day-button-background-hover);
+                --c: var(--day-number-color-hover);
+                --b: var(--day-number-background-hover);
             }
 
             &:focus {
-                --c: var(--day-button-color-focus);
-                --b: var(--day-button-background-focus);
+                --c: var(--day-number-color-focus);
+                --b: var(--day-number-background-focus);
             }
 
             &:active {
-                --c: var(--day-button-color-active);
-                --b: var(--day-button-background-active);
+                --c: var(--day-number-color-active);
+                --b: var(--day-number-background-active);
             }
         }
 

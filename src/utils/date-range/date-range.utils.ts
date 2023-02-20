@@ -19,3 +19,14 @@ export const isDateRangeOverlap = (
             timeRangeB.start <= timeRangeA.end)
     );
 };
+
+export const isDateRangeSameYear = (dateRange: B5rDateRange): boolean =>
+    dateRange.start.getFullYear() === dateRange.end.getFullYear();
+
+export const isDateRangeSameMonth = (dateRange: B5rDateRange): boolean =>
+    isDateRangeSameYear(dateRange) &&
+    dateRange.start.getMonth() === dateRange.end.getMonth();
+
+export const isDateRangeSameDate = (dateRange: B5rDateRange): boolean =>
+    isDateRangeSameMonth(dateRange) &&
+    dateRange.start.getDate() === dateRange.end.getDate();
