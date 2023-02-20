@@ -97,6 +97,8 @@ export class B5rMonthView implements CalendarView {
         ) {
             this.#setDatesOfMonthDisplayed(selectedDate);
             this.updateView();
+        } else {
+            // TODO: mettre à jour élément sélectionné (tabindex)
         }
 
         this.#pastSelectedDate = selectedDate;
@@ -262,13 +264,13 @@ export class B5rMonthView implements CalendarView {
         }
 
         this.refHeaderRow = document.createElement('div');
-        this.refHeaderRow.className = `${ROW_CLASS} ${ROW_HEADER_CLASS}`;
         this.refHeaderRow.role = 'row';
+        this.refHeaderRow.className = `${ROW_CLASS} ${ROW_HEADER_CLASS}`;
 
         [...this.#visibleDates].splice(0, 7).forEach((date) => {
             const refHeaderCell = document.createElement('div');
-            refHeaderCell.className = `${CELL_CLASS} ${CELL_HEADER_CLASS}`;
             refHeaderCell.role = 'columnheader';
+            refHeaderCell.className = `${CELL_CLASS} ${CELL_HEADER_CLASS}`;
             refHeaderCell.setAttribute('aria-readonly', 'true');
             refHeaderCell.setAttribute('aria-hidden', 'columnheader');
             refHeaderCell.setAttribute(
@@ -334,8 +336,8 @@ export class B5rMonthView implements CalendarView {
 
     #createCell(refRow: HTMLElement, date: Date): void {
         const refCell = document.createElement('div');
-        refCell.className = CELL_CLASS;
         refCell.role = 'gridcell';
+        refCell.className = CELL_CLASS;
 
         const isSelectedDate = isDateRangeSameDate({
             start: date,
@@ -365,6 +367,8 @@ export class B5rMonthView implements CalendarView {
         );
 
         refCell.addEventListener('click', this.#onDayClick.bind(this, date));
+
+        // TODO: Ajouter écouter d'événements keydown pour la navigation avec les flèches
 
         if (isTodayDate(date, this.timeZone)) {
             refCell.classList.add(CELL_TODAY_CLASS);
