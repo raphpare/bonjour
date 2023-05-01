@@ -1,6 +1,6 @@
 {
     "name": "b5r-bonjour",
-    "version": "0.0.0-beta.17",
+    "version": "0.0.0-beta.19",
     "description": "Accessible and dependency-free calendar JavaScript library: import the code you need and use your UI controls.",
     "keywords": [
         "calendar",
@@ -74,9 +74,9 @@
         "rimraf": "^4.1.2",
         "typescript": "^4.9.3"
     },
-    "browserslist": {
-        "browsers": "last 4 versions, > 1%"
-    },
+    "browserslist": [
+        "last 4 versions, > 1%"
+    ],
     "bugs": {
         "url": "https://github.com/raphpare/bonjour/issues"
     },

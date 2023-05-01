@@ -39,21 +39,19 @@
         .b5r-week__columns {
             position: absolute;
             top: 0;
-            right: 0;
             bottom: 0;
-            left: 0;
+            width: 100%;
         }
     }
 
     &__background {
         position: absolute;
         top: 0;
-        right: 0;
         bottom: 0;
-        left: 0;
         display: flex;
         padding-left: var(--time-area-width);
         background: var(--background);
+        width: 100%;
     }
 
     &__empty-area::before,
@@ -187,6 +185,7 @@
 
         transition: color 0.3s ease, background 0.3s ease;
         appearance: none;
+        margin: 0;
         overflow: hidden;
         padding: 0;
         border: none;
