@@ -10,7 +10,7 @@
     --day-number-color-focus: var(--day-number-color-hover);
     --day-number-color-active: var(--day-number-color-focus);
     --day-number-background: inherit;
-    --day-number-background-hover: var(--day-number-background);
+    --day-number-background-hover: red;
     --day-number-background-focus: var(--day-number-background-hover);
     --day-number-background-active: var(--day-number-background-focus);
     --today-color: currentColor;
@@ -43,8 +43,8 @@
         align-items: baseline;
         flex: auto;
 
-        &.--selected-row {
-            background-color: gray;
+        &--selected {
+            background-color: rgb(237, 237, 237);
         }
     }
 
@@ -57,12 +57,40 @@
         min-height: var(--cell-height);
         padding: var(--cell-padding);
 
-        &[aria-selected='true'] {
+        &:focus {
             .b5r-month__day-number {
+                --c: var(--day-number-color-hover);
+                --b: var(--day-number-background-hover);
+            }
+        }
+
+        &:hover {
+            .b5r-month__day-number {
+                --c: var(--day-number-color-focus);
+                --b: var(--day-number-background-focus);
+            }
+        }
+
+        &:active {
+            .b5r-month__day-number {
+                --c: var(--day-number-color-active);
+                --b: var(--day-number-background-active);
+            }
+        }
+
+        &--today {
+            .b5r-month__day-number {
+                --c: var(--today-color);
+                --b: var(--today-background);
+            }
+        }
+
+        &--selected {
+            .b5r-month__day-number {
+                --c: var(--day-number-color-selected);
+                --b: var(--day-number-background-selected);
                 border-radius: var(--day-number-border-selected-radius);
                 border: 1px solid var(--day-number-border-selected);
-                background-color: var(--day-number-background-selected);
-                color: var(--day-number-color-selected);
             }
         }
     }
@@ -85,26 +113,6 @@
 
         &:not(:disabled) {
             cursor: pointer;
-
-            &:hover {
-                --c: var(--day-number-color-hover);
-                --b: var(--day-number-background-hover);
-            }
-
-            &:focus {
-                --c: var(--day-number-color-focus);
-                --b: var(--day-number-background-focus);
-            }
-
-            &:active {
-                --c: var(--day-number-color-active);
-                --b: var(--day-number-background-active);
-            }
-        }
-
-        &--today {
-            --c: var(--today-color);
-            --b: var(--today-background);
         }
     }
 

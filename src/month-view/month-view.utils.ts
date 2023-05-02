@@ -4,6 +4,7 @@ import { B5rMonthOptions } from './month-view.def';
 export const ROOT_CLASS = 'b5r-month';
 export const BOBY_CLASS = `${ROOT_CLASS}__body`;
 export const ROW_CLASS = `${ROOT_CLASS}__row`;
+export const ROW_SELECTED_CLASS = `${ROW_CLASS}--selected`;
 export const ROW_HEADER_CLASS = `${ROW_CLASS}--header`;
 export const CELL_CLASS = `${ROOT_CLASS}__cell`;
 export const CELL_HEADER_CLASS = `${CELL_CLASS}--header`;

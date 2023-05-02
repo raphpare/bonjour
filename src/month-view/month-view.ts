@@ -7,6 +7,7 @@ import {
     B5R_MONTH_VIEW_STYLE_ID,
     CELL_CLASS,
     CELL_HEADER_CLASS,
+    CELL_SELECTED_CLASS,
     CELL_TODAY_CLASS,
     DAY_NUMBER_CLASS,
     DAY_NUMBER_TODAY_CLASS,
@@ -19,6 +20,7 @@ import {
     ROOT_CLASS,
     ROW_CLASS,
     ROW_HEADER_CLASS,
+    ROW_SELECTED_CLASS,
 } from './month-view.utils';
 import cssText from './month-view.css';
 import {
@@ -101,7 +103,7 @@ export class B5rMonthView implements CalendarView {
         } else {
             // TODO: mettre à jour élément sélectionné (tabindex)
             document.querySelectorAll(`[role="row"]`).forEach((element) => {
-                element.classList.remove('--selected-row');
+                element.classList.remove(ROW_SELECTED_CLASS);
             });
 
             document
@@ -113,10 +115,12 @@ export class B5rMonthView implements CalendarView {
                     ) {
                         element.setAttribute('tabindex', '0');
                         element.setAttribute('aria-selected', 'true');
-                        element.parentElement.classList.add('--selected-row');
+                        element.classList.add(CELL_SELECTED_CLASS);
+                        element.parentElement.classList.add(ROW_SELECTED_CLASS);
                     } else {
                         element.setAttribute('tabindex', '-1');
                         element.setAttribute('aria-selected', 'false');
+                        element.classList.remove(CELL_SELECTED_CLASS);
                     }
                 });
         }
@@ -332,9 +336,6 @@ export class B5rMonthView implements CalendarView {
         let indexCurrentWeekRow = 0;
 
         this.#visibleDates.forEach((vd) => {
-            // eslint-disable-next-line no-console
-            console.log(vd);
-
             if (indexDayOfWeek === 8) {
                 indexCurrentWeekRow++;
                 this.refWeekRows.push(this.#getWeekRowElement());
@@ -374,15 +375,16 @@ export class B5rMonthView implements CalendarView {
         );
 
         if (isSelectedDate) {
-            refRow.classList.add('--selected-row');
+            refRow.classList.add(ROW_SELECTED_CLASS);
+            refCell.classList.add(CELL_SELECTED_CLASS);
         }
 
         const refDayNumber = document.createElement('span');
         refDayNumber.className = DAY_NUMBER_CLASS;
         refDayNumber.innerText = date.getDate().toString();
+
         refCell.append(refDayNumber);
 
-        refCell.className = CELL_CLASS;
         refCell.setAttribute('data-date', date.toISOString());
         refDayNumber.setAttribute(
             'aria-label',
@@ -404,32 +406,7 @@ export class B5rMonthView implements CalendarView {
             refDayNumber.classList.add(DAY_NUMBER_TODAY_CLASS);
         }
 
-        this.#createEventsForDay(refCell, date);
-
         refRow.append(refCell);
-    }
-
-    #createEventsForDay(refDay: HTMLElement, _date: Date): void {
-        const refListEvents = document.createElement('ul');
-        refListEvents.className = LIST_EVENTS_CLASS;
-
-        // TODO: utiliser this.#events pour faire la boucle
-        for (let index = 0; index < 2; index++) {
-            const refEvent = document.createElement('li');
-            refEvent.className = EVENT_CLASS;
-
-            const refEventButton = document.createElement('span');
-            refEventButton.className = EVENT_BUTTON_CLASS;
-
-            refEventButton.innerHTML = `<span class="${HIDDEN_CLASS}">#Event Name</soan>`;
-
-            refEvent.append(refEventButton);
-            refListEvents.append(refEvent);
-
-            this.refEvents.push(refEvent);
-        }
-
-        refDay.append(refListEvents);
     }
 
     #getWeekday(date: Date, format: B5rWeekdayFormat): string {
