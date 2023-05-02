@@ -11,6 +11,7 @@ export const getMonthViewDefaultTemplate = (options: {
     const refBtnNext = document.createElement('button');
     const refMonthView = document.createElement('div');
 
+    refRoot.setAttribute('style', `width: 300px`);
     refHeader.setAttribute(
         'style',
         `display: flex; gap: 16px; margin-bottom: 16px`
@@ -37,8 +38,7 @@ export const getMonthViewDefaultTemplate = (options: {
     });
 
     monthView.onDayClick((event, date) => {
-        // eslint-disable-next-line no-console
-        console.log('click', event, date);
+        monthView.selectedDate = date;
     });
 
     refHeader.append(refBtnToday);

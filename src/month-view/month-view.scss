@@ -16,6 +16,10 @@
     --today-color: currentColor;
     --today-background: rgb(221, 245, 255);
     --background: rgba(0, 0, 0, 0);
+    --day-number-color-selected: currentColor;
+    --day-number-background-selected: yellow;
+    --day-number-border-selected: orange;
+    --day-number-border-selected-radius: 3px;
 
     &__header {
         display: grid;
@@ -38,6 +42,10 @@
         display: flex;
         align-items: baseline;
         flex: auto;
+
+        &.--selected-row {
+            background-color: gray;
+        }
     }
 
     &__cell {
@@ -48,6 +56,15 @@
         flex-direction: column;
         min-height: var(--cell-height);
         padding: var(--cell-padding);
+
+        &[aria-selected='true'] {
+            .b5r-month__day-number {
+                border-radius: var(--day-number-border-selected-radius);
+                border: 1px solid var(--day-number-border-selected);
+                background-color: var(--day-number-background-selected);
+                color: var(--day-number-color-selected);
+            }
+        }
     }
 
     &__day-number {

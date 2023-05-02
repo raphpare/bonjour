@@ -14,4 +14,17 @@ const Template: StoryFn = (args): HTMLElement => {
 };
 
 export const Default = Template.bind({});
-Default.storyName = 'TODO';
+
+const WithSelectDateDayClickCallbackTemplate: StoryFn = (args): HTMLElement => {
+    const { refRoot, monthView } = getMonthViewDefaultTemplate({
+        monthOptions: args,
+    });
+    monthView.onDayClick((_event, date) => {
+        monthView.selectedDate = date;
+    });
+    return refRoot;
+};
+
+export const WithSelectDateDayClickCallback =
+    WithSelectDateDayClickCallbackTemplate.bind({});
+WithSelectDateDayClickCallback.args = Default.args;

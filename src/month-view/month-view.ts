@@ -15,6 +15,7 @@ import {
     EVENT_CLASS,
     HIDDEN_CLASS,
     LIST_EVENTS_CLASS,
+    ROLE_GRID_CELL,
     ROOT_CLASS,
     ROW_CLASS,
     ROW_HEADER_CLASS,
@@ -99,6 +100,25 @@ export class B5rMonthView implements CalendarView {
             this.updateView();
         } else {
             // TODO: mettre à jour élément sélectionné (tabindex)
+            document.querySelectorAll(`[role="row"]`).forEach((element) => {
+                element.classList.remove('--selected-row');
+            });
+
+            document
+                .querySelectorAll(`[role="${ROLE_GRID_CELL}"]`)
+                .forEach((element) => {
+                    if (
+                        selectedDate.toISOString().slice(0, 10) ===
+                        element.getAttribute('data-date').slice(0, 10)
+                    ) {
+                        element.setAttribute('tabindex', '0');
+                        element.setAttribute('aria-selected', 'true');
+                        element.parentElement.classList.add('--selected-row');
+                    } else {
+                        element.setAttribute('tabindex', '-1');
+                        element.setAttribute('aria-selected', 'false');
+                    }
+                });
         }
 
         this.#pastSelectedDate = selectedDate;
@@ -312,6 +332,9 @@ export class B5rMonthView implements CalendarView {
         let indexCurrentWeekRow = 0;
 
         this.#visibleDates.forEach((vd) => {
+            // eslint-disable-next-line no-console
+            console.log(vd);
+
             if (indexDayOfWeek === 8) {
                 indexCurrentWeekRow++;
                 this.refWeekRows.push(this.#getWeekRowElement());
@@ -336,7 +359,7 @@ export class B5rMonthView implements CalendarView {
 
     #createCell(refRow: HTMLElement, date: Date): void {
         const refCell = document.createElement('div');
-        refCell.role = 'gridcell';
+        refCell.role = ROLE_GRID_CELL;
         refCell.className = CELL_CLASS;
 
         const isSelectedDate = isDateRangeSameDate({
@@ -349,6 +372,10 @@ export class B5rMonthView implements CalendarView {
             'aria-selected',
             isSelectedDate ? 'true' : 'false'
         );
+
+        if (isSelectedDate) {
+            refRow.classList.add('--selected-row');
+        }
 
         const refDayNumber = document.createElement('span');
         refDayNumber.className = DAY_NUMBER_CLASS;
@@ -366,7 +393,9 @@ export class B5rMonthView implements CalendarView {
             })
         );
 
-        refCell.addEventListener('click', this.#onDayClick.bind(this, date));
+        refCell.addEventListener('click', (event: PointerEvent) => {
+            this.#onDayClick(event, date);
+        });
 
         // TODO: Ajouter écouter d'événements keydown pour la navigation avec les flèches
 
@@ -466,8 +495,6 @@ export class B5rMonthView implements CalendarView {
     }
 
     #onDayClick(event: PointerEvent, date: Date): void {
-        if (this.#callbacks.dayClickCallbacks.length === 0) return;
-
         this.#callbacks.dayClickCallbacks.forEach(
             (callback: (event: PointerEvent, date: Date) => void) =>
                 callback(event, date)
