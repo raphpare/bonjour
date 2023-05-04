@@ -38,7 +38,9 @@ export const getMonthViewDefaultTemplate = (options: {
     });
 
     monthView.onDayClick((event, date) => {
-        monthView.selectedDate = date;
+        // eslint-disable-next-line no-console
+        console.log(date);
+        monthView.currentDate = date;
     });
 
     refHeader.append(refBtnToday);

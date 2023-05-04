@@ -6,6 +6,7 @@ import { injectStyleTag } from '../utils/stylesheets';
 import {
     B5R_MONTH_VIEW_STYLE_ID,
     CELL_CLASS,
+    CELL_CURRENT_CLASS,
     CELL_HEADER_CLASS,
     CELL_SELECTED_CLASS,
     CELL_TODAY_CLASS,
@@ -15,6 +16,12 @@ import {
     EVENT_BUTTON_CLASS,
     EVENT_CLASS,
     HIDDEN_CLASS,
+    KEY_ARROW_DOWN,
+    KEY_ARROW_LEFT,
+    KEY_ARROW_RIGHT,
+    KEY_ARROW_UP,
+    KEY_ENTER,
+    KEY_SPACE,
     LIST_EVENTS_CLASS,
     ROLE_GRID_CELL,
     ROOT_CLASS,
@@ -58,6 +65,7 @@ export class B5rMonthView implements CalendarView {
         dayClickCallbacks: [],
     };
     #options: B5rMonthOptions = {};
+    #keydownElementList: HTMLElement[] = [];
 
     constructor(element: HTMLElement, options?: B5rMonthOptions) {
         injectStyleTag(B5R_MONTH_VIEW_STYLE_ID, cssText);
@@ -70,16 +78,14 @@ export class B5rMonthView implements CalendarView {
         this.refRoot = element;
         this.refRoot.role = 'grid';
 
-        this.selectedDate =
+        const date =
             options.selectedDate ||
             options.currentDate ||
             newDate({ timeZone: options.timeZone });
 
-        this.#pastSelectedDate = new Date(
-            this.#selectedDate.getMilliseconds() - DAY_MS * 365
-        );
+        this.#pastSelectedDate = date;
 
-        this.currentDate = this.selectedDate;
+        this.currentDate = date;
 
         this.#locale = options.locale;
         this.timeZone = options.timeZone;
@@ -101,28 +107,11 @@ export class B5rMonthView implements CalendarView {
             this.#setDatesOfMonthDisplayed(selectedDate);
             this.updateView();
         } else {
-            // TODO: mettre à jour élément sélectionné (tabindex)
             document.querySelectorAll(`[role="row"]`).forEach((element) => {
                 element.classList.remove(ROW_SELECTED_CLASS);
             });
 
-            document
-                .querySelectorAll(`[role="${ROLE_GRID_CELL}"]`)
-                .forEach((element) => {
-                    if (
-                        selectedDate.toISOString().slice(0, 10) ===
-                        element.getAttribute('data-date').slice(0, 10)
-                    ) {
-                        element.setAttribute('tabindex', '0');
-                        element.setAttribute('aria-selected', 'true');
-                        element.classList.add(CELL_SELECTED_CLASS);
-                        element.parentElement.classList.add(ROW_SELECTED_CLASS);
-                    } else {
-                        element.setAttribute('tabindex', '-1');
-                        element.setAttribute('aria-selected', 'false');
-                        element.classList.remove(CELL_SELECTED_CLASS);
-                    }
-                });
+            this.#updateSelectedElement();
         }
 
         this.#pastSelectedDate = selectedDate;
@@ -133,8 +122,8 @@ export class B5rMonthView implements CalendarView {
     }
 
     set currentDate(currentDate: Date) {
-        this.selectedDate = currentDate;
         this.#currentDate = currentDate;
+        this.selectedDate = currentDate;
     }
 
     get currentDate(): Date {
@@ -267,6 +256,8 @@ export class B5rMonthView implements CalendarView {
     }
 
     #createTemplate(): HTMLElement {
+        this.#setDatesOfMonthDisplayed(this.#selectedDate);
+
         if (!this.refRoot) {
             this.refRoot = document.createElement('div');
         }
@@ -317,18 +308,6 @@ export class B5rMonthView implements CalendarView {
         if (this.refWeekRows) {
             this.refWeekRows.forEach((r) => r.remove());
             this.refWeekRows = [];
-
-            document
-                .querySelectorAll(`.${DAY_NUMBER_CLASS}`)
-                .forEach((element) => {
-                    element.removeEventListener(
-                        'click',
-                        this.#onDayClick.bind(
-                            this,
-                            new Date(element.getAttribute('data-date'))
-                        )
-                    );
-                });
         }
 
         let indexDayOfWeek = 1;
@@ -368,16 +347,16 @@ export class B5rMonthView implements CalendarView {
             end: this.selectedDate,
         });
 
+        const isCurrentDate = isDateRangeSameDate({
+            start: date,
+            end: this.currentDate,
+        });
+
         refCell.setAttribute('tabindex', isSelectedDate ? '0' : '-1');
         refCell.setAttribute(
             'aria-selected',
             isSelectedDate ? 'true' : 'false'
         );
-
-        if (isSelectedDate) {
-            refRow.classList.add(ROW_SELECTED_CLASS);
-            refCell.classList.add(CELL_SELECTED_CLASS);
-        }
 
         const refDayNumber = document.createElement('span');
         refDayNumber.className = DAY_NUMBER_CLASS;
@@ -385,7 +364,7 @@ export class B5rMonthView implements CalendarView {
 
         refCell.append(refDayNumber);
 
-        refCell.setAttribute('data-date', date.toISOString());
+        refCell.setAttribute('data-date', date.toISOString().slice(0, 10));
         refDayNumber.setAttribute(
             'aria-label',
             date.toLocaleString(this.#locale, {
@@ -395,18 +374,162 @@ export class B5rMonthView implements CalendarView {
             })
         );
 
-        refCell.addEventListener('click', (event: PointerEvent) => {
-            this.#onDayClick(event, date);
-        });
-
-        // TODO: Ajouter écouter d'événements keydown pour la navigation avec les flèches
-
         if (isTodayDate(date, this.timeZone)) {
             refCell.classList.add(CELL_TODAY_CLASS);
             refDayNumber.classList.add(DAY_NUMBER_TODAY_CLASS);
         }
 
+        if (isCurrentDate) {
+            refCell.classList.add(CELL_CURRENT_CLASS);
+        }
+
+        if (isSelectedDate) {
+            refRow.classList.add(ROW_SELECTED_CLASS);
+            refCell.classList.add(CELL_SELECTED_CLASS);
+            this.#addEventListenerKeydow(refCell);
+        }
+
+        refCell.addEventListener('click', (event: PointerEvent) => {
+            this.#onDayClick(event, date);
+        });
+
         refRow.append(refCell);
+    }
+
+    #handlerEventKeydown(event: KeyboardEvent): void {
+        const element = event.target as HTMLElement;
+
+        // eslint-disable-next-line no-console
+        console.log(event.code);
+
+        const updateSelectedElement = (
+            element: HTMLElement,
+            jours: number
+        ): void => {
+            this.selectedDate = this.#addDays(
+                element.getAttribute('data-date'),
+                jours
+            );
+        };
+
+        switch (event.code) {
+            case KEY_ARROW_LEFT:
+                updateSelectedElement(element, -1);
+                break;
+            case KEY_ARROW_RIGHT:
+                updateSelectedElement(element, 1);
+                break;
+            case KEY_ARROW_UP:
+                updateSelectedElement(element, -7);
+                break;
+            case KEY_ARROW_DOWN:
+                updateSelectedElement(element, 7);
+                break;
+            case KEY_ENTER:
+            case KEY_SPACE:
+                this.#updateCurrentDate(element);
+                break;
+        }
+    }
+
+    #updateCurrentDate(element: Element) {
+        const date = element.getAttribute('data-date');
+        document
+            .querySelector(`.${CELL_CURRENT_CLASS}`)
+            .classList.remove(CELL_CURRENT_CLASS);
+
+        this.currentDate = new Date(`${date}:00:00:000`);
+        element.classList.add(CELL_CURRENT_CLASS);
+    }
+
+    #updateSelectedElement() {
+        if (!this.refRoot) return;
+
+        this.#removeAllKeydownEventListener();
+
+        const pastElement: HTMLElement = this.refRoot.querySelector(
+            `[data-date="${this.#pastSelectedDate.toISOString().slice(0, 10)}"]`
+        );
+
+        const nextElement: HTMLElement = this.refRoot.querySelector(
+            `[data-date="${this.#selectedDate.toISOString().slice(0, 10)}"]`
+        );
+
+        const pastElementIsFocus = pastElement === document.activeElement;
+
+        if (pastElement) {
+            pastElement.setAttribute('tabindex', '-1');
+            pastElement.removeAttribute('aria-selected');
+            pastElement.classList.remove(CELL_SELECTED_CLASS);
+        }
+
+        if (nextElement) {
+            nextElement.setAttribute('tabindex', '0');
+            nextElement.setAttribute('aria-selected', '');
+            nextElement.classList.add(CELL_SELECTED_CLASS);
+
+            this.#addEventListenerKeydow(nextElement);
+
+            if (pastElementIsFocus) {
+                nextElement.focus();
+            }
+        }
+
+        // if (
+        //     selectedDate.toISOString().slice(0, 10) ===
+        //     element.getAttribute('data-date')
+        // ) {
+        //     element.setAttribute('tabindex', '0');
+        //     element.setAttribute('aria-selected', 'true');
+        //     element.classList.add(CELL_SELECTED_CLASS);
+        //     element.parentElement.classList.add(ROW_SELECTED_CLASS);
+
+        //     this.#addEventListenerKeydow(element);
+        //     (element as HTMLElement)?.focus();
+        // } else {
+        //     element.setAttribute('tabindex', '-1');
+        //     element.setAttribute('aria-selected', 'false');
+        // }
+
+        // if (
+        //     this.currentDate.toISOString().slice(0, 10) ===
+        //     element.getAttribute('data-date')
+        // ) {
+        //
+        // }
+    }
+
+    #addEventListenerKeydow(element: HTMLElement | Element): void {
+        console.log('add');
+        element.addEventListener(
+            'keydown',
+            this.#handlerEventKeydown.bind(this)
+        );
+
+        this.#keydownElementList.push(element as HTMLElement);
+    }
+
+    #removeAllKeydownEventListener(): void {
+        console.log(
+            'remove',
+            this.#keydownElementList[0].getAttribute('data-date')
+        );
+
+        this.#keydownElementList.forEach((element) => {
+            element.removeEventListener(
+                'keydown',
+                this.#handlerEventKeydown.bind(this)
+            );
+        });
+
+        this.#keydownElementList = [];
+    }
+
+    #addDays(date: string, days: number): Date {
+        const newDate = new Date(`${date}:00:00:000`);
+
+        newDate.setDate(newDate.getDate() + days);
+        return newDate;
     }
 
     #getWeekday(date: Date, format: B5rWeekdayFormat): string {

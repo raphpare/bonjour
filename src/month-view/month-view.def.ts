@@ -42,6 +42,7 @@ export interface B5rMonthDesignTokens {
     ['--today-color']?: string;
     ['--today-background']?: string;
     ['--background']?: string;
+    ['--background-week-selected']?: string;
 }
 
 export type B5rDayClickCallback = (event: PointerEvent, date: Date) => void;

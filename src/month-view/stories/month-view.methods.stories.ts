@@ -20,7 +20,7 @@ const WithSelectDateDayClickCallbackTemplate: StoryFn = (args): HTMLElement => {
         monthOptions: args,
     });
     monthView.onDayClick((_event, date) => {
-        monthView.selectedDate = date;
+        monthView.currentDate = date;
     });
     return refRoot;
 };

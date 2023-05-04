@@ -10,15 +10,15 @@
     --day-number-color-focus: var(--day-number-color-hover);
     --day-number-color-active: var(--day-number-color-focus);
     --day-number-background: inherit;
-    --day-number-background-hover: red;
+    --day-number-background-hover: rgb(149, 148, 148);
     --day-number-background-focus: var(--day-number-background-hover);
     --day-number-background-active: var(--day-number-background-focus);
     --today-color: currentColor;
     --today-background: rgb(221, 245, 255);
     --background: rgba(0, 0, 0, 0);
+    --background-week-selected: transparent;
     --day-number-color-selected: currentColor;
     --day-number-background-selected: yellow;
-    --day-number-border-selected: orange;
     --day-number-border-selected-radius: 3px;
 
     &__header {
@@ -44,7 +44,7 @@
         flex: auto;
 
         &--selected {
-            background-color: rgb(237, 237, 237);
+            background-color: var(--background-week-selected);
         }
     }
 
@@ -85,12 +85,16 @@
             }
         }
 
-        &--selected {
+        &--current {
             .b5r-month__day-number {
                 --c: var(--day-number-color-selected);
                 --b: var(--day-number-background-selected);
-                border-radius: var(--day-number-border-selected-radius);
-                border: 1px solid var(--day-number-border-selected);
+            }
+        }
+
+        &--selected {
+            .b5r-month__day-number {
+                border: 1px dashed gray;
             }
         }
     }
