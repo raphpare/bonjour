@@ -10,19 +10,16 @@ import {
     CELL_HEADER_CLASS,
     CELL_SELECTED_CLASS,
     CELL_TODAY_CLASS,
+    DATA_DATE,
     DAY_NUMBER_CLASS,
     DAY_NUMBER_TODAY_CLASS,
     DEFAULT_OPTIONS,
-    EVENT_BUTTON_CLASS,
-    EVENT_CLASS,
-    HIDDEN_CLASS,
     KEY_ARROW_DOWN,
     KEY_ARROW_LEFT,
     KEY_ARROW_RIGHT,
     KEY_ARROW_UP,
     KEY_ENTER,
     KEY_SPACE,
-    LIST_EVENTS_CLASS,
     ROLE_GRID_CELL,
     ROOT_CLASS,
     ROW_CLASS,
@@ -42,8 +39,9 @@ import { B5rEventClickCallback, B5rUpdateCallback } from '../models/callbacks';
 import { B5rDateRange } from '../models/date-range';
 import { addDesignTokenOnElement } from '../week-view/week-view.utils';
 import { isDateRangeSameDate, isDateRangeSameMonth } from '../utils/date-range';
-import { DAY_MS } from '../utils/milliseconds';
 
+const convertDateToString = (date: Date): string =>
+    date.toISOString().slice(0, 10);
 export class B5rMonthView implements CalendarView {
     refRoot: HTMLElement = null;
     refHeaderRow: HTMLElement = null;
@@ -65,7 +63,8 @@ export class B5rMonthView implements CalendarView {
         dayClickCallbacks: [],
     };
     #options: B5rMonthOptions = {};
-    #keydownElementList: HTMLElement[] = [];
+    #keydowEvent: () => void;
+    #refWithKeydownEvent: Set<HTMLElement> = new Set();
 
     constructor(element: HTMLElement, options?: B5rMonthOptions) {
         injectStyleTag(B5R_MONTH_VIEW_STYLE_ID, cssText);
@@ -78,18 +77,18 @@ export class B5rMonthView implements CalendarView {
         this.refRoot = element;
         this.refRoot.role = 'grid';
 
-        const date =
+        const originalDate: Date =
             options.selectedDate ||
             options.currentDate ||
             newDate({ timeZone: options.timeZone });
-
-        this.#pastSelectedDate = date;
-
-        this.currentDate = date;
+        this.#pastSelectedDate = originalDate;
+        this.currentDate = originalDate;
 
         this.#locale = options.locale;
         this.timeZone = options.timeZone;
         this.#options = options;
+
+        this.#keydowEvent = this.#onKeydown.bind(this) as () => void;
 
         this.#createTemplate();
         this.#setDesignTokens(options?.designTokens);
@@ -107,11 +106,7 @@ export class B5rMonthView implements CalendarView {
             this.#setDatesOfMonthDisplayed(selectedDate);
             this.updateView();
         } else {
-            document.querySelectorAll(`[role="row"]`).forEach((element) => {
-                element.classList.remove(ROW_SELECTED_CLASS);
-            });
-
-            this.#updateSelectedElement();
+            this.#updateSelectedCell();
         }
 
         this.#pastSelectedDate = selectedDate;
@@ -132,7 +127,8 @@ export class B5rMonthView implements CalendarView {
 
     set locale(locale: string) {
         this.#locale = locale;
-        this.updateView();
+        this.#createHeaderTemplate();
+        this.#createBodyTemplate();
     }
 
     get locale(): string {
@@ -228,6 +224,7 @@ export class B5rMonthView implements CalendarView {
 
     destroy(): void {
         this.deleteAllEvents();
+        this.#removeAllKeydownEventListener();
         this.refRoot.innerHTML = '';
         this.refRoot.classList.remove(ROOT_CLASS);
     }
@@ -268,6 +265,7 @@ export class B5rMonthView implements CalendarView {
         if (!this.refHeaderRow) {
             this.#createHeaderTemplate();
         }
+
         this.#createBodyTemplate();
 
         return this.refRoot;
@@ -305,6 +303,12 @@ export class B5rMonthView implements CalendarView {
     }
 
     #createBodyTemplate(): void {
+        const pastSelectedCell: HTMLElement = this.#getCell(
+            this.#pastSelectedDate
+        );
+        const pastSelectedCellIsFocus =
+            pastSelectedCell === document.activeElement;
+
         if (this.refWeekRows) {
             this.refWeekRows.forEach((r) => r.remove());
             this.refWeekRows = [];
@@ -327,6 +331,11 @@ export class B5rMonthView implements CalendarView {
 
             indexDayOfWeek++;
         });
+
+        const nextSelectedCell: HTMLElement = this.#getCell(this.#selectedDate);
+        if (pastSelectedCellIsFocus) {
+            nextSelectedCell?.focus();
+        }
     }
 
     #getWeekRowElement(): HTMLElement {
@@ -364,7 +373,7 @@ export class B5rMonthView implements CalendarView {
 
         refCell.append(refDayNumber);
 
-        refCell.setAttribute('data-date', date.toISOString().slice(0, 10));
+        refCell.setAttribute(DATA_DATE, convertDateToString(date));
         refDayNumber.setAttribute(
             'aria-label',
             date.toLocaleString(this.#locale, {
@@ -386,7 +395,7 @@ export class B5rMonthView implements CalendarView {
         if (isSelectedDate) {
             refRow.classList.add(ROW_SELECTED_CLASS);
             refCell.classList.add(CELL_SELECTED_CLASS);
-            this.#addEventListenerKeydow(refCell);
+            this.#addKeydowEventListener(refCell);
         }
 
         refCell.addEventListener('click', (event: PointerEvent) => {
@@ -396,44 +405,14 @@ export class B5rMonthView implements CalendarView {
         refRow.append(refCell);
     }
 
-    #handlerEventKeydown(event: KeyboardEvent): void {
-        const element = event.target as HTMLElement;
-
-        // eslint-disable-next-line no-console
-        console.log(event.code);
-
-        const updateSelectedElement = (
-            element: HTMLElement,
-            jours: number
-        ): void => {
-            this.selectedDate = this.#addDays(
-                element.getAttribute('data-date'),
-                jours
-            );
-        };
-
-        switch (event.code) {
-            case KEY_ARROW_LEFT:
-                updateSelectedElement(element, -1);
-                break;
-            case KEY_ARROW_RIGHT:
-                updateSelectedElement(element, 1);
-                break;
-            case KEY_ARROW_UP:
-                updateSelectedElement(element, -7);
-                break;
-            case KEY_ARROW_DOWN:
-                updateSelectedElement(element, 7);
-                break;
-            case KEY_ENTER:
-            case KEY_SPACE:
-                this.#updateCurrentDate(element);
-                break;
-        }
+    #getCell(date: Date): HTMLElement {
+        return this.refRoot.querySelector(
+            `.${CELL_CLASS}[${DATA_DATE}="${convertDateToString(date)}"]`
+        );
     }
 
     #updateCurrentDate(element: Element) {
-        const date = element.getAttribute('data-date');
+        const date = element.getAttribute(DATA_DATE);
         document
             .querySelector(`.${CELL_CURRENT_CLASS}`)
             .classList.remove(CELL_CURRENT_CLASS);
@@ -442,87 +421,36 @@ export class B5rMonthView implements CalendarView {
         element.classList.add(CELL_CURRENT_CLASS);
     }
 
-    #updateSelectedElement() {
+    #updateSelectedCell() {
         if (!this.refRoot) return;
 
-        this.#removeAllKeydownEventListener();
-
-        const pastElement: HTMLElement = this.refRoot.querySelector(
-            `[data-date="${this.#pastSelectedDate.toISOString().slice(0, 10)}"]`
+        const pastSelectedCell: HTMLElement = this.#getCell(
+            this.#pastSelectedDate
         );
 
-        const nextElement: HTMLElement = this.refRoot.querySelector(
-            `[data-date="${this.#selectedDate.toISOString().slice(0, 10)}"]`
-        );
+        const nextSelectedCell: HTMLElement = this.#getCell(this.#selectedDate);
 
-        const pastElementIsFocus = pastElement === document.activeElement;
+        const pastSelectedCellIsFocus =
+            pastSelectedCell === document.activeElement;
 
-        if (pastElement) {
-            pastElement.setAttribute('tabindex', '-1');
-            pastElement.removeAttribute('aria-selected');
-            pastElement.classList.remove(CELL_SELECTED_CLASS);
+        if (pastSelectedCell) {
+            pastSelectedCell.setAttribute('tabindex', '-1');
+            pastSelectedCell.setAttribute('aria-selected', 'false');
+            pastSelectedCell.classList.remove(CELL_SELECTED_CLASS);
+            this.#removeKeydowEventListener(pastSelectedCell);
         }
 
-        if (nextElement) {
-            nextElement.setAttribute('tabindex', '0');
-            nextElement.setAttribute('aria-selected', '');
-            nextElement.classList.add(CELL_SELECTED_CLASS);
+        if (nextSelectedCell) {
+            nextSelectedCell.setAttribute('tabindex', '0');
+            nextSelectedCell.setAttribute('aria-selected', '');
+            nextSelectedCell.classList.add(CELL_SELECTED_CLASS);
 
-            this.#addEventListenerKeydow(nextElement);
-
-            if (pastElementIsFocus) {
-                nextElement.focus();
-            }
+            this.#addKeydowEventListener(nextSelectedCell);
         }
 
-        // if (
-        //     selectedDate.toISOString().slice(0, 10) ===
-        //     element.getAttribute('data-date')
-        // ) {
-        //     element.setAttribute('tabindex', '0');
-        //     element.setAttribute('aria-selected', 'true');
-        //     element.classList.add(CELL_SELECTED_CLASS);
-        //     element.parentElement.classList.add(ROW_SELECTED_CLASS);
-
-        //     this.#addEventListenerKeydow(element);
-        //     (element as HTMLElement)?.focus();
-        // } else {
-        //     element.setAttribute('tabindex', '-1');
-        //     element.setAttribute('aria-selected', 'false');
-        // }
-
-        // if (
-        //     this.currentDate.toISOString().slice(0, 10) ===
-        //     element.getAttribute('data-date')
-        // ) {
-        //
-        // }
-    }
-
-    #addEventListenerKeydow(element: HTMLElement | Element): void {
-        console.log('add');
-        element.addEventListener(
-            'keydown',
-            this.#handlerEventKeydown.bind(this)
-        );
-
-        this.#keydownElementList.push(element as HTMLElement);
-    }
-
-    #removeAllKeydownEventListener(): void {
-        console.log(
-            'remove',
-            this.#keydownElementList[0].getAttribute('data-date')
-        );
-
-        this.#keydownElementList.forEach((element) => {
-            element.removeEventListener(
-                'keydown',
-                this.#handlerEventKeydown.bind(this)
-            );
-        });
-
-        this.#keydownElementList = [];
+        if (pastSelectedCellIsFocus) {
+            nextSelectedCell?.focus();
+        }
     }
 
     #addDays(date: string, days: number): Date {
@@ -599,5 +527,52 @@ export class B5rMonthView implements CalendarView {
             (callback: (event: PointerEvent, date: Date) => void) =>
                 callback(event, date)
         );
+    }
+
+    #onKeydown(event: KeyboardEvent): void {
+        const refCell = event.target as HTMLElement;
+
+        const setSelectedDate = (dayToAdd: number): void => {
+            this.selectedDate = this.#addDays(
+                refCell.getAttribute(DATA_DATE),
+                dayToAdd
+            );
+        };
+
+        switch (event.code) {
+            case KEY_ARROW_LEFT:
+                setSelectedDate(-1);
+                break;
+            case KEY_ARROW_RIGHT:
+                setSelectedDate(1);
+                break;
+            case KEY_ARROW_UP:
+                setSelectedDate(-7);
+                break;
+            case KEY_ARROW_DOWN:
+                setSelectedDate(7);
+                break;
+            case KEY_ENTER:
+            case KEY_SPACE:
+                this.#updateCurrentDate(refCell);
+                break;
+        }
+    }
+
+    #addKeydowEventListener(refCell: HTMLElement): void {
+        refCell.addEventListener('keydown', this.#keydowEvent);
+        this.#refWithKeydownEvent.add(refCell);
+    }
+
+    #removeKeydowEventListener(refCell: HTMLElement): void {
+        refCell.removeEventListener('keydown', this.#keydowEvent);
+        this.#refWithKeydownEvent.delete(refCell);
+    }
+
+    #removeAllKeydownEventListener(): void {
+        Array.from(this.#refWithKeydownEvent).forEach((refCell) => {
+            refCell.removeEventListener('keydown', this.#keydowEvent);
+        });
+        this.#refWithKeydownEvent = new Set();
     }
 }

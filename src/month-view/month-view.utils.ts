@@ -18,6 +18,7 @@ export const EVENT_CLASS = `${ROOT_CLASS}__event`;
 export const EVENT_BUTTON_CLASS = `${ROOT_CLASS}__event-button`;
 export const HIDDEN_CLASS = `${ROOT_CLASS}__hidden`;
 export const ROLE_GRID_CELL = 'gridcell';
+export const DATA_DATE = 'data-date';
 export const KEY_ARROW_LEFT = 'ArrowLeft';
 export const KEY_ARROW_RIGHT = 'ArrowRight';
 export const KEY_ARROW_UP = 'ArrowUp';
