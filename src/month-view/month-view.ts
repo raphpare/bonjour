@@ -30,6 +30,7 @@ import cssText from './month-view.css';
 import {
     B5rDayClickCallback,
     B5rMonthCallbacks,
+    B5rMonthClassNames,
     B5rMonthDesignTokens,
     B5rMonthOptions,
     B5rWeekdayFormat,
@@ -39,6 +40,7 @@ import { B5rEventClickCallback, B5rUpdateCallback } from '../models/callbacks';
 import { B5rDateRange } from '../models/date-range';
 import { addDesignTokenOnElement } from '../week-view/week-view.utils';
 import { isDateRangeSameDate, isDateRangeSameMonth } from '../utils/date-range';
+import { B5rWeekClassNames } from '../types';
 
 const convertDateToString = (date: Date): string =>
     date.toISOString().slice(0, 10);
@@ -65,6 +67,7 @@ export class B5rMonthView implements CalendarView {
     #options: B5rMonthOptions = {};
     #keydowEvent: () => void;
     #refWithKeydownEvent: Set<HTMLElement> = new Set();
+    #classNames: B5rMonthClassNames = {};
 
     constructor(element: HTMLElement, options?: B5rMonthOptions) {
         injectStyleTag(B5R_MONTH_VIEW_STYLE_ID, cssText);
@@ -81,12 +84,14 @@ export class B5rMonthView implements CalendarView {
             options.selectedDate ||
             options.currentDate ||
             newDate({ timeZone: options.timeZone });
+
         this.#pastSelectedDate = originalDate;
         this.currentDate = originalDate;
 
         this.#locale = options.locale;
         this.timeZone = options.timeZone;
         this.#options = options;
+        this.#classNames = options.classNames;
 
         this.#keydowEvent = this.#onKeydown.bind(this) as () => void;
 
@@ -214,8 +219,6 @@ export class B5rMonthView implements CalendarView {
         let indexEvent = this.refEvents.length;
         while (indexEvent--) {
             const refEvent = this.refEvents[indexEvent];
-
-            // TODO : remove event listener
             refEvent.remove();
         }
 
@@ -349,7 +352,9 @@ export class B5rMonthView implements CalendarView {
     #createCell(refRow: HTMLElement, date: Date): void {
         const refCell = document.createElement('div');
         refCell.role = ROLE_GRID_CELL;
-        refCell.className = CELL_CLASS;
+        refCell.className = this.#classNames?.day
+            ? `${CELL_CLASS} ${this.#classNames.day}`
+            : CELL_CLASS;
 
         const isSelectedDate = isDateRangeSameDate({
             start: date,
@@ -385,11 +390,17 @@ export class B5rMonthView implements CalendarView {
 
         if (isTodayDate(date, this.timeZone)) {
             refCell.classList.add(CELL_TODAY_CLASS);
+
             refDayNumber.classList.add(DAY_NUMBER_TODAY_CLASS);
+            refCell.classList.add(
+                this.#classNames?.todayModifier
+                    ? this.#classNames.todayModifier
+                    : ''
+            );
         }
 
         if (isCurrentDate) {
-            refCell.classList.add(CELL_CURRENT_CLASS);
+            this.#updateClassCurrentDate(refCell);
         }
 
         if (isSelectedDate) {
@@ -413,12 +424,27 @@ export class B5rMonthView implements CalendarView {
 
     #updateCurrentDate(element: Element) {
         const date = element.getAttribute(DATA_DATE);
-        document
-            .querySelector(`.${CELL_CURRENT_CLASS}`)
-            .classList.remove(CELL_CURRENT_CLASS);
-
         this.currentDate = new Date(`${date}:00:00:000`);
+    }
+
+    #updateClassCurrentDate(element: Element) {
+        const elementCurrentDate = document.querySelector(
+            `.${CELL_CURRENT_CLASS}`
+        );
+        elementCurrentDate?.classList.remove(CELL_CURRENT_CLASS);
+
+        if (this.#classNames?.currentDateSelected) {
+            elementCurrentDate?.classList.remove(
+                this.#classNames.currentDateSelected
+            );
+        }
+
         element.classList.add(CELL_CURRENT_CLASS);
+        element.classList.add(
+            this.#classNames?.currentDateSelected
+                ? this.#classNames.currentDateSelected
+                : ''
+        );
     }
 
     #updateSelectedCell() {
@@ -450,6 +476,16 @@ export class B5rMonthView implements CalendarView {
 
         if (pastSelectedCellIsFocus) {
             nextSelectedCell?.focus();
+        }
+
+        if (
+            nextSelectedCell &&
+            isDateRangeSameDate({
+                start: this.#selectedDate,
+                end: this.currentDate,
+            })
+        ) {
+            this.#updateClassCurrentDate(nextSelectedCell);
         }
     }
 

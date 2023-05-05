@@ -59,36 +59,35 @@
 
         &:focus {
             .b5r-month__day-number {
-                --c: var(--day-number-color-hover);
-                --b: var(--day-number-background-hover);
+                /* --c: var(--day-number-color-hover);
+                --b: var(--day-number-background-hover); */
             }
         }
 
         &:hover {
             .b5r-month__day-number {
-                --c: var(--day-number-color-focus);
-                --b: var(--day-number-background-focus);
+                /* --c: var(--day-number-color-focus);
+                --b: var(--day-number-background-focus); */
             }
         }
 
         &:active {
             .b5r-month__day-number {
-                --c: var(--day-number-color-active);
-                --b: var(--day-number-background-active);
+                /* --c: var(--day-number-color-active);
+                --b: var(--day-number-background-active); */
             }
         }
 
         &--today {
             .b5r-month__day-number {
-                --c: var(--today-color);
-                --b: var(--today-background);
+                /* --c: var(--today-color);
+                --b: var(--today-background); */
             }
         }
 
         &--current {
             .b5r-month__day-number {
-                --c: var(--day-number-color-selected);
-                --b: var(--day-number-background-selected);
+                border: 1px dashed gray;
             }
         }
 

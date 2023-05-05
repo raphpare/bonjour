@@ -27,7 +27,6 @@ export const KEY_ENTER = 'Enter';
 export const KEY_SPACE = 'Space';
 
 export const DEFAULT_OPTIONS: B5rMonthOptions = {
-    currentDate: new Date(),
     weekdayFormat: 'short',
     locale: LOCALE_EN,
 };

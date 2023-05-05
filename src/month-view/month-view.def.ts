@@ -18,6 +18,7 @@ export interface B5rMonthClassNames {
     header?: string;
     body?: string;
     day?: string;
+    currentDateSelected?: string;
     dayButton?: string;
     listEvents?: string;
     todayModifier?: string;
