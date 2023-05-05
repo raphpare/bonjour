@@ -390,13 +390,9 @@ export class B5rMonthView implements CalendarView {
 
         if (isTodayDate(date, this.timeZone)) {
             refCell.classList.add(CELL_TODAY_CLASS);
-
             refDayNumber.classList.add(DAY_NUMBER_TODAY_CLASS);
-            refCell.classList.add(
-                this.#classNames?.todayModifier
-                    ? this.#classNames.todayModifier
-                    : ''
-            );
+
+            if (this.#classNames?.todayModifier) this.#classNames.todayModifier;
         }
 
         if (isCurrentDate) {
@@ -431,20 +427,17 @@ export class B5rMonthView implements CalendarView {
         const elementCurrentDate = document.querySelector(
             `.${CELL_CURRENT_CLASS}`
         );
+
         elementCurrentDate?.classList.remove(CELL_CURRENT_CLASS);
+        element.classList.add(CELL_CURRENT_CLASS);
 
         if (this.#classNames?.currentDateSelected) {
             elementCurrentDate?.classList.remove(
                 this.#classNames.currentDateSelected
             );
-        }
 
-        element.classList.add(CELL_CURRENT_CLASS);
-        element.classList.add(
-            this.#classNames?.currentDateSelected
-                ? this.#classNames.currentDateSelected
-                : ''
-        );
+            element.classList.add(this.#classNames.currentDateSelected);
+        }
     }
 
     #updateSelectedCell() {
