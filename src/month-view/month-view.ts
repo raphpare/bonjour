@@ -40,7 +40,6 @@ import { B5rEventClickCallback, B5rUpdateCallback } from '../models/callbacks';
 import { B5rDateRange } from '../models/date-range';
 import { addDesignTokenOnElement } from '../week-view/week-view.utils';
 import { isDateRangeSameDate, isDateRangeSameMonth } from '../utils/date-range';
-import { B5rWeekClassNames } from '../types';
 
 const convertDateToString = (date: Date): string =>
     date.toISOString().slice(0, 10);
@@ -392,7 +391,8 @@ export class B5rMonthView implements CalendarView {
             refCell.classList.add(CELL_TODAY_CLASS);
             refDayNumber.classList.add(DAY_NUMBER_TODAY_CLASS);
 
-            if (this.#classNames?.todayModifier) this.#classNames.todayModifier;
+            if (this.#classNames?.todayModifier)
+                refCell.classList.add(this.#classNames.todayModifier);
         }
 
         if (isCurrentDate) {
@@ -401,6 +401,9 @@ export class B5rMonthView implements CalendarView {
 
         if (isSelectedDate) {
             refRow.classList.add(ROW_SELECTED_CLASS);
+            if (this.#classNames?.weekSelectedModifier)
+                refRow.classList.add(this.#classNames.weekSelectedModifier);
+
             refCell.classList.add(CELL_SELECTED_CLASS);
             this.#addKeydowEventListener(refCell);
         }
@@ -440,6 +443,29 @@ export class B5rMonthView implements CalendarView {
         }
     }
 
+    #updateRowSelected() {
+        const elementRowCurrentDate = document.querySelector(
+            `.${ROW_SELECTED_CLASS}`
+        );
+
+        elementRowCurrentDate.classList.remove(ROW_SELECTED_CLASS);
+
+        const elementCurrentDate = document.querySelector(
+            `.${CELL_CURRENT_CLASS}`
+        );
+        elementCurrentDate?.parentElement.classList.add(ROW_SELECTED_CLASS);
+
+        if (this.#classNames?.weekSelectedModifier) {
+            elementRowCurrentDate?.classList.remove(
+                `${this.#classNames.weekSelectedModifier}`
+            );
+
+            elementCurrentDate?.parentElement?.classList.add(
+                this.#classNames.weekSelectedModifier
+            );
+        }
+    }
+
     #updateSelectedCell() {
         if (!this.refRoot) return;
 
@@ -456,6 +482,7 @@ export class B5rMonthView implements CalendarView {
             pastSelectedCell.setAttribute('tabindex', '-1');
             pastSelectedCell.setAttribute('aria-selected', 'false');
             pastSelectedCell.classList.remove(CELL_SELECTED_CLASS);
+
             this.#removeKeydowEventListener(pastSelectedCell);
         }
 
@@ -479,6 +506,7 @@ export class B5rMonthView implements CalendarView {
             })
         ) {
             this.#updateClassCurrentDate(nextSelectedCell);
+            this.#updateRowSelected();
         }
     }
 

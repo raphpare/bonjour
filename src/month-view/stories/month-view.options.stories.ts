@@ -26,6 +26,10 @@ const TemplateClassNames: StoryFn = (args): HTMLElement => {
             background-color: #e20d0d;
             color: white;
         }
+        .test-week-selected {
+            background-color: gray;
+            border: 1px solid gray;
+        }
     `;
 
     injectStyleTag('styleTagTestClassMonthView', cssText);
@@ -40,6 +44,7 @@ ClassNames.args = {
         day: 'test-day',
         todayModifier: 'test-today',
         currentDateSelected: 'test-currentDate',
+        weekSelectedModifier: 'test-week-selected',
     } as B5rMonthClassNames,
 };
 ClassNames.storyName = 'options.classNames';

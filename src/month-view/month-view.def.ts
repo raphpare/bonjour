@@ -23,6 +23,7 @@ export interface B5rMonthClassNames {
     listEvents?: string;
     todayModifier?: string;
     weekendModifier?: string;
+    weekSelectedModifier?: string;
 }
 
 export interface B5rMonthDesignTokens {
