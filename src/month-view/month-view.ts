@@ -14,6 +14,7 @@ import {
     DAY_NUMBER_CLASS,
     DAY_NUMBER_TODAY_CLASS,
     DEFAULT_OPTIONS,
+    EVENT_CLASS,
     KEY_ARROW_DOWN,
     KEY_ARROW_LEFT,
     KEY_ARROW_RIGHT,
@@ -412,6 +413,12 @@ export class B5rMonthView implements CalendarView {
             this.#onDayClick(event, date);
         });
 
+        if (this.#thereIsAnEventInDate(date)) {
+            const event = document.createElement('span');
+            event.classList.add(EVENT_CLASS);
+            refCell.append(event);
+        }
+
         refRow.append(refCell);
     }
 
@@ -421,13 +428,22 @@ export class B5rMonthView implements CalendarView {
         );
     }
 
+    #thereIsAnEventInDate(date: Date): boolean {
+        for (const event of this.#internalEvents) {
+            if (date >= event.dateRange.start && date <= event.dateRange.end) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     #updateCurrentDate(element: Element) {
         const date = element.getAttribute(DATA_DATE);
         this.currentDate = new Date(`${date}:00:00:000`);
     }
 
     #updateClassCurrentDate(element: Element) {
-        const elementCurrentDate = document.querySelector(
+        const elementCurrentDate = this.refRoot.querySelector(
             `.${CELL_CURRENT_CLASS}`
         );
 
@@ -444,13 +460,13 @@ export class B5rMonthView implements CalendarView {
     }
 
     #updateRowSelected() {
-        const elementRowCurrentDate = document.querySelector(
+        const elementRowCurrentDate = this.refRoot.querySelector(
             `.${ROW_SELECTED_CLASS}`
         );
 
         elementRowCurrentDate.classList.remove(ROW_SELECTED_CLASS);
 
-        const elementCurrentDate = document.querySelector(
+        const elementCurrentDate = this.refRoot.querySelector(
             `.${CELL_CURRENT_CLASS}`
         );
         elementCurrentDate?.parentElement.classList.add(ROW_SELECTED_CLASS);

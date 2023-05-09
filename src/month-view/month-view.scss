@@ -49,6 +49,7 @@
     }
 
     &__cell {
+        position: relative;
         display: flex;
         flex-direction: column;
         width: calc(100% / 7);
@@ -80,8 +81,8 @@
 
         &--today {
             .b5r-month__day-number {
-                /* --c: var(--today-color);
-                --b: var(--today-background); */
+                --c: var(--today-color);
+                --b: var(--today-background);
             }
         }
 
@@ -127,14 +128,12 @@
     }
 
     &__event {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0;
-
-        &:not(:last-child) {
-            margin-right: 2px;
-        }
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background-color: red;
+        position: absolute;
+        bottom: 0;
     }
 
     &__event-button {

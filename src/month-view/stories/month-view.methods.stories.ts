@@ -1,5 +1,6 @@
 import { Meta, StoryFn } from '@storybook/html';
 import { getMonthViewDefaultTemplate } from './commons';
+import { EVENTS_MOCKS } from '../../mocks/events.mocks';
 
 export default {
     title: 'month-view/Methods',
@@ -13,18 +14,21 @@ const Template: StoryFn = (args): HTMLElement => {
     return refRoot;
 };
 
-export const Default = Template.bind({});
-
-const WithSelectDateDayClickCallbackTemplate: StoryFn = (args): HTMLElement => {
+const setEvents: StoryFn = (args): HTMLElement => {
     const { refRoot, monthView } = getMonthViewDefaultTemplate({
         monthOptions: args,
     });
-    monthView.onDayClick((_event, date) => {
-        monthView.currentDate = date;
-    });
+    monthView.setEvents([
+        {
+            id: '7jvusutc',
+            title: 'Event 1',
+            dateRange: {
+                start: new Date('2023-04-29 12:30:30'),
+                end: new Date('2023-05-2 15:30:30'),
+            },
+        },
+    ]);
     return refRoot;
 };
 
-export const WithSelectDateDayClickCallback =
-    WithSelectDateDayClickCallbackTemplate.bind({});
-WithSelectDateDayClickCallback.args = Default.args;
+export const MethodSetEvent = setEvents.bind({});
