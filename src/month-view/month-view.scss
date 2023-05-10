@@ -2,49 +2,51 @@
     --cell-height: inherit;
     --cell-align-items: center;
     --cell-padding: 4px;
-    --day-number-min-width: inherit;
-    --day-number-min-height: inherit;
-    --day-number-border-radius: 0;
-    --day-number-color: currentColor;
-    --day-number-color-hover: var(--day-number-color);
-    --day-number-color-focus: var(--day-number-color-hover);
-    --day-number-color-active: var(--day-number-color-focus);
-    --day-number-background: inherit;
-    --day-number-background-hover: rgb(149, 148, 148);
-    --day-number-background-focus: var(--day-number-background-hover);
-    --day-number-background-active: var(--day-number-background-focus);
+    --day-min-width: inherit;
+    --day-min-height: inherit;
+    --day-border-radius: 0;
+    --day-border: none;
+    --day-color: currentColor;
+    --day-color-hover: var(--day-color);
+    --day-color-focus: var(--day-color-hover);
+    --day-color-active: var(--day-color-focus);
+    --day-background: inherit;
+    --day-background-hover: rgb(149, 148, 148);
+    --day-background-focus: var(--day-background-hover);
+    --day-background-active: var(--day-background-focus);
+    --selected-day-color: var(--day-color-focus);
+    --selected-day-border: none;
+    --selected-day-background: var(--day-background-focus);
+    --current-day-color: var(--day-color-focus);
+    --current-day-background: var(--day-background-focus);
+    --current-day-border: none;
     --today-color: currentColor;
     --today-background: rgb(221, 245, 255);
-    --background: rgba(0, 0, 0, 0);
-    --background-week-selected: transparent;
-    --day-number-color-selected: currentColor;
-    --day-number-background-selected: yellow;
-    --day-number-border-selected-radius: 3px;
+    --today-border: none;
+    --background: #393838;
+    --row-background: rgba(255, 255, 255, 0);
+    --selected-row-background: rgba(255, 255, 255, 0);
+    --header-background: rgba(255, 255, 255, 0);
+    --cell-selected-color: currentColor;
+    --cell-selected-background: #fff;
 
-    &__header {
-        display: grid;
-        grid-template-columns: repeat(7, 1fr);
-        list-style: none;
-        padding: 0;
-        margin: 0;
-        background: var(--background);
-        text-align: center;
-    }
-
-    &__body {
-        display: flex;
-        flex-direction: column;
-        background: var(--background);
-        width: 100%;
-    }
+    display: flex;
+    flex-direction: column;
+    background: var(--background);
+    width: 100%;
 
     &__row {
         display: flex;
         align-items: baseline;
         flex: auto;
+        background: var(--row-background);
 
         &--selected {
-            background-color: var(--background-week-selected);
+            --row-background: var(--selected-row-background);
+        }
+
+        &--header {
+            --row-background: var(--header-background);
         }
     }
 
@@ -58,73 +60,69 @@
         min-height: var(--cell-height);
         padding: var(--cell-padding);
 
-        &:focus {
+        &:hover {
             .b5r-month__day-number {
-                /* --c: var(--day-number-color-hover);
-                --b: var(--day-number-background-hover); */
+                --day-color: var(--day-color-hover);
+                --day-background: var(--day-background-hover);
             }
         }
 
-        &:hover {
+        &:focus {
             .b5r-month__day-number {
-                /* --c: var(--day-number-color-focus);
-                --b: var(--day-number-background-focus); */
+                --day-color: var(--day-color-focus);
+                --day-background: var(--day-background-focus);
             }
         }
 
         &:active {
             .b5r-month__day-number {
-                /* --c: var(--day-number-color-active);
-                --b: var(--day-number-background-active); */
+                --day-color: var(--day-color-active);
+                --day-background: var(--day-background-active);
             }
         }
 
         &--today {
             .b5r-month__day-number {
-                --c: var(--today-color);
-                --b: var(--today-background);
+                --day-color: var(--today-color);
+                --day-background: var(--today-background);
+                --day-border: var(--today-border);
             }
         }
 
         &--current {
             .b5r-month__day-number {
-                border: 1px dashed gray;
+                --day-color: var(--current-day-color);
+                --day-background: var(--current-day-background);
+                --day-border: var(--current-day-border);
             }
         }
 
         &--selected {
             .b5r-month__day-number {
-                border: 1px dashed gray;
+                --day-color: var(--selected-day-color);
+                --day-background: var(--selected-day-background);
+                --day-border: var(--selected-day-border);
             }
         }
     }
 
     &__day-number {
-        --c: var(--day-number-color);
-        --b: var(--day-number-background);
-
-        min-width: var(--day-number-min-width);
-        min-height: var(--day-number-min-height);
+        min-width: var(--day-min-width);
+        min-height: var(--day-min-height);
         transition: background 0.3s ease, color 0.3s ease;
         appearance: none;
-        border: none;
-        border-radius: var(--day-number-border-radius);
-        background: var(--b);
-        color: var(--c);
+        border: var(--day-border);
+        border-radius: var(--day-border-radius);
+        background: var(--day-background);
+        color: var(--day-color);
         padding: 4px;
         font-family: inherit;
         font-size: inherit;
+        text-align: center;
 
         &:not(:disabled) {
             cursor: pointer;
         }
-    }
-
-    &__list-events {
-        display: flex;
-        margin: 2px 0 0;
-        padding: 0;
-        list-style-type: none;
     }
 
     &__event {
@@ -134,28 +132,5 @@
         background-color: red;
         position: absolute;
         bottom: 0;
-    }
-
-    &__event-button {
-        appearance: none;
-        padding: 0;
-        width: 8px;
-        height: 8px;
-        border: none;
-        background: #ccc;
-
-        &:not(:disabled) {
-            cursor: pointer;
-        }
-    }
-
-    &__hidden {
-        clip: rect(0 0 0 0);
-        clip-path: inset(50%);
-        height: 1px;
-        overflow: hidden;
-        position: absolute;
-        white-space: nowrap;
-        width: 1px;
     }
 }

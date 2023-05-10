@@ -1,11 +1,11 @@
 import { B5rEvent } from '../models/event';
+const dateNow = new Date();
 
 export const generateDateFromNow = (
     day: number,
     heures: number = new Date().getHours(),
     minutes = 0
 ): Date => {
-    const dateNow = new Date();
     return new Date(
         dateNow.getFullYear(),
         dateNow.getMonth(),
@@ -392,6 +392,51 @@ export const EVENTS_MOCKS_2 = [
         dateRange: {
             start: new Date('2021-06-10 12:30:30'),
             end: new Date('2021-06-14 15:30:30'),
+        },
+    },
+];
+
+export const EVENT_MOCK_3_DAY: B5rEvent[] = [
+    {
+        id: '0000000001',
+        title: 'Long event',
+        dateRange: {
+            start: new Date(
+                dateNow.getFullYear(),
+                dateNow.getMonth(),
+                dateNow.getDate() + 2
+            ),
+            end: new Date(
+                dateNow.getFullYear(),
+                dateNow.getMonth(),
+                dateNow.getDate() + 4
+            ),
+        },
+    },
+    {
+        id: '0000000002',
+        title: 'today 8-12',
+        dateRange: {
+            start: new Date(new Date().setHours(8, 0, 0, 0)),
+            end: new Date(new Date().setHours(12, 0, 0, 0)),
+        },
+    },
+    {
+        id: '0000000003',
+        title: 'past 2 day',
+        dateRange: {
+            start: new Date(
+                dateNow.getFullYear(),
+                dateNow.getMonth(),
+                dateNow.getDate() - 2,
+                8
+            ),
+            end: new Date(
+                dateNow.getFullYear(),
+                dateNow.getMonth(),
+                dateNow.getDate() - 2,
+                12
+            ),
         },
     },
 ];

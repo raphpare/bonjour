@@ -14,37 +14,47 @@ export interface B5rMonthOptions {
 }
 
 export interface B5rMonthClassNames {
-    event?: B5rEventClassNames;
-    header?: string;
-    body?: string;
-    day?: string;
-    currentDateSelected?: string;
-    dayButton?: string;
-    listEvents?: string;
-    todayModifier?: string;
-    weekendModifier?: string;
-    weekSelectedModifier?: string;
+    event?: string;
+    headerRow?: string;
+    row?: string;
+    rowSelected?: string;
+    headerCell?: string;
+    cell?: string;
+    cellCurrentDate?: string;
+    cellSelectedDate?: string;
+    todayCell?: string;
+    weekendCell?: string;
+    dayNumber?: string;
 }
 
 export interface B5rMonthDesignTokens {
-    ['--day-height']?: string;
+    ['--cell-height']?: string;
     ['--cell-align-items']?: string;
     ['--cell-padding']?: string;
-    ['--day-number-min-width']?: string;
-    ['--day-number-min-height']?: string;
-    ['--day-number-color']?: string;
-    ['--day-number-color-hover']?: string;
-    ['--day-number-color-focus']?: string;
-    ['--day-number-color-active']?: string;
-    ['--day-number-background']?: string;
-    ['--day-number-background-hover']?: string;
-    ['--day-number-background-focus']?: string;
-    ['--day-number-background-active']?: string;
-    ['--day-number-border-radius']?: string;
+    ['--day-min-width']?: string;
+    ['--day-min-height']?: string;
+    ['--day-border-radius']: string;
+    ['--day-border']: string;
+    ['--day-color']?: string;
+    ['--day-color-hover']?: string;
+    ['--day-color-focus']?: string;
+    ['--day-color-active']?: string;
+    ['--day-background']?: string;
+    ['--day-background-hover']?: string;
+    ['--day-background-focus']?: string;
+    ['--day-background-active']?: string;
+    ['--selected-day-color']?: string;
+    ['--selected-day-background']?: string;
+    ['--selected-day-border']?: string;
+    ['--current-day-color']?: string;
+    ['--current-day-background']?: string;
+    ['--current-day-border']?: string;
     ['--today-color']?: string;
     ['--today-background']?: string;
-    ['--background']?: string;
-    ['--background-week-selected']?: string;
+    ['--today-border']?: string;
+    ['--row-background']?: string;
+    ['--selected-row-background']?: string;
+    ['--header-background']?: string;
 }
 
 export type B5rDayClickCallback = (event: PointerEvent, date: Date) => void;
