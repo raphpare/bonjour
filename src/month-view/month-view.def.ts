@@ -28,6 +28,7 @@ export interface B5rMonthClassNames {
 }
 
 export interface B5rMonthDesignTokens {
+    ['--background']?: string;
     ['--cell-height']?: string;
     ['--cell-align-items']?: string;
     ['--cell-padding']?: string;
@@ -55,6 +56,8 @@ export interface B5rMonthDesignTokens {
     ['--row-background']?: string;
     ['--selected-row-background']?: string;
     ['--header-background']?: string;
+    ['--cell-selected-color']?: string;
+    ['--cell-selected-background']?: string;
 }
 
 export type B5rDayClickCallback = (event: PointerEvent, date: Date) => void;

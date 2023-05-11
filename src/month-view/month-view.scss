@@ -1,4 +1,5 @@
 .b5r-month {
+    --background: #ffffff;
     --cell-height: inherit;
     --cell-align-items: center;
     --cell-padding: 4px;
@@ -14,16 +15,15 @@
     --day-background-hover: rgb(149, 148, 148);
     --day-background-focus: var(--day-background-hover);
     --day-background-active: var(--day-background-focus);
-    --selected-day-color: var(--day-color-focus);
+    --selected-day-color: var(--day-color);
+    --selected-day-background: var(--day-background);
     --selected-day-border: none;
-    --selected-day-background: var(--day-background-focus);
-    --current-day-color: var(--day-color-focus);
-    --current-day-background: var(--day-background-focus);
+    --current-day-color: var(--day-color);
+    --current-day-background: var(--day-background);
     --current-day-border: none;
     --today-color: currentColor;
     --today-background: rgb(221, 245, 255);
     --today-border: none;
-    --background: #393838;
     --row-background: rgba(255, 255, 255, 0);
     --selected-row-background: rgba(255, 255, 255, 0);
     --header-background: rgba(255, 255, 255, 0);
@@ -98,6 +98,8 @@
         }
 
         &--selected {
+            color: var(--cell-selected-color);
+            background-color: var(--cell-selected-background);
             .b5r-month__day-number {
                 --day-color: var(--selected-day-color);
                 --day-background: var(--selected-day-background);
