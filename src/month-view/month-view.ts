@@ -409,12 +409,11 @@ export class B5rMonthView implements CalendarView {
 
         if (isCurrentDate) {
             this.#updateClassCurrentDate(refCell);
+            addClassOnElement(refRow, ROW_SELECTED_CLASS);
+            addClassOnElement(refRow, this.#classNames?.rowSelected);
         }
 
         if (isSelectedDate) {
-            addClassOnElement(refRow, ROW_SELECTED_CLASS);
-            addClassOnElement(refRow, this.#classNames?.rowSelected);
-
             addClassOnElement(refCell, CELL_SELECTED_CLASS);
             this.#addKeydowEventListener(refCell);
         }
@@ -425,7 +424,7 @@ export class B5rMonthView implements CalendarView {
 
         if (this.#thereIsAnEventInDate(date)) {
             const event = document.createElement('span');
-            addClassOnElement(event, EVENT_CLASS);
+            event.className = EVENT_CLASS;
 
             addClassOnElement(event, this.#classNames?.event);
 
@@ -481,28 +480,28 @@ export class B5rMonthView implements CalendarView {
             `.${ROW_SELECTED_CLASS}`
         );
 
-        removeClassOnElement(elementRowCurrentDate, ROW_SELECTED_CLASS);
+        if (elementRowCurrentDate) {
+            removeClassOnElement(elementRowCurrentDate, ROW_SELECTED_CLASS);
+            removeClassOnElement(
+                elementRowCurrentDate,
+                `${this.#classNames?.rowSelected}`
+            );
+        }
 
         const elementCurrentDate = this.refRoot.querySelector(
             `.${CELL_CURRENT_CLASS}`
         );
 
+        if (!elementCurrentDate) return;
+
         addClassOnElement(
             elementCurrentDate?.parentElement,
             ROW_SELECTED_CLASS
         );
-
-        if (this.#classNames?.rowSelected) {
-            removeClassOnElement(
-                elementRowCurrentDate,
-                `${this.#classNames?.rowSelected}`
-            );
-
-            addClassOnElement(
-                elementCurrentDate?.parentElement,
-                this.#classNames?.rowSelected
-            );
-        }
+        addClassOnElement(
+            elementCurrentDate?.parentElement,
+            this.#classNames?.rowSelected
+        );
     }
 
     #updateSelectedCell() {
