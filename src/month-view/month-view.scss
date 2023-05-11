@@ -101,7 +101,7 @@
             }
         }
 
-        &--selected {
+        &--selected:focus {
             color: var(--cell-selected-color);
             background-color: var(--cell-selected-background);
 
