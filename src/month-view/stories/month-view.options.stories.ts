@@ -129,3 +129,5 @@ DesignTokens.args = {
         ['--cell-selected-background']: '#9BF7FF',
     },
 };
+
+DesignTokens.storyName = 'options.DesignTokens';
