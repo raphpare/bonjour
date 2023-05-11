@@ -23,7 +23,7 @@ CurrentDate.args = {
         dateNow.getDate() + 15
     ),
 };
-CurrentDate.storyName = 'CurrentDate';
+CurrentDate.storyName = 'currentDate';
 
 export const SelectedDate = Template.bind({});
 SelectedDate.args = {
@@ -39,7 +39,7 @@ export const Locale = Template.bind({});
 Locale.args = {
     locale: 'fr-CA',
 };
-Locale.storyName = 'Locale';
+Locale.storyName = 'locale';
 
 export const TimeZone = Template.bind({});
 TimeZone.args = {

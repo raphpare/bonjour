@@ -27,28 +27,3 @@ export const DEFAULT_OPTIONS: B5rWeekOptions = {
 };
 
 export const B5R_WEEK_VIEW_STYLE_ID = 'B5rWeekViewStyle';
-
-export const addClassOnElement = (element: HTMLElement, className?: string) => {
-    if (!className) return;
-    element.classList.add(className);
-};
-
-export const removeClassOnElement = (
-    element: HTMLElement,
-    className?: string
-) => {
-    if (!className) return;
-    element.classList.remove(className);
-};
-
-export const addDesignTokenOnElement = (
-    element: HTMLElement,
-    designTokens?: Record<string, string>
-) => {
-    if (!designTokens) return;
-    for (const propertie in designTokens) {
-        if (designTokens[propertie]) {
-            element.style.setProperty(propertie, designTokens[propertie]);
-        }
-    }
-};

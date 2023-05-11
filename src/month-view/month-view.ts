@@ -39,7 +39,11 @@ import {
 import { CalendarView } from '../models/calendar-view';
 import { B5rEventClickCallback, B5rUpdateCallback } from '../models/callbacks';
 import { B5rDateRange } from '../models/date-range';
-import { addDesignTokenOnElement } from '../week-view/week-view.utils';
+import {
+    addDesignTokenOnElement,
+    addClassOnElement,
+    removeClassOnElement,
+} from '../utils/dom';
 import { isDateRangeSameDate, isDateRangeSameMonth } from '../utils/date-range';
 
 const convertDateToString = (date: Date): string =>
@@ -229,7 +233,7 @@ export class B5rMonthView implements CalendarView {
         this.deleteAllEvents();
         this.#removeAllKeydownEventListener();
         this.refRoot.innerHTML = '';
-        this.refRoot.classList.remove(ROOT_CLASS);
+        removeClassOnElement(this.refRoot, ROOT_CLASS);
     }
 
     onUpdate(callback: B5rUpdateCallback): void {
@@ -283,9 +287,8 @@ export class B5rMonthView implements CalendarView {
         this.refHeaderRow.role = 'row';
         this.refHeaderRow.className = `${ROW_CLASS} ${ROW_HEADER_CLASS}`;
 
-        if (this.#classNames?.headerRow) {
-            this.refHeaderRow.classList.add(this.#classNames?.headerRow);
-        }
+        addClassOnElement(this.refHeaderRow, this.#classNames?.row);
+        addClassOnElement(this.refHeaderRow, this.#classNames?.headerRow);
 
         [...this.#visibleDates].splice(0, 7).forEach((date) => {
             const refHeaderCell = document.createElement('div');
@@ -302,9 +305,8 @@ export class B5rMonthView implements CalendarView {
                 this.#options?.weekdayFormat ?? 'short'
             );
 
-            if (this.#classNames?.headerCell) {
-                refHeaderCell.classList.add(this.#classNames.headerCell);
-            }
+            addClassOnElement(refHeaderCell, this.#classNames?.cell);
+            addClassOnElement(refHeaderCell, this.#classNames?.headerCell);
 
             this.refHeaderRow.append(refHeaderCell);
         });
@@ -354,9 +356,7 @@ export class B5rMonthView implements CalendarView {
         refWeekRow.role = 'row';
         refWeekRow.className = ROW_CLASS;
 
-        if (this.#classNames?.row) {
-            refWeekRow.classList.add(this.#classNames.row);
-        }
+        addClassOnElement(refWeekRow, this.#classNames?.row);
 
         return refWeekRow;
     }
@@ -365,7 +365,7 @@ export class B5rMonthView implements CalendarView {
         const refCell = document.createElement('div');
         refCell.role = ROLE_GRID_CELL;
         refCell.className = this.#classNames?.cell
-            ? `${CELL_CLASS} ${this.#classNames.cell}`
+            ? `${CELL_CLASS} ${this.#classNames?.cell}`
             : CELL_CLASS;
 
         const isSelectedDate = isDateRangeSameDate({
@@ -384,7 +384,7 @@ export class B5rMonthView implements CalendarView {
             isSelectedDate ? 'true' : 'false'
         );
 
-        const refDayNumber = document.createElement('span');
+        const refDayNumber: HTMLElement = document.createElement('span');
         refDayNumber.className = DAY_NUMBER_CLASS;
         refDayNumber.innerText = date.getDate().toString();
         refDayNumber.setAttribute(
@@ -396,19 +396,15 @@ export class B5rMonthView implements CalendarView {
             })
         );
 
-        if (this.#classNames?.dayNumber) {
-            refDayNumber.classList.add(this.#classNames.dayNumber);
-        }
+        addClassOnElement(refDayNumber, this.#classNames?.dayNumber);
 
         refCell.setAttribute(DATA_DATE, convertDateToString(date));
         refCell.append(refDayNumber);
 
         if (isTodayDate(date, this.timeZone)) {
-            refCell.classList.add(CELL_TODAY_CLASS);
-            refDayNumber.classList.add(DAY_NUMBER_TODAY_CLASS);
-
-            if (this.#classNames?.todayCell)
-                refCell.classList.add(this.#classNames.todayCell);
+            addClassOnElement(refCell, CELL_TODAY_CLASS);
+            addClassOnElement(refDayNumber, DAY_NUMBER_TODAY_CLASS);
+            addClassOnElement(refCell, this.#classNames?.todayCell);
         }
 
         if (isCurrentDate) {
@@ -416,11 +412,10 @@ export class B5rMonthView implements CalendarView {
         }
 
         if (isSelectedDate) {
-            refRow.classList.add(ROW_SELECTED_CLASS);
-            if (this.#classNames?.rowSelected)
-                refRow.classList.add(this.#classNames.rowSelected);
+            addClassOnElement(refRow, ROW_SELECTED_CLASS);
+            addClassOnElement(refRow, this.#classNames?.rowSelected);
 
-            refCell.classList.add(CELL_SELECTED_CLASS);
+            addClassOnElement(refCell, CELL_SELECTED_CLASS);
             this.#addKeydowEventListener(refCell);
         }
 
@@ -430,11 +425,10 @@ export class B5rMonthView implements CalendarView {
 
         if (this.#thereIsAnEventInDate(date)) {
             const event = document.createElement('span');
-            event.classList.add(EVENT_CLASS);
+            addClassOnElement(event, EVENT_CLASS);
 
-            if (this.#classNames?.event) {
-                event.classList.add(this.#classNames?.event);
-            }
+            addClassOnElement(event, this.#classNames?.event);
+
             refCell.append(event);
         }
 
@@ -459,47 +453,54 @@ export class B5rMonthView implements CalendarView {
         return false;
     }
 
-    #updateCurrentDate(element: Element) {
+    #updateCurrentDate(element: HTMLElement) {
         const date = element.getAttribute(DATA_DATE);
         this.currentDate = new Date(`${date}:00:00:000`);
     }
 
-    #updateClassCurrentDate(element: Element) {
-        const elementCurrentDate = this.refRoot.querySelector(
+    #updateClassCurrentDate(element: HTMLElement) {
+        const elementCurrentDate: HTMLElement = this.refRoot.querySelector(
             `.${CELL_CURRENT_CLASS}`
         );
 
-        elementCurrentDate?.classList.remove(CELL_CURRENT_CLASS);
-        element.classList.add(CELL_CURRENT_CLASS);
+        removeClassOnElement(elementCurrentDate, CELL_CURRENT_CLASS);
+        addClassOnElement(element, CELL_CURRENT_CLASS);
 
         if (this.#classNames?.cellCurrentDate) {
-            elementCurrentDate?.classList.remove(
-                this.#classNames.cellCurrentDate
+            removeClassOnElement(
+                elementCurrentDate,
+                this.#classNames?.cellCurrentDate
             );
 
-            element.classList.add(this.#classNames.cellCurrentDate);
+            addClassOnElement(element, this.#classNames?.cellCurrentDate);
         }
     }
 
     #updateRowSelected() {
-        const elementRowCurrentDate = this.refRoot.querySelector(
+        const elementRowCurrentDate: HTMLElement = this.refRoot.querySelector(
             `.${ROW_SELECTED_CLASS}`
         );
 
-        elementRowCurrentDate.classList.remove(ROW_SELECTED_CLASS);
+        removeClassOnElement(elementRowCurrentDate, ROW_SELECTED_CLASS);
 
         const elementCurrentDate = this.refRoot.querySelector(
             `.${CELL_CURRENT_CLASS}`
         );
-        elementCurrentDate?.parentElement.classList.add(ROW_SELECTED_CLASS);
+
+        addClassOnElement(
+            elementCurrentDate?.parentElement,
+            ROW_SELECTED_CLASS
+        );
 
         if (this.#classNames?.rowSelected) {
-            elementRowCurrentDate?.classList.remove(
-                `${this.#classNames.rowSelected}`
+            removeClassOnElement(
+                elementRowCurrentDate,
+                `${this.#classNames?.rowSelected}`
             );
 
-            elementCurrentDate?.parentElement?.classList.add(
-                this.#classNames.rowSelected
+            addClassOnElement(
+                elementCurrentDate?.parentElement,
+                this.#classNames?.rowSelected
             );
         }
     }
@@ -519,7 +520,7 @@ export class B5rMonthView implements CalendarView {
         if (pastSelectedCell) {
             pastSelectedCell.setAttribute('tabindex', '-1');
             pastSelectedCell.setAttribute('aria-selected', 'false');
-            pastSelectedCell.classList.remove(CELL_SELECTED_CLASS);
+            removeClassOnElement(pastSelectedCell, CELL_SELECTED_CLASS);
 
             this.#removeKeydowEventListener(pastSelectedCell);
         }
@@ -527,16 +528,20 @@ export class B5rMonthView implements CalendarView {
         if (nextSelectedCell) {
             nextSelectedCell.setAttribute('tabindex', '0');
             nextSelectedCell.setAttribute('aria-selected', '');
-            nextSelectedCell.classList.add(CELL_SELECTED_CLASS);
+            addClassOnElement(nextSelectedCell, CELL_SELECTED_CLASS);
 
             this.#addKeydowEventListener(nextSelectedCell);
         }
 
         if (this.#classNames?.cellSelectedDate) {
-            pastSelectedCell.classList.remove(
-                this.#classNames.cellSelectedDate
+            removeClassOnElement(
+                pastSelectedCell,
+                this.#classNames?.cellSelectedDate
             );
-            nextSelectedCell.classList.add(this.#classNames.cellSelectedDate);
+            addClassOnElement(
+                nextSelectedCell,
+                this.#classNames?.cellSelectedDate
+            );
         }
 
         if (pastSelectedCellIsFocus) {

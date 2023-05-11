@@ -25,46 +25,81 @@ const TemplateClassNames: StoryFn = (args): HTMLElement => {
 
     const cssText = `
         .test-event {
+            position: absolute;
+            right: 50%;
+            bottom: -4px;
+            left: 50%;
             background-color: blue;
-            border: 1px solid red;
+            width: 6px;
+            height: 6px;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
         }
-        .test-headerRow {
-            background-color: purple;
+        .test-header-row {
+            background-color: rgb(221, 226, 230);
         }
         .test-row {
-            margin: 2px 0;
-            border: 1px solid #c5c5c5;
+            padding: 4px 0;
+            font-family: sans-serif;
         }
-        .test-rowSelected {
-            background-color: gray;
-            border: 1px dashed gray;
+        .test-row:not(:first-child) {
+            border-top: 1px solid #c5c5c5;
         }
-        .test-headerCell {
+        .test-row-selected {
+            position: relative;
+        }
+        .test-row-selected > * {
+            position: relative;
+            z-index: 1;
+        }
+        .test-row-selected::before {
+            position: absolute;
+            inset: 4px;
+            z-index: 0;
+            content: '';
+            background-color: rgba(221, 226, 230, .5);
+            border: 1px dashed #c5c5c5;
+            border-radius: 4px;
+        }
+        .test-header-cell {
             font-weight: bold;
             text-transform: uppercase;
+            font-size: .65rem;
         }
         .test-cell {
-            background-color: #FFC107;
-            color: #777777;
-            margin: 2px;
+            position: relative;
+            height: 100%;
+            outline: none;
         }
-        .test-cellCurrentDate {
-            background-color: #e20d0d;
+        .test-cell:hover .test-day-number {
+            border: 1px solid blue;
         }
-        .test-cellSelectedDate {
-            border: 1px dashed gray;
-            color: white;
-            background: #3a3a3a;
+        .test-row:not(.test-header-row) .test-cell:not(:first-child) {
+            border-left: 1px solid #c5c5c5;
         }
-        .test-todayCell {
-            background-color: #039d17;
+        .test-cell-current-date .test-day-number {
+            background-color: rgba(233, 181, 1, 0.1);
+            border: 1px solid rgb(233, 181, 1);
         }
-        .test-weekendCell {
-            background-color: font-weight: bold;
+        .test-cell-selected-date .test-day-number {
+            border: 1px solid blue;
         }
-        .test-dayNumber {
-            border: 1px solid red;
-            border-radius: 10px;
+        .test-today-cell {
+            background-color: rgba(233, 181, 1, 0.1);
+        }
+        .test-weekend-cell {
+            font-weight: bold;
+        }
+        .test-day-number {
+            transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            font-size: .75rem;
+            border: 1px solid rgba(255, 255, 255, 0);
+            border-radius: 50px;
         }
     `;
 
@@ -80,16 +115,16 @@ export const ClassNames = TemplateClassNames.bind({});
 ClassNames.args = {
     classNames: {
         event: 'test-event',
-        headerRow: 'test-headerRow',
+        headerRow: 'test-header-row',
         row: 'test-row',
-        rowSelected: 'test-rowSelected',
-        headerCell: 'test-headerCell',
+        rowSelected: 'test-row-selected',
+        headerCell: 'test-header-cell',
         cell: 'test-cell',
-        cellCurrentDate: 'test-cellCurrentDate',
-        cellSelectedDate: 'test-cellSelectedDate',
-        todayCell: 'test-todayCell',
-        weekendCell: 'test-weekendCell',
-        dayNumber: 'test-dayNumber',
+        cellCurrentDate: 'test-cell-current-date',
+        cellSelectedDate: 'test-cell-selected-date',
+        todayCell: 'test-today-cell',
+        weekendCell: 'test-weekend-cell',
+        dayNumber: 'test-day-number',
     } as B5rMonthClassNames,
 };
 ClassNames.storyName = 'options.classNames';

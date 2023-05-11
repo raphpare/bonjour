@@ -1,4 +1,3 @@
-import { B5rEventClassNames } from '../models';
 import { B5rEventClickCallback, B5rUpdateCallback } from '../models/callbacks';
 
 export type B5rWeekdayFormat = 'long' | 'short' | 'narrow';
@@ -28,6 +27,9 @@ export interface B5rMonthClassNames {
 }
 
 export interface B5rMonthDesignTokens {
+    ['--event-background']?: string;
+    ['--event-width']?: string;
+    ['--event-height']?: string;
     ['--background']?: string;
     ['--cell-height']?: string;
     ['--cell-align-items']?: string;

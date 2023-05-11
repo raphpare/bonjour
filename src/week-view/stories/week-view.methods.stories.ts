@@ -141,7 +141,6 @@ const TemplateOnUpdate: StoryFn = (args): HTMLElement => {
     refHeader.append(refCurrentdate);
 
     weekView.onUpdate(() => {
-        console.log('The week view is updated');
         refCurrentdate.innerText = weekView.currentDate.toLocaleDateString();
     });
 

@@ -16,9 +16,6 @@ import {
     HEADER_DAY_CLASS,
     HEADER_WEEKDAY_CLASS,
     ROOT_CLASS,
-    addClassOnElement,
-    removeClassOnElement,
-    addDesignTokenOnElement,
     ALL_DAY_EVENT_ENDS_OUT_OF_VIEW_CLASS,
     ALL_DAY_EVENT_STARTS_OUT_OF_VIEW_CLASS,
     CURRENT_TIME_CLASS,
@@ -42,6 +39,11 @@ import cssText from './week-view.css';
 import { LOCALE_EN } from '../utils/locales';
 import { DAY_MS } from '../utils/milliseconds';
 import { newDate, getDaysBetween, isTodayDate } from '../utils/date';
+import {
+    addDesignTokenOnElement,
+    addClassOnElement,
+    removeClassOnElement,
+} from '../utils/dom';
 
 export class B5rWeekView implements CalendarView {
     refRoot: HTMLElement = null;

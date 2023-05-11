@@ -1,10 +1,13 @@
 .b5r-month {
-    --background: #ffffff;
+    --event-background: blue;
+    --event-width: 6px;
+    --event-height: var(--event-width);
+    --background: rgba(255, 255, 255, 0);
     --cell-height: inherit;
     --cell-align-items: center;
-    --cell-padding: 4px;
-    --day-min-width: inherit;
-    --day-min-height: inherit;
+    --cell-padding: 0;
+    --day-min-width: 34px;
+    --day-min-height: 34px;
     --day-border-radius: 0;
     --day-border: none;
     --day-color: currentColor;
@@ -12,12 +15,12 @@
     --day-color-focus: var(--day-color-hover);
     --day-color-active: var(--day-color-focus);
     --day-background: inherit;
-    --day-background-hover: rgb(149, 148, 148);
+    --day-background-hover: #ccc;
     --day-background-focus: var(--day-background-hover);
     --day-background-active: var(--day-background-focus);
     --selected-day-color: var(--day-color);
-    --selected-day-background: var(--day-background);
-    --selected-day-border: none;
+    --selected-day-background: yellow;
+    --selected-day-border: var(--day-border);
     --current-day-color: var(--day-color);
     --current-day-background: var(--day-background);
     --current-day-border: none;
@@ -59,6 +62,7 @@
         flex-direction: column;
         min-height: var(--cell-height);
         padding: var(--cell-padding);
+        cursor: pointer;
 
         &:hover {
             .b5r-month__day-number {
@@ -100,6 +104,7 @@
         &--selected {
             color: var(--cell-selected-color);
             background-color: var(--cell-selected-background);
+
             .b5r-month__day-number {
                 --day-color: var(--selected-day-color);
                 --day-background: var(--selected-day-background);
@@ -121,17 +126,13 @@
         font-family: inherit;
         font-size: inherit;
         text-align: center;
-
-        &:not(:disabled) {
-            cursor: pointer;
-        }
     }
 
     &__event {
-        width: 5px;
-        height: 5px;
+        width: var(--event-width);
+        height: var(--event-height);
         border-radius: 50%;
-        background-color: red;
+        background-color: var(--event-background);
         position: absolute;
         bottom: 0;
     }

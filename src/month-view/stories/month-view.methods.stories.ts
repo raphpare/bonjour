@@ -6,7 +6,7 @@ export default {
     title: 'month-view/Methods',
 } as Meta;
 
-const setEvents: StoryFn = (args): HTMLElement => {
+const TemplateSetEvents: StoryFn = (args): HTMLElement => {
     const { refRoot, monthView } = getMonthViewDefaultTemplate({
         monthOptions: args,
     });
@@ -14,4 +14,5 @@ const setEvents: StoryFn = (args): HTMLElement => {
     return refRoot;
 };
 
-export const MethodSetEvent = setEvents.bind({});
+export const SetEvents = TemplateSetEvents.bind({});
+SetEvents.storyName = 'setEvents()';
