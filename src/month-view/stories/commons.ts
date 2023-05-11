@@ -9,6 +9,8 @@ export const getMonthViewDefaultTemplate = (options: {
     const refBtnToday = document.createElement('button');
     const refBtnPrevious = document.createElement('button');
     const refBtnNext = document.createElement('button');
+    const refBtnLangJp = document.createElement('button');
+    const refBtnLangEn = document.createElement('button');
     const refMonthView = document.createElement('div');
 
     refRoot.setAttribute('style', `width: 300px`);
@@ -22,6 +24,9 @@ export const getMonthViewDefaultTemplate = (options: {
     refBtnPrevious.title = 'Previous';
     refBtnNext.innerText = '>';
     refBtnNext.title = 'Next';
+
+    refBtnLangJp.innerText = 'Jp';
+    refBtnLangEn.innerText = 'En';
 
     const monthView = new B5rMonthView(refMonthView, options.monthOptions);
 
@@ -37,6 +42,14 @@ export const getMonthViewDefaultTemplate = (options: {
         monthView.next();
     });
 
+    refBtnLangJp.addEventListener('click', () => {
+        monthView.locale = 'ja-JP';
+    });
+
+    refBtnLangEn.addEventListener('click', () => {
+        monthView.locale = 'en-CA';
+    });
+
     monthView.onDayClick((event, date) => {
         // eslint-disable-next-line no-console
         console.log(date);
@@ -46,6 +59,8 @@ export const getMonthViewDefaultTemplate = (options: {
     refHeader.append(refBtnToday);
     refHeader.append(refBtnPrevious);
     refHeader.append(refBtnNext);
+    refHeader.append(refBtnLangJp);
+    refHeader.append(refBtnLangEn);
 
     refRoot.append(refHeader);
     refRoot.append(refMonthView);
