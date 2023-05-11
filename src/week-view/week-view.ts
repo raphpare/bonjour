@@ -116,6 +116,7 @@ export class B5rWeekView implements CalendarView {
     }
 
     set currentDate(currentDate: Date) {
+        if (this.currentDate === currentDate) return;
         this.#currentDate = currentDate;
         this.#setDatesDisplayed(currentDate);
         this.updateView();

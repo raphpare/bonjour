@@ -126,6 +126,7 @@ export class B5rMonthView implements CalendarView {
     }
 
     set currentDate(currentDate: Date) {
+        if (this.currentDate === currentDate) return;
         this.#currentDate = currentDate;
         this.selectedDate = currentDate;
     }
