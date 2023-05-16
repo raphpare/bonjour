@@ -1,4 +1,4 @@
-import { B5rEventClickCallback, B5rUpdateCallback } from '../models/callbacks';
+import { B5rUpdateCallback } from '../models/callbacks';
 
 export type B5rWeekdayFormat = 'long' | 'short' | 'narrow';
 
@@ -36,8 +36,8 @@ export interface B5rMonthDesignTokens {
     ['--cell-padding']?: string;
     ['--day-min-width']?: string;
     ['--day-min-height']?: string;
-    ['--day-border-radius']: string;
-    ['--day-border']: string;
+    ['--day-border-radius']?: string;
+    ['--day-border']?: string;
     ['--day-color']?: string;
     ['--day-color-hover']?: string;
     ['--day-color-focus']?: string;
@@ -62,10 +62,9 @@ export interface B5rMonthDesignTokens {
     ['--cell-selected-background']?: string;
 }
 
-export type B5rDayClickCallback = (event: PointerEvent, date: Date) => void;
+export type B5rDateCallback = (date: Date) => void;
 
 export interface B5rMonthCallbacks {
-    updateCallbacks: B5rUpdateCallback[];
-    eventClickCallbacks: B5rEventClickCallback[];
-    dayClickCallbacks: B5rDayClickCallback[];
+    selectedDateChange: B5rDateCallback[];
+    currentDateChange: B5rDateCallback[];
 }

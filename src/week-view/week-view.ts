@@ -67,8 +67,8 @@ export class B5rWeekView implements CalendarView {
     #eventsClone: B5rEvent[] = [];
     #internalEvents: B5rInternalEvent[] = [];
     #callbacks: B5rWeekCallbacks = {
-        updateCallbacks: [],
-        eventClickCallbacks: [],
+        update: [],
+        eventClick: [],
     };
 
     constructor(element: HTMLElement, options?: B5rWeekOptions) {
@@ -238,11 +238,11 @@ export class B5rWeekView implements CalendarView {
     }
 
     onUpdate(callback: B5rUpdateCallback): void {
-        this.#callbacks.updateCallbacks.push(callback);
+        this.#callbacks.update.push(callback);
     }
 
     onEventClick(callback: B5rEventClickCallback): void {
-        this.#callbacks.eventClickCallbacks.push(callback);
+        this.#callbacks.eventClick.push(callback);
     }
 
     set #events(events: B5rEvent[]) {
@@ -439,9 +439,9 @@ export class B5rWeekView implements CalendarView {
     }
 
     #updated(): void {
-        if (!this.#callbacks.updateCallbacks) return;
+        if (!this.#callbacks.update) return;
 
-        this.#callbacks.updateCallbacks.forEach((callback) => callback());
+        this.#callbacks.update.forEach((callback) => callback());
     }
 
     #createAllEvents(): void {
@@ -776,12 +776,11 @@ export class B5rWeekView implements CalendarView {
         eventClicked: B5rInternalEvent,
         pointerEvent: PointerEvent
     ): void {
-        if (this.#callbacks.eventClickCallbacks.length === 0) return;
+        if (this.#callbacks.eventClick.length === 0) return;
         eventClicked = this.events.find((e) => e.id === eventClicked.id);
 
-        this.#callbacks.eventClickCallbacks.forEach(
-            (callback: B5rEventClickCallback) =>
-                callback(pointerEvent, eventClicked)
+        this.#callbacks.eventClick.forEach((callback: B5rEventClickCallback) =>
+            callback(pointerEvent, eventClicked)
         );
     }
 
