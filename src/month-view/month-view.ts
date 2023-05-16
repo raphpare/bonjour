@@ -418,6 +418,10 @@ export class B5rMonthView implements CalendarView {
             this.#addKeydowEventListener(refCell);
         }
 
+        refCell.addEventListener('click', (_event: PointerEvent) => {
+            this.currentDate = date;
+        });
+
         if (this.#thereIsAnEventInDate(date)) {
             const event = document.createElement('span');
             event.className = EVENT_CLASS;
