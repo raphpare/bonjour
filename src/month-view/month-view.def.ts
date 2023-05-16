@@ -1,5 +1,3 @@
-import { B5rUpdateCallback } from '../models/callbacks';
-
 export type B5rWeekdayFormat = 'long' | 'short' | 'narrow';
 
 export interface B5rMonthOptions {
