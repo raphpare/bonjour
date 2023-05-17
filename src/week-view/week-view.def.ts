@@ -41,6 +41,6 @@ export interface B5rWeekDesignTokens {
 }
 
 export interface B5rWeekCallbacks {
-    updateCallbacks: B5rUpdateCallback[];
-    eventClickCallbacks: B5rEventClickCallback[];
+    update: B5rUpdateCallback[];
+    eventClick: B5rEventClickCallback[];
 }

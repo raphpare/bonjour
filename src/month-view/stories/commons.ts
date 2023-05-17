@@ -12,8 +12,13 @@ export const getMonthViewDefaultTemplate = (options: {
     const refBtnLangJp = document.createElement('button');
     const refBtnLangEn = document.createElement('button');
     const refMonthView = document.createElement('div');
+    const refCurrentDate = document.createElement('span');
+    const refSelectedDate = document.createElement('span');
 
-    refRoot.setAttribute('style', `max-width: 600px`);
+    const texteSelectedDate = 'Selected date: ';
+    const texteCurrentDate = 'Current date: ';
+
+    refRoot.setAttribute('style', `max-width: 600px; height: 800px`);
     refHeader.setAttribute(
         'style',
         `display: flex; gap: 16px; margin-bottom: 16px`
@@ -50,10 +55,19 @@ export const getMonthViewDefaultTemplate = (options: {
         monthView.locale = 'en-CA';
     });
 
-    monthView.onDayClick((event, date) => {
-        monthView.currentDate = date;
+    monthView.onCurrentDateChange((_date: Date) => {
+        refCurrentDate.innerText = `${texteCurrentDate}${_date.toLocaleString()}`;
     });
 
+    monthView.onSelectedDateChange((_date: Date) => {
+        refSelectedDate.innerText = `${texteSelectedDate}${_date.toLocaleString()}`;
+    });
+
+    refCurrentDate.innerText = `${texteCurrentDate}${monthView.currentDate.toLocaleString()}`;
+    refSelectedDate.innerText = `${texteSelectedDate}${monthView.selectedDate.toLocaleString()}`;
+
+    refHeader.append(refCurrentDate);
+    refHeader.append(refSelectedDate);
     refHeader.append(refBtnToday);
     refHeader.append(refBtnPrevious);
     refHeader.append(refBtnNext);
