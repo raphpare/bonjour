@@ -2,7 +2,7 @@
 
 Accessible and dependency-free calendar JavaScript library: import the code you need and use your UI controls.
 
-<img alt="Brique example" style="width: 100%; margin: 0 auto; max-width: 800px;" src="https://github.com/raphpare/brique/blob/main/example.png?raw=true" />
+<img alt="b5r-bonjour Example" style="width: 100%; margin: 0 auto; max-width: 800px;" src="https://github.com/raphpare/bonjour/blob/main/example.png?raw=true" />
 
 ## Getting Started
 
