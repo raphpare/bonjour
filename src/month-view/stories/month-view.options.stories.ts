@@ -165,4 +165,4 @@ DesignTokens.args = {
     },
 };
 
-DesignTokens.storyName = 'options.DesignTokens';
+DesignTokens.storyName = 'options.designTokens';

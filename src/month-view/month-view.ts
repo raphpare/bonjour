@@ -29,7 +29,7 @@ import {
 } from './month-view.utils';
 import cssText from './month-view.css';
 import {
-    B5rDayClickCallback,
+    B5rDateCallback,
     B5rMonthCallbacks,
     B5rMonthClassNames,
     B5rMonthDesignTokens,
@@ -37,7 +37,6 @@ import {
     B5rWeekdayFormat,
 } from './month-view.def';
 import { CalendarView } from '../models/calendar-view';
-import { B5rEventClickCallback, B5rUpdateCallback } from '../models/callbacks';
 import { B5rDateRange } from '../models/date-range';
 import {
     addDesignTokenOnElement,
@@ -64,9 +63,8 @@ export class B5rMonthView implements CalendarView {
     #internalEvents: B5rEvent[] = [];
     #visibleDates: Date[] = [];
     #callbacks: B5rMonthCallbacks = {
-        updateCallbacks: [],
-        eventClickCallbacks: [],
-        dayClickCallbacks: [],
+        selectedDateChange: [],
+        currentDateChange: [],
     };
     #options: B5rMonthOptions = {};
     #keydowEvent: () => void;
@@ -119,6 +117,8 @@ export class B5rMonthView implements CalendarView {
         }
 
         this.#pastSelectedDate = selectedDate;
+
+        this.#onSelectedDateChange(this.#selectedDate);
     }
 
     get selectedDate(): Date {
@@ -126,8 +126,12 @@ export class B5rMonthView implements CalendarView {
     }
 
     set currentDate(currentDate: Date) {
+        if (this.currentDate === currentDate) return;
+
         this.#currentDate = currentDate;
         this.selectedDate = currentDate;
+
+        this.#onCurrentDateChange(currentDate);
     }
 
     get currentDate(): Date {
@@ -236,16 +240,12 @@ export class B5rMonthView implements CalendarView {
         removeClassOnElement(this.refRoot, ROOT_CLASS);
     }
 
-    onUpdate(callback: B5rUpdateCallback): void {
-        this.#callbacks.updateCallbacks.push(callback);
+    onSelectedDateChange(callback: B5rDateCallback): void {
+        this.#callbacks.selectedDateChange.push(callback);
     }
 
-    onEventClick(callback: B5rEventClickCallback): void {
-        this.#callbacks.eventClickCallbacks.push(callback);
-    }
-
-    onDayClick(callback: B5rDayClickCallback): void {
-        this.#callbacks.dayClickCallbacks.push(callback);
+    onCurrentDateChange(callback: B5rDateCallback): void {
+        this.#callbacks.currentDateChange.push(callback);
     }
 
     set #events(events: B5rEvent[]) {
@@ -409,23 +409,22 @@ export class B5rMonthView implements CalendarView {
 
         if (isCurrentDate) {
             this.#updateClassCurrentDate(refCell);
+            addClassOnElement(refRow, ROW_SELECTED_CLASS);
+            addClassOnElement(refRow, this.#classNames?.rowSelected);
         }
 
         if (isSelectedDate) {
-            addClassOnElement(refRow, ROW_SELECTED_CLASS);
-            addClassOnElement(refRow, this.#classNames?.rowSelected);
-
             addClassOnElement(refCell, CELL_SELECTED_CLASS);
             this.#addKeydowEventListener(refCell);
         }
 
-        refCell.addEventListener('click', (event: PointerEvent) => {
-            this.#onDayClick(event, date);
+        refCell.addEventListener('click', (_event: PointerEvent) => {
+            this.currentDate = date;
         });
 
         if (this.#thereIsAnEventInDate(date)) {
             const event = document.createElement('span');
-            addClassOnElement(event, EVENT_CLASS);
+            event.className = EVENT_CLASS;
 
             addClassOnElement(event, this.#classNames?.event);
 
@@ -481,28 +480,28 @@ export class B5rMonthView implements CalendarView {
             `.${ROW_SELECTED_CLASS}`
         );
 
-        removeClassOnElement(elementRowCurrentDate, ROW_SELECTED_CLASS);
+        if (elementRowCurrentDate) {
+            removeClassOnElement(elementRowCurrentDate, ROW_SELECTED_CLASS);
+            removeClassOnElement(
+                elementRowCurrentDate,
+                `${this.#classNames?.rowSelected}`
+            );
+        }
 
         const elementCurrentDate = this.refRoot.querySelector(
             `.${CELL_CURRENT_CLASS}`
         );
 
+        if (!elementCurrentDate) return;
+
         addClassOnElement(
             elementCurrentDate?.parentElement,
             ROW_SELECTED_CLASS
         );
-
-        if (this.#classNames?.rowSelected) {
-            removeClassOnElement(
-                elementRowCurrentDate,
-                `${this.#classNames?.rowSelected}`
-            );
-
-            addClassOnElement(
-                elementCurrentDate?.parentElement,
-                this.#classNames?.rowSelected
-            );
-        }
+        addClassOnElement(
+            elementCurrentDate?.parentElement,
+            this.#classNames?.rowSelected
+        );
     }
 
     #updateSelectedCell() {
@@ -629,10 +628,19 @@ export class B5rMonthView implements CalendarView {
         return dates;
     }
 
-    #onDayClick(event: PointerEvent, date: Date): void {
-        this.#callbacks.dayClickCallbacks.forEach(
-            (callback: (event: PointerEvent, date: Date) => void) =>
-                callback(event, date)
+    #onSelectedDateChange(date: Date): void {
+        if (this.#callbacks.selectedDateChange.length === 0) return;
+
+        this.#callbacks.selectedDateChange.forEach(
+            (callback: (date: Date) => void) => callback(date)
+        );
+    }
+
+    #onCurrentDateChange(date: Date): void {
+        if (this.#callbacks.currentDateChange.length === 0) return;
+
+        this.#callbacks.currentDateChange.forEach(
+            (callback: (date: Date) => void) => callback(date)
         );
     }
 
@@ -664,6 +672,8 @@ export class B5rMonthView implements CalendarView {
                 this.#updateCurrentDate(refCell);
                 break;
         }
+
+        event.preventDefault();
     }
 
     #addKeydowEventListener(refCell: HTMLElement): void {

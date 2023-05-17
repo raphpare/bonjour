@@ -1,4 +1,3 @@
-import { B5rEventClickCallback, B5rUpdateCallback } from './callbacks';
 import { B5rDateRange } from './date-range';
 import { B5rEvent } from './event';
 
@@ -18,6 +17,4 @@ export interface CalendarView {
     updateView: () => Promise<void> | void;
     deleteAllEvents: () => void;
     destroy: () => void;
-    onUpdate: (callback: B5rUpdateCallback) => void;
-    onEventClick: (callback: B5rEventClickCallback) => void;
 }
