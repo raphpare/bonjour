@@ -2,13 +2,14 @@
 
 Accessible and dependency-free calendar JavaScript library: import the code you need and use your UI controls.
 
-<img alt="b5r-bonjour Example" style="width: 100%; margin: 0 auto; max-width: 800px; margin-top: 24px;" src="https://github.com/raphpare/bonjour/blob/main/example.png?raw=true" />
+<img alt="b5r-bonjour Example" style="width: 100%; margin: 16px auto 0; max-width: 800px;" src="https://github.com/raphpare/bonjour/blob/main/example.png?raw=true" />
 
 ## Getting Started
 
 1. [Install](#install)
-2. [Examples](#examples)
-3. [Contribution](#contribution)
+2. [Tree Shaking](#tree-shaking)
+3. [Examples](#examples)
+4. [Contribution](#contribution)
 
 ## Install
 
@@ -22,6 +23,18 @@ $ npm i b5r-bonjour --save
 
 ```
 $ yarn add b5r-bonjour
+```
+
+## Tree Shaking
+
+Bonjour was designed to be able to do Treeshaking. This technique allows you to reduce the size of the final build by including only the code you use.
+
+### Example
+
+```
+import { B5rEvent } from 'b5r-bonjour';
+import { B5rMonthView } from 'b5r-bonjour/lib/month-view';
+import { B5rWeekView } from 'b5r-bonjour/lib/week-view';
 ```
 
 ## Examples
