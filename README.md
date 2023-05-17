@@ -31,7 +31,7 @@ Bonjour was designed to be able to do Treeshaking. This technique allows you to 
 
 ### Example
 
-```
+```TS
 import { B5rEvent } from 'b5r-bonjour';
 import { B5rMonthView } from 'b5r-bonjour/lib/month-view';
 import { B5rWeekView } from 'b5r-bonjour/lib/week-view';
