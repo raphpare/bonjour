@@ -2,19 +2,33 @@
 
 Accessible and dependency-free calendar JavaScript library: import the code you need and use your UI controls.
 
+<img alt="Brique example" style="width: 100%; margin: 0 auto; max-width: 800px;" src="https://github.com/raphpare/brique/blob/master/example.png?raw=true" />
+
+## Getting Started
+
+1. [Install](#install)
+2. [Examples](#examples)
+3. [Contribution](#contribution)
+
 ## Install
+
+### npm
 
 ```
 $ npm i b5r-bonjour --save
 ```
 
-or
+### Yarn
 
 ```
 $ yarn add b5r-bonjour
 ```
 
-## WeekView Example
+## Examples
+
+### Week View
+
+#### HTML
 
 ```HTML
 <!-- Calendar -->
@@ -27,6 +41,8 @@ $ yarn add b5r-bonjour
 <button id="btnNext">Next</button>
 <button id="btnAdd">Add event</button>
 ```
+
+#### TypeScript
 
 ```TS
 import { B5rWeekView } from 'b5r-bonjour/lib/week-view';
@@ -86,11 +102,4 @@ $ yarn run build
 ```
 $ yarn install
 $ yarn run storybook
-```
-
-### Local Development
-
-```
-$ yarn install
-$ yarn run dev
 ```
