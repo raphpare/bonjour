@@ -16,13 +16,13 @@ Accessible and dependency-free calendar JavaScript library: import the code you 
 ### npm
 
 ```
-$ npm i b5r-bonjour --save
+npm i b5r-bonjour --save
 ```
 
 ### Yarn
 
 ```
-$ yarn add b5r-bonjour
+yarn add b5r-bonjour
 ```
 
 ## Tree Shaking
