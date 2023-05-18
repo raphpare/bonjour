@@ -17,7 +17,7 @@ export const newDate = (options: {
         : date;
 };
 
-export const isTodayDate = (someDate: Date, timeZone?: string) => {
+export const isTodayDate = (someDate: Date, timeZone?: string): boolean => {
     const today = newDate({ timeZone: timeZone });
     return (
         someDate.getDate() == today.getDate() &&
@@ -26,7 +26,29 @@ export const isTodayDate = (someDate: Date, timeZone?: string) => {
     );
 };
 
-export const getDaysBetween = (dateA, dateB) => {
-    const differenceMs = Math.abs(dateA - dateB);
-    return Math.round(differenceMs / DAY_MS);
+export const getDaysBetween = (dateA: Date, dateB: Date): number => {
+    let dateIncrementer = dateA.getTime();
+    let numberDays = 0;
+
+    while (
+        dateIncrementer <
+        new Date(
+            dateB.getFullYear(),
+            dateB.getMonth(),
+            dateB.getDate(),
+            23,
+            59,
+            59
+        ).getTime()
+    ) {
+        const date = new Date(dateIncrementer);
+        numberDays++;
+
+        dateIncrementer = new Date(
+            date.getFullYear(),
+            date.getMonth(),
+            date.getDate() + 1
+        ).getTime();
+    }
+    return numberDays;
 };

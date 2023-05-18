@@ -1,6 +1,5 @@
 import { Meta, StoryFn } from '@storybook/html';
 import { EVENTS_MOCKS, EVENTS_SAMEDAY_MOCK } from '../../mocks/events.mocks';
-import { injectStyleTag } from '../../utils/stylesheets';
 import { getWeekViewDefaultTemplate } from './commons';
 
 export default {

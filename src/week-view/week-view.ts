@@ -34,7 +34,7 @@ import { B5rEvent, B5rInternalEvent } from '../models/event';
 import { B5rDateRange } from '../models/date-range';
 import { injectStyleTag } from '../utils/stylesheets';
 import { generateUuid } from '../utils/uuid';
-import { isDateRangeOverlap } from '../utils/date-range';
+import { isDateRangeOverlap, isDateRangeSameDate } from '../utils/date-range';
 import cssText from './week-view.css';
 import { LOCALE_EN } from '../utils/locales';
 import { DAY_MS } from '../utils/milliseconds';
@@ -317,6 +317,25 @@ export class B5rWeekView implements CalendarView {
 
                     initEvents.push(eventBetweenStartAndEnd);
                     daysBetween--;
+                }
+            } else if (
+                eventEnd.getHours() === 0 &&
+                eventEnd.getMinutes() === 0 &&
+                eventEnd.getSeconds() < 1
+            ) {
+                const newDateEnd = new Date(
+                    yearEnd,
+                    monthEnd,
+                    dateEnd - 1,
+                    23,
+                    59,
+                    currentEvent.allDay ? 0 : 59
+                );
+
+                if (
+                    isDateRangeSameDate({ start: eventStart, end: newDateEnd })
+                ) {
+                    currentEvent.dateRange.end = newDateEnd;
                 }
             }
         }
@@ -646,14 +665,15 @@ export class B5rWeekView implements CalendarView {
                 : getDaysBetween(
                       this.dateRangesDisplayed.start,
                       event.dateRange.start
-                  );
+                  ) - 1;
         const indexEnd =
             event.dateRange.end > this.dateRangesDisplayed.end
                 ? this.datesDisplayed.length
                 : getDaysBetween(
                       this.dateRangesDisplayed.start,
                       event.dateRange.end
-                  ) + 1;
+                  );
+
         refAllDayEvent.style.setProperty(
             '--index-start',
             indexStart.toString()

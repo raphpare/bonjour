@@ -1,21 +1,42 @@
 import { B5rEvent } from '../models/event';
+
 const dateNow = new Date();
 
 export const generateDateFromNow = (
     day: number,
     heures: number = new Date().getHours(),
     minutes = 0
-): Date => {
-    return new Date(
+): Date =>
+    new Date(
         dateNow.getFullYear(),
         dateNow.getMonth(),
         dateNow.getDate() + day,
         heures,
         minutes
     );
-};
 
 export const EVENTS_MOCKS: B5rEvent[] = [
+    {
+        id: 'test-1-test',
+        title: 'test 1',
+        subtitle: 'Subtitle',
+        allDay: true,
+        dateRange: {
+            start: generateDateFromNow(0, 0, 0),
+            end: generateDateFromNow(1, 0, 0),
+        },
+        designTokens: {
+            '--color': '#fff',
+            '--color-hover': 'red',
+            '--color-focus': 'blue',
+            '--color-active': '#ccc',
+            '--background': 'red',
+            '--background-hover': 'blue',
+            '--background-focus': 'green',
+            '--background-active': '#000',
+            '--border-radius': '20px',
+        },
+    },
     {
         id: '1',
         title: 'Event 1',
@@ -202,7 +223,7 @@ export const EVENTS_MOCKS: B5rEvent[] = [
         allDay: true,
         dateRange: {
             start: generateDateFromNow(-4, 0),
-            end: generateDateFromNow(-3, 0),
+            end: generateDateFromNow(-5, 0),
         },
     },
     {
@@ -265,7 +286,7 @@ export const EVENTS_MOCKS: B5rEvent[] = [
         allDay: true,
         dateRange: {
             start: generateDateFromNow(-7, 0),
-            end: generateDateFromNow(-6, 0),
+            end: generateDateFromNow(-6, 2),
         },
     },
     {
