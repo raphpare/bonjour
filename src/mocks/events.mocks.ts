@@ -324,7 +324,7 @@ export const EVENTS_MOCKS: B5rEvent[] = [
         title: 'Event 32',
         dateRange: {
             start: generateDateFromNow(0, 14),
-            end: generateDateFromNow(10, 3),
+            end: generateDateFromNow(80, 3),
         },
         designTokens: {
             ['--background']: 'red',
