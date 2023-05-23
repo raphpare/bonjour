@@ -669,23 +669,26 @@ export class B5rMonthView implements CalendarView {
         switch (event.code) {
             case KEY_ARROW_LEFT:
                 setSelectedDate(-1);
+                event.preventDefault();
                 break;
             case KEY_ARROW_RIGHT:
                 setSelectedDate(1);
+                event.preventDefault();
                 break;
             case KEY_ARROW_UP:
                 setSelectedDate(-7);
+                event.preventDefault();
                 break;
             case KEY_ARROW_DOWN:
                 setSelectedDate(7);
+                event.preventDefault();
                 break;
             case KEY_ENTER:
             case KEY_SPACE:
                 this.#updateCurrentDate(refCell);
+                event.preventDefault();
                 break;
         }
-
-        event.preventDefault();
     }
 
     #addKeydowEventListener(refCell: HTMLElement): void {
