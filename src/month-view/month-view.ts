@@ -44,6 +44,7 @@ import {
     removeClassOnElement,
 } from '../utils/dom';
 import { isDateRangeSameDate, isDateRangeSameMonth } from '../utils/date-range';
+import { isDateRangeOverlap } from '../utils/date-range';
 
 const convertDateToString = (date: Date): string =>
     date.toISOString().slice(0, 10);
@@ -422,7 +423,45 @@ export class B5rMonthView implements CalendarView {
             this.currentDate = date;
         });
 
-        if (this.#thereIsAnEventInDate(date)) {
+        const dateRange: B5rDateRange = {
+            start: new Date(
+                date.getFullYear(),
+                date.getMonth(),
+                date.getDate(),
+                0,
+                0,
+                0
+            ),
+            end: new Date(
+                date.getFullYear(),
+                date.getMonth(),
+                date.getDate(),
+                23,
+                59,
+                59
+            ),
+        };
+
+        if (
+            this.#internalEvents.some((e) =>
+                isDateRangeOverlap(dateRange, {
+                    start: e.dateRange.start,
+                    end:
+                        e.dateRange.end.getHours() === 0 &&
+                        e.dateRange.end.getMinutes() === 0 &&
+                        e.dateRange.end.getSeconds() < 1
+                            ? new Date(
+                                  e.dateRange.end.getFullYear(),
+                                  e.dateRange.end.getMonth(),
+                                  e.dateRange.end.getDate() - 1,
+                                  23,
+                                  59,
+                                  59
+                              )
+                            : e.dateRange.end,
+                })
+            )
+        ) {
             const event = document.createElement('span');
             event.className = EVENT_CLASS;
 
@@ -438,18 +477,6 @@ export class B5rMonthView implements CalendarView {
         return this.refRoot.querySelector(
             `.${CELL_CLASS}[${DATA_DATE}="${convertDateToString(date)}"]`
         );
-    }
-
-    #thereIsAnEventInDate(date: Date): boolean {
-        for (const event of this.#internalEvents) {
-            event.dateRange.start.setHours(0, 0, 0, 0);
-            event.dateRange.end.setHours(0, 0, 0, 0);
-
-            if (date >= event.dateRange.start && date <= event.dateRange.end) {
-                return true;
-            }
-        }
-        return false;
     }
 
     #updateCurrentDate(element: HTMLElement) {

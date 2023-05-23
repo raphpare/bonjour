@@ -2,7 +2,7 @@ import { Meta, StoryFn } from '@storybook/html';
 import { getMonthViewDefaultTemplate } from './commons';
 import { B5rMonthClassNames } from '../month-view.def';
 import { injectStyleTag } from '../../utils/stylesheets';
-import { EVENT_MOCK_3_DAY } from '../../mocks/events.mocks';
+import { EVENT_MOCK_3 } from '../../mocks/events.mocks';
 
 export default {
     title: 'month-view/Constructor Options',
@@ -13,7 +13,7 @@ const Template: StoryFn = (args): HTMLElement => {
         monthOptions: args,
     });
 
-    monthView.setEvents(EVENT_MOCK_3_DAY);
+    monthView.setEvents(EVENT_MOCK_3);
 
     return refRoot;
 };
@@ -105,7 +105,7 @@ const TemplateClassNames: StoryFn = (args): HTMLElement => {
 
     injectStyleTag('styleTagTestClassMonthView', cssText);
 
-    monthView.setEvents(EVENT_MOCK_3_DAY);
+    monthView.setEvents(EVENT_MOCK_3);
 
     return refRoot;
 };

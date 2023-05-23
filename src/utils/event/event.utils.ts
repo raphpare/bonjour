@@ -17,16 +17,15 @@ export const cloneEvents = (events: B5rEvent[]): B5rEvent[] =>
         )
     ) as B5rEvent[];
 
-export const sortEvents = (
-    events: B5rEvent[] | B5rInternalEvent[]
-): B5rEvent[] | B5rInternalEvent[] =>
+export const sortEvents = (events: B5rInternalEvent[]): B5rInternalEvent[] =>
     events
         .sort(
             (a, b) =>
-                b.dateRange.end.getTime() -
-                b.dateRange.start.getTime() -
-                (a.dateRange.end.getTime() - a.dateRange.start.getTime())
+                b._dateRange.end.getTime() -
+                b._dateRange.start.getTime() -
+                (a._dateRange.end.getTime() - a._dateRange.start.getTime())
         )
         .sort(
-            (a, b) => a.dateRange.start.getTime() - b.dateRange.start.getTime()
+            (a, b) =>
+                a._dateRange.start.getTime() - b._dateRange.start.getTime()
         );

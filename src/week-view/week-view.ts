@@ -264,6 +264,10 @@ export class B5rWeekView implements CalendarView {
             const dateEnd = eventEnd.getDate();
 
             currentEvent._id = generateUuid();
+            currentEvent._dateRange = {
+                start: new Date(eventStart),
+                end: new Date(eventEnd),
+            };
 
             if (
                 !(
@@ -335,7 +339,7 @@ export class B5rWeekView implements CalendarView {
                 if (
                     isDateRangeSameDate({ start: eventStart, end: newDateEnd })
                 ) {
-                    currentEvent.dateRange.end = newDateEnd;
+                    currentEvent._dateRange.end = newDateEnd;
                 }
             }
         }
@@ -347,7 +351,7 @@ export class B5rWeekView implements CalendarView {
             if (event.allDay) {
                 eventsOverlapped = sortedEvents.filter(
                     (e) =>
-                        (isDateRangeOverlap(event.dateRange, e.dateRange) ||
+                        (isDateRangeOverlap(event._dateRange, e._dateRange) ||
                             event === e) &&
                         e.allDay === true
                 );
@@ -380,8 +384,10 @@ export class B5rWeekView implements CalendarView {
     get #allDayEventsDisplayed(): B5rInternalEvent[] {
         return this.#events.filter(
             (event) =>
-                isDateRangeOverlap(this.dateRangesDisplayed, event.dateRange) &&
-                event?.allDay === true
+                isDateRangeOverlap(
+                    this.dateRangesDisplayed,
+                    event._dateRange
+                ) && event?.allDay === true
         );
     }
 
@@ -660,18 +666,18 @@ export class B5rWeekView implements CalendarView {
         refAllDayEvent.disabled = event.disabled;
 
         const indexStart =
-            event.dateRange.start < this.dateRangesDisplayed.start
+            event._dateRange.start < this.dateRangesDisplayed.start
                 ? 0
                 : getDaysBetween(
                       this.dateRangesDisplayed.start,
-                      event.dateRange.start
+                      event._dateRange.start
                   ) - 1;
         const indexEnd =
-            event.dateRange.end > this.dateRangesDisplayed.end
+            event._dateRange.end > this.dateRangesDisplayed.end
                 ? this.datesDisplayed.length
                 : getDaysBetween(
                       this.dateRangesDisplayed.start,
-                      event.dateRange.end
+                      event._dateRange.end
                   );
 
         refAllDayEvent.style.setProperty(
@@ -679,14 +685,14 @@ export class B5rWeekView implements CalendarView {
             indexStart.toString()
         );
 
-        if (event.dateRange.start < this.dateRangesDisplayed.start) {
+        if (event._dateRange.start < this.dateRangesDisplayed.start) {
             addClassOnElement(
                 refAllDayEvent,
                 ALL_DAY_EVENT_STARTS_OUT_OF_VIEW_CLASS
             );
         }
 
-        if (event.dateRange.end > this.dateRangesDisplayed.end) {
+        if (event._dateRange.end > this.dateRangesDisplayed.end) {
             addClassOnElement(
                 refAllDayEvent,
                 ALL_DAY_EVENT_ENDS_OUT_OF_VIEW_CLASS
@@ -704,18 +710,18 @@ export class B5rWeekView implements CalendarView {
             refAllDayEvent.style.setProperty('--row-number', '1');
         } else {
             if (!event._position) {
-                const eventIds = event?._overlapped.eventIds.filter((event) =>
+                const eventIds = event?._overlapped.eventIds.filter((eventId) =>
                     this.#allDayEventsDisplayed
-                        .find((e) => e._id === event)
-                        ?._overlapped.eventIds.filter((e) => e === event)
+                        .find((e) => e._id === eventId)
+                        ?._overlapped.eventIds.filter((id) => id === eventId)
                 );
                 let currentPosition = eventIds.indexOf(event._id);
                 const overlappedEvents = eventIds.map((id) =>
-                    this.#events.find((we) => we._id === id)
+                    this.#events.find((e) => e._id === id)
                 );
                 overlappedEvents.forEach((oe, index) => {
                     if (oe?._position === currentPosition.toString()) {
-                        currentPosition = index;
+                        currentPosition = index - Number(oe._position);
                     }
                 });
                 event._position = currentPosition.toString();
