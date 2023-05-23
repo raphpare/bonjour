@@ -37,7 +37,6 @@ import { generateUuid } from '../utils/uuid';
 import { isDateRangeOverlap, isDateRangeSameDate } from '../utils/date-range';
 import cssText from './week-view.css';
 import { LOCALE_EN } from '../utils/locales';
-import { DAY_MS, MINUTE_MS, SECOND_MS } from '../utils/milliseconds';
 import { newDate, getDaysBetween, isTodayDate } from '../utils/date';
 import {
     addDesignTokenOnElement,
