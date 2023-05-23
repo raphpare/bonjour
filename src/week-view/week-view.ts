@@ -37,7 +37,7 @@ import { generateUuid } from '../utils/uuid';
 import { isDateRangeOverlap, isDateRangeSameDate } from '../utils/date-range';
 import cssText from './week-view.css';
 import { LOCALE_EN } from '../utils/locales';
-import { DAY_MS } from '../utils/milliseconds';
+import { DAY_MS, MINUTE_MS, SECOND_MS } from '../utils/milliseconds';
 import { newDate, getDaysBetween, isTodayDate } from '../utils/date';
 import {
     addDesignTokenOnElement,
@@ -47,9 +47,6 @@ import {
 
 export class B5rWeekView implements CalendarView {
     refRoot: HTMLElement = null;
-    refEvents: HTMLElement[] = [];
-    refAllDayEvents: HTMLElement[] = [];
-    refWeekEvents: HTMLElement[] = [];
     refHeader: HTMLElement = null;
     refAllDayArea: HTMLElement = null;
     refBody: HTMLElement = null;
@@ -103,12 +100,11 @@ export class B5rWeekView implements CalendarView {
                 this.#nbDaysDisplayed = 7;
         }
 
-        if (this.refRoot) {
-            this.destroy();
-            this.#setDatesDisplayed(this.currentDate);
-            this.#createTemplate();
-            this.updateView();
-        }
+        if (!this.refRoot) return;
+        this.destroy();
+        this.#setDatesDisplayed(this.currentDate);
+        this.#createTemplate();
+        this.updateView();
     }
 
     get mode(): B5rWeekViewMode {
@@ -160,11 +156,11 @@ export class B5rWeekView implements CalendarView {
 
     setEvents(events: B5rEvent[] = []): Promise<void> {
         return new Promise<void>((resolve) => {
-            this.deleteAllEvents();
             if (events !== this.#events) {
                 this.#events = events;
+                this.#createAllEvents();
             }
-            this.#createAllEvents();
+
             resolve();
         });
     }
@@ -198,41 +194,21 @@ export class B5rWeekView implements CalendarView {
         });
     }
 
-    async updateView(): Promise<void> {
+    updateView(): void {
         if (!this.refRoot) return;
 
         this.refRoot.querySelector(
             `.${HEADER_CLASS} .${COLUMNS_CLASS}`
         ).innerHTML = this.#getHeaderColumnsContainTemplate();
 
-        await this.setEvents(this.#events);
-
+        this.#createAllEvents();
         this.#updateCurrentTimeTemplate();
         this.#updateBackgroundTemplate();
         this.#updated();
     }
 
-    deleteAllEvents(): void {
-        if (!this.refEvents) return;
-
-        let indexEvent = this.refEvents.length;
-        while (indexEvent--) {
-            const refEvent = this.refEvents[indexEvent];
-            const event: B5rEvent = this.#events.find(
-                (we) => we._id === refEvent.id
-            );
-            refEvent.removeEventListener(
-                'click',
-                this.#onEventClick.bind(this, event)
-            );
-            refEvent.remove();
-        }
-
-        this.#events = [];
-    }
-
     destroy(): void {
-        this.deleteAllEvents();
+        this.#deleteAllEvents();
         this.refRoot.innerHTML = '';
         this.refRoot.classList.remove(ROOT_CLASS);
     }
@@ -248,7 +224,7 @@ export class B5rWeekView implements CalendarView {
     set #events(events: B5rEvent[]) {
         this.#eventsClone = cloneEvents(events);
 
-        const initEvents: B5rInternalEvent[] = events;
+        const initEvents: B5rInternalEvent[] = cloneEvents(events);
 
         let index = events.length;
 
@@ -270,59 +246,6 @@ export class B5rWeekView implements CalendarView {
             };
 
             if (
-                !(
-                    yearStart === yearEnd &&
-                    monthStart === monthEnd &&
-                    dateStart === dateEnd
-                ) &&
-                currentEvent.allDay !== true
-            ) {
-                const newEventStart: B5rInternalEvent = { ...currentEvent };
-                newEventStart._id = generateUuid();
-                newEventStart.dateRange = {
-                    start: eventStart,
-                    end: new Date(
-                        new Date(yearStart, monthStart, dateStart).getTime() +
-                            DAY_MS -
-                            1
-                    ),
-                };
-
-                const newEventEnd: B5rInternalEvent = { ...currentEvent };
-                newEventEnd._id = generateUuid();
-                newEventEnd.dateRange = {
-                    start: new Date(yearEnd, monthEnd, dateEnd),
-                    end: eventEnd,
-                };
-                initEvents.splice(index, 1);
-
-                initEvents.push(newEventStart);
-                initEvents.push(newEventEnd);
-
-                let daysBetween = getDaysBetween(
-                    newEventStart.dateRange.end,
-                    newEventEnd.dateRange.start
-                );
-
-                while (daysBetween > 0) {
-                    const start: Date = new Date(
-                        yearStart,
-                        monthStart,
-                        dateStart + daysBetween
-                    );
-                    const eventBetweenStartAndEnd: B5rInternalEvent = {
-                        ...currentEvent,
-                    };
-                    eventBetweenStartAndEnd._id = generateUuid();
-                    eventBetweenStartAndEnd.dateRange = {
-                        start,
-                        end: new Date(start.getTime() + DAY_MS - 1),
-                    };
-
-                    initEvents.push(eventBetweenStartAndEnd);
-                    daysBetween--;
-                }
-            } else if (
                 eventEnd.getHours() === 0 &&
                 eventEnd.getMinutes() === 0 &&
                 eventEnd.getSeconds() < 1
@@ -332,14 +255,67 @@ export class B5rWeekView implements CalendarView {
                     monthEnd,
                     dateEnd - 1,
                     23,
-                    59,
-                    currentEvent.allDay ? 0 : 59
+                    59
                 );
 
                 if (
                     isDateRangeSameDate({ start: eventStart, end: newDateEnd })
                 ) {
                     currentEvent._dateRange.end = newDateEnd;
+                }
+            }
+
+            if (
+                !isDateRangeSameDate(currentEvent.dateRange) &&
+                currentEvent.allDay !== true
+            ) {
+                currentEvent._dateRange.end = new Date(
+                    yearStart,
+                    monthStart,
+                    dateStart,
+                    23,
+                    59
+                );
+
+                const newEventEnd: B5rInternalEvent = { ...currentEvent };
+                newEventEnd._id = generateUuid();
+                newEventEnd._dateRange = {
+                    start: new Date(yearEnd, monthEnd, dateEnd),
+                    end: eventEnd,
+                };
+
+                initEvents.push(newEventEnd);
+
+                let daysBetween =
+                    getDaysBetween(
+                        currentEvent._dateRange.end,
+                        newEventEnd._dateRange.start
+                    ) - 2;
+
+                while (daysBetween > 0) {
+                    const start: Date = new Date(
+                        yearStart,
+                        monthStart,
+                        dateStart + daysBetween
+                    );
+
+                    const eventBetweenStartAndEnd: B5rInternalEvent = {
+                        ...currentEvent,
+                    };
+                    eventBetweenStartAndEnd._id = generateUuid();
+                    eventBetweenStartAndEnd._dateRange = {
+                        start,
+                        end: new Date(
+                            start.getFullYear(),
+                            start.getMonth(),
+                            start.getDate(),
+                            23,
+                            59
+                        ),
+                    };
+
+                    initEvents.push(eventBetweenStartAndEnd);
+                    daysBetween--;
                 }
             }
         }
@@ -358,7 +334,7 @@ export class B5rWeekView implements CalendarView {
             } else {
                 eventsOverlapped = sortedEvents.filter(
                     (e) =>
-                        (isDateRangeOverlap(event.dateRange, e.dateRange) ||
+                        (isDateRangeOverlap(event._dateRange, e._dateRange) ||
                             event === e) &&
                         e.allDay !== true
                 );
@@ -470,6 +446,8 @@ export class B5rWeekView implements CalendarView {
     }
 
     #createAllEvents(): void {
+        this.#deleteAllEvents();
+
         if (this.refDayColumns.length === 0) return;
 
         let columnIndex = 0;
@@ -483,7 +461,7 @@ export class B5rWeekView implements CalendarView {
                 if (
                     isDateRangeOverlap(
                         this.dateRangesDisplayed,
-                        event.dateRange
+                        event._dateRange
                     )
                 ) {
                     if (event._position) {
@@ -505,13 +483,6 @@ export class B5rWeekView implements CalendarView {
             '--number-of-columns',
             this.#nbDaysDisplayed.toString()
         );
-        this.refAllDayEvents = Array.from(
-            this.refRoot.querySelectorAll(`.${ALL_DAY_EVENT_CLASS}`)
-        );
-        this.refWeekEvents = Array.from(
-            this.refRoot.querySelectorAll(`.${EVENT_CLASS}`)
-        );
-        this.refEvents = [...this.refAllDayEvents, ...this.refWeekEvents];
     }
 
     #createEvent(
@@ -519,7 +490,7 @@ export class B5rWeekView implements CalendarView {
         refColumn: HTMLElement,
         indexColumn: number
     ): void {
-        const dateStart: Date = event.dateRange.start;
+        const dateStart: Date = event._dateRange.start;
 
         const currentColumnDate: string = this.#datesOfWeek[
             indexColumn
@@ -536,7 +507,7 @@ export class B5rWeekView implements CalendarView {
         if (currentEventDate !== currentColumnDate || event.allDay === true)
             return;
 
-        const dateEnd: Date = event.dateRange.end;
+        const dateEnd: Date = event._dateRange.end;
 
         const eventStartTime =
             dateStart.getHours() + dateStart.getMinutes() / 60;
@@ -603,11 +574,11 @@ export class B5rWeekView implements CalendarView {
             const eventIds = event?._overlapped.eventIds;
             const isLastEvent = event._id == eventIds[eventIds.length - 1];
             let currentPosition = eventIds.indexOf(event._id);
-            const idlastEventAdd = eventIds[currentPosition - 1];
+            const idLastEventAdd = eventIds[currentPosition - 1];
 
-            if (idlastEventAdd) {
+            if (idLastEventAdd) {
                 const positionLastEventAdd = this.#events.find(
-                    (e) => e._id === idlastEventAdd
+                    (e) => e._id === idLastEventAdd
                 )._position;
                 if (Number(positionLastEventAdd)) {
                     currentPosition = Number(positionLastEventAdd) + 1;
@@ -748,6 +719,30 @@ export class B5rWeekView implements CalendarView {
         );
 
         this.refAllDayArea.append(refAllDayEvent);
+    }
+
+    #deleteAllEvents(): void {
+        const refEvents = Array.from(
+            this.refRoot.querySelectorAll(
+                `.${ALL_DAY_EVENT_CLASS}, .${EVENT_CLASS}`
+            )
+        );
+
+        if (!refEvents) return;
+
+        let indexEvent = refEvents.length;
+
+        while (indexEvent--) {
+            const refEvent = refEvents[indexEvent];
+            const event: B5rEvent = this.#events.find(
+                (we) => we._id === refEvent.id
+            );
+            refEvent.removeEventListener(
+                'click',
+                this.#onEventClick.bind(this, event)
+            );
+            refEvent.remove();
+        }
     }
 
     #getTitleAreaTemplate(

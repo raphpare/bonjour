@@ -147,6 +147,9 @@ export const EVENTS_MOCKS: B5rEvent[] = [
             start: generateDateFromNow(3, 1),
             end: generateDateFromNow(20, 5),
         },
+        designTokens: {
+            ['--background']: 'yellow',
+        },
     },
     {
         id: '13',
@@ -320,8 +323,11 @@ export const EVENTS_MOCKS: B5rEvent[] = [
         id: '32',
         title: 'Event 32',
         dateRange: {
-            start: generateDateFromNow(20, 0),
-            end: generateDateFromNow(300, 0),
+            start: generateDateFromNow(0, 14),
+            end: generateDateFromNow(10, 3),
+        },
+        designTokens: {
+            ['--background']: 'red',
         },
     },
     {
@@ -385,7 +391,7 @@ export const EVENTS_MOCKS: B5rEvent[] = [
         title: 'Event 40',
         dateRange: {
             start: generateDateFromNow(0, 17),
-            end: generateDateFromNow(0, 18, 30),
+            end: generateDateFromNow(0, 22, 55),
         },
     },
     {

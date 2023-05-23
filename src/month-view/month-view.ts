@@ -178,11 +178,10 @@ export class B5rMonthView implements CalendarView {
 
     setEvents(events: B5rEvent[] = []): Promise<void> {
         return new Promise<void>((resolve) => {
-            this.deleteAllEvents();
             if (events !== this.#events) {
                 this.#events = events;
+                this.#createBodyTemplate();
             }
-            this.#createBodyTemplate();
             resolve();
         });
     }
@@ -222,20 +221,7 @@ export class B5rMonthView implements CalendarView {
         this.#createBodyTemplate();
     }
 
-    deleteAllEvents(): void {
-        if (!this.refEvents) return;
-
-        let indexEvent = this.refEvents.length;
-        while (indexEvent--) {
-            const refEvent = this.refEvents[indexEvent];
-            refEvent.remove();
-        }
-
-        this.#events = [];
-    }
-
     destroy(): void {
-        this.deleteAllEvents();
         this.#removeAllKeydownEventListener();
         this.refRoot.innerHTML = '';
         removeClassOnElement(this.refRoot, ROOT_CLASS);
@@ -268,7 +254,6 @@ export class B5rMonthView implements CalendarView {
         }
 
         this.refRoot.className = ROOT_CLASS;
-        this.refEvents = [];
 
         if (!this.refHeaderRow) {
             this.#createHeaderTemplate();

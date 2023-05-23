@@ -10,8 +10,7 @@ const TemplateSetEvents: StoryFn = (args): HTMLElement => {
     const { refRoot, weekView } = getWeekViewDefaultTemplate({
         weekOptions: args,
     });
-
-    weekView.setEvents(EVENTS_MOCKS);
+    weekView.setEvents([...EVENTS_MOCKS]);
 
     return refRoot;
 };
@@ -24,7 +23,7 @@ const TemplateSetEventsSameDay: StoryFn = (args): HTMLElement => {
         weekOptions: args,
     });
 
-    weekView.setEvents(EVENTS_SAMEDAY_MOCK);
+    weekView.setEvents([...EVENTS_SAMEDAY_MOCK]);
 
     weekView.onEventClick((pointerEvent, eventClicked) => {
         console.log(
@@ -85,26 +84,6 @@ const TemplateNext: StoryFn = (args): HTMLElement => {
 export const Next = TemplateNext.bind({});
 Next.storyName = 'next()';
 
-const TemplateDeleteAllEvents: StoryFn = (args): HTMLElement => {
-    const { refRoot, weekView } = getWeekViewDefaultTemplate({
-        showBtnToday: true,
-        showBtnNext: true,
-        showBtnPrevious: true,
-        weekOptions: args,
-    });
-
-    weekView.setEvents(EVENTS_MOCKS);
-
-    setTimeout(() => {
-        weekView.deleteAllEvents();
-    }, 1000);
-
-    return refRoot;
-};
-
-export const DeleteAllEvents = TemplateDeleteAllEvents.bind({});
-DeleteAllEvents.storyName = 'deleteAllEvents()';
-
 const TemplateDestroy: StoryFn = (args): HTMLElement => {
     const { refRoot, weekView } = getWeekViewDefaultTemplate({
         showBtnToday: true,
@@ -113,7 +92,7 @@ const TemplateDestroy: StoryFn = (args): HTMLElement => {
         weekOptions: args,
     });
 
-    weekView.setEvents(EVENTS_MOCKS);
+    weekView.setEvents([...EVENTS_MOCKS]);
 
     setTimeout(() => {
         weekView.destroy();
@@ -156,8 +135,7 @@ const TemplateOnEventClick: StoryFn = (args): HTMLElement => {
         showBtnPrevious: true,
         weekOptions: args,
     });
-
-    weekView.setEvents(EVENTS_MOCKS);
+    weekView.setEvents([...EVENTS_MOCKS]);
 
     weekView.onEventClick((pointerEvent, eventClicked) => {
         console.log(
