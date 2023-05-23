@@ -223,16 +223,7 @@ export const EVENTS_MOCKS: B5rEvent[] = [
         allDay: true,
         dateRange: {
             start: generateDateFromNow(-10, 0),
-            end: generateDateFromNow(-9, 0),
-        },
-    },
-    {
-        id: '21--3',
-        title: 'Event 21--3',
-        allDay: true,
-        dateRange: {
-            start: generateDateFromNow(-8, 0),
-            end: generateDateFromNow(-7, 2),
+            end: generateDateFromNow(-8, 0),
         },
     },
     {
@@ -322,7 +313,7 @@ export const EVENTS_MOCKS: B5rEvent[] = [
         allDay: true,
         dateRange: {
             start: generateDateFromNow(-5, 0),
-            end: generateDateFromNow(-5, 0),
+            end: generateDateFromNow(-4, 2),
         },
     },
     {
