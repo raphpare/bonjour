@@ -340,11 +340,12 @@ export class B5rWeekView implements CalendarView {
             }
 
             if (eventsOverlapped.length > 1) {
+                const eventIds = eventsOverlapped.map(
+                    (e: B5rInternalEvent) => e._id
+                );
                 event._overlapped = {
-                    index: eventsOverlapped.indexOf(event._id),
-                    eventIds: eventsOverlapped.map(
-                        (e: B5rInternalEvent) => e._id
-                    ),
+                    index: eventIds.indexOf(event._id),
+                    eventIds,
                 };
             }
 
@@ -552,14 +553,11 @@ export class B5rWeekView implements CalendarView {
                         const eventIds = currentEvent._overlapped.eventIds;
                         acc = {
                             columnNumber: Math.max(
-                                ...eventIds
-                                    .filter((id) => id !== currentEvent._id)
-                                    .map(
-                                        (id) =>
-                                            this.#events.find(
-                                                (e) => e._id === id
-                                            )._overlapped.eventIds.length
-                                    )
+                                ...eventIds.map(
+                                    (id) =>
+                                        this.#events.find((e) => e._id === id)
+                                            ._overlapped.eventIds.length
+                                )
                             ),
                             eventIds,
                         };

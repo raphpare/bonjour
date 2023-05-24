@@ -17,6 +17,7 @@ export interface B5rInternalEvent extends B5rEvent {
     _dateRange?: B5rDateRange;
     _overlapped?: {
         index: number;
+        events?: B5rEvent[];
         eventIds: string[];
     };
     _position?: string;
