@@ -44,6 +44,7 @@ import {
     removeClassOnElement,
 } from '../utils/dom';
 import { isDateRangeSameDate, isDateRangeSameMonth } from '../utils/date-range';
+import { isDateRangeOverlap } from '../utils/date-range';
 
 const convertDateToString = (date: Date): string =>
     date.toISOString().slice(0, 10);
@@ -177,11 +178,10 @@ export class B5rMonthView implements CalendarView {
 
     setEvents(events: B5rEvent[] = []): Promise<void> {
         return new Promise<void>((resolve) => {
-            this.deleteAllEvents();
             if (events !== this.#events) {
                 this.#events = events;
+                this.#createBodyTemplate();
             }
-            this.#createBodyTemplate();
             resolve();
         });
     }
@@ -221,20 +221,7 @@ export class B5rMonthView implements CalendarView {
         this.#createBodyTemplate();
     }
 
-    deleteAllEvents(): void {
-        if (!this.refEvents) return;
-
-        let indexEvent = this.refEvents.length;
-        while (indexEvent--) {
-            const refEvent = this.refEvents[indexEvent];
-            refEvent.remove();
-        }
-
-        this.#events = [];
-    }
-
     destroy(): void {
-        this.deleteAllEvents();
         this.#removeAllKeydownEventListener();
         this.refRoot.innerHTML = '';
         removeClassOnElement(this.refRoot, ROOT_CLASS);
@@ -267,7 +254,6 @@ export class B5rMonthView implements CalendarView {
         }
 
         this.refRoot.className = ROOT_CLASS;
-        this.refEvents = [];
 
         if (!this.refHeaderRow) {
             this.#createHeaderTemplate();
@@ -422,7 +408,45 @@ export class B5rMonthView implements CalendarView {
             this.currentDate = date;
         });
 
-        if (this.#thereIsAnEventInDate(date)) {
+        const dateRange: B5rDateRange = {
+            start: new Date(
+                date.getFullYear(),
+                date.getMonth(),
+                date.getDate(),
+                0,
+                0,
+                0
+            ),
+            end: new Date(
+                date.getFullYear(),
+                date.getMonth(),
+                date.getDate(),
+                23,
+                59,
+                59
+            ),
+        };
+
+        if (
+            this.#internalEvents.some((e) =>
+                isDateRangeOverlap(dateRange, {
+                    start: e.dateRange.start,
+                    end:
+                        e.dateRange.end.getHours() === 0 &&
+                        e.dateRange.end.getMinutes() === 0 &&
+                        e.dateRange.end.getSeconds() < 1
+                            ? new Date(
+                                  e.dateRange.end.getFullYear(),
+                                  e.dateRange.end.getMonth(),
+                                  e.dateRange.end.getDate() - 1,
+                                  23,
+                                  59,
+                                  59
+                              )
+                            : e.dateRange.end,
+                })
+            )
+        ) {
             const event = document.createElement('span');
             event.className = EVENT_CLASS;
 
@@ -438,18 +462,6 @@ export class B5rMonthView implements CalendarView {
         return this.refRoot.querySelector(
             `.${CELL_CLASS}[${DATA_DATE}="${convertDateToString(date)}"]`
         );
-    }
-
-    #thereIsAnEventInDate(date: Date): boolean {
-        for (const event of this.#internalEvents) {
-            event.dateRange.start.setHours(0, 0, 0, 0);
-            event.dateRange.end.setHours(0, 0, 0, 0);
-
-            if (date >= event.dateRange.start && date <= event.dateRange.end) {
-                return true;
-            }
-        }
-        return false;
     }
 
     #updateCurrentDate(element: HTMLElement) {
@@ -657,23 +669,26 @@ export class B5rMonthView implements CalendarView {
         switch (event.code) {
             case KEY_ARROW_LEFT:
                 setSelectedDate(-1);
+                event.preventDefault();
                 break;
             case KEY_ARROW_RIGHT:
                 setSelectedDate(1);
+                event.preventDefault();
                 break;
             case KEY_ARROW_UP:
                 setSelectedDate(-7);
+                event.preventDefault();
                 break;
             case KEY_ARROW_DOWN:
                 setSelectedDate(7);
+                event.preventDefault();
                 break;
             case KEY_ENTER:
             case KEY_SPACE:
                 this.#updateCurrentDate(refCell);
+                event.preventDefault();
                 break;
         }
-
-        event.preventDefault();
     }
 
     #addKeydowEventListener(refCell: HTMLElement): void {

@@ -1,12 +1,11 @@
+import { B5rDateRange } from './date-range';
+
 export interface B5rEvent {
     id: string;
     title: string;
     subtitle?: string;
     allDay?: boolean;
-    dateRange: {
-        start: Date;
-        end: Date;
-    };
+    dateRange: B5rDateRange;
     classNames?: B5rEventClassNames;
     designTokens?: B5rEventDesignTokens;
     ariaLabel?: string;
@@ -15,6 +14,7 @@ export interface B5rEvent {
 
 export interface B5rInternalEvent extends B5rEvent {
     _id?: string;
+    _dateRange?: B5rDateRange;
     _overlapped?: {
         index: number;
         eventIds: string[];
