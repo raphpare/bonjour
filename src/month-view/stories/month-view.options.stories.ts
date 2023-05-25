@@ -128,7 +128,7 @@ ClassNames.args = {
         todayCell: 'test-today-cell',
         weekendCell: 'test-weekend-cell',
         dayNumber: 'test-day-number',
-        dayOutMonth: 'test-day-out-of-month',
+        dayOutsideMonth: 'test-day-out-of-month',
     } as B5rMonthClassNames,
 };
 ClassNames.storyName = 'options.classNames';

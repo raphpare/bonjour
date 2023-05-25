@@ -409,14 +409,14 @@ export class B5rMonthView implements CalendarView {
             this.#addKeydowEventListener(refCell);
         }
 
-        if (!this.#isDateInSameMonthOfDatesDisplayed(date)) {
+        if (this.selectedDate.getMonth() !== date.getMonth()) {
             addClassOnElement(refCell, CELL_OUTSIDE_MONTH_CLASS);
-            addClassOnElement(refCell, this.#classNames?.dayOutMonth);
+            addClassOnElement(refCell, this.#classNames?.dayOutsideMonth);
         }
 
-        refCell.addEventListener('click', (_event: PointerEvent) => {
+        refCell.onclick = () => {
             this.currentDate = date;
-        });
+        };
 
         const dateRange: B5rDateRange = {
             start: new Date(
@@ -466,11 +466,6 @@ export class B5rMonthView implements CalendarView {
         }
 
         refRow.append(refCell);
-    }
-
-    #isDateInSameMonthOfDatesDisplayed(date: Date) {
-        const currentMonth = this.selectedDate.getMonth();
-        return currentMonth === date.getMonth();
     }
 
     #getCell(date: Date): HTMLElement {

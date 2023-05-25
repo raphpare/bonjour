@@ -22,7 +22,7 @@ export interface B5rMonthClassNames {
     todayCell?: string;
     weekendCell?: string;
     dayNumber?: string;
-    dayOutMonth?: string;
+    dayOutsideMonth?: string;
 }
 
 export interface B5rMonthDesignTokens {
