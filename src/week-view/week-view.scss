@@ -8,8 +8,12 @@
     --out-of-view-event-indicator-size: 8px;
     --current-time-color: #ffc103;
     --current-time-size: 2px;
+    --header-position: sticky;
+    --header-position-top: 0;
+    --position-top: var(--header-position-top);
 
     position: relative;
+    top: var(--position-top);
     display: grid;
     grid-template-areas:
         'header'
@@ -23,8 +27,8 @@
     }
 
     &__header {
-        position: sticky;
-        top: 0;
+        position: var(--header-position);
+        top: var(--header-position-top);
         z-index: 2;
         grid-area: header;
         display: flex;

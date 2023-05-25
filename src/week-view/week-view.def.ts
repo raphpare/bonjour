@@ -38,6 +38,14 @@ export interface B5rWeekDesignTokens {
     ['--out-of-view-event-indicator-size']?: string;
     ['--current-time-color']?: string;
     ['--current-time-size']?: string;
+    ['--header-position']?:
+        | 'relative'
+        | 'absolute'
+        | 'sticky'
+        | 'fixed'
+        | 'inherit';
+    ['--header-position-top']?: string;
+    ['--position-top']?: string;
 }
 
 export interface B5rWeekCallbacks {

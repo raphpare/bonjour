@@ -206,6 +206,10 @@ export class B5rWeekView implements CalendarView {
         this.#updated();
     }
 
+    updateDesignTokens(designTokens: B5rWeekDesignTokens): void {
+        this.#setDesignTokens(designTokens);
+    }
+
     destroy(): void {
         this.#deleteAllEvents();
         this.refRoot.innerHTML = '';

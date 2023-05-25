@@ -221,6 +221,10 @@ export class B5rMonthView implements CalendarView {
         this.#createBodyTemplate();
     }
 
+    updateDesignTokens(designTokens: B5rMonthDesignTokens): void {
+        this.#setDesignTokens(designTokens);
+    }
+
     destroy(): void {
         this.#removeAllKeydownEventListener();
         this.refRoot.innerHTML = '';

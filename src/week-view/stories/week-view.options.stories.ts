@@ -69,6 +69,7 @@ DesignTokens.args = {
         ['--background']: '#ecffd7',
         ['--current-time-color']: 'green',
         ['--current-time-size']: '6px',
+        ['--header-position-top']: '100px',
     },
 };
 DesignTokens.storyName = 'options.designTokens';
