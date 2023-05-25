@@ -20,6 +20,7 @@ const TemplateSetEvents: StoryFn = (args): HTMLElement => {
     monthView.onCurrentDateChange((date) => {
         console.log('onCurrentDateChange : ', date);
     });
+
     return refRoot;
 };
 
