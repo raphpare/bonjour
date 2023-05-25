@@ -18,6 +18,9 @@
     --day-background-hover: #ccc;
     --day-background-focus: var(--day-background-hover);
     --day-background-active: var(--day-background-focus);
+    --day-outside-month-color: rgba(0, 0, 0, 0.4);
+    --day-outside-month-background: var(--day-background);
+    --day-outside-month-border: var(--day-border);
     --selected-day-color: var(--day-color);
     --selected-day-background: yellow;
     --selected-day-border: var(--day-border);
@@ -32,9 +35,6 @@
     --header-background: rgba(255, 255, 255, 0);
     --cell-selected-color: currentColor;
     --cell-selected-background: #fff;
-    --out-of-month-day-color: rgba(0, 0, 0, 0.4);
-    --out-of-month-day-background: var(--day-background);
-    --out-of-month-day-border: var(--day-border);
 
     display: flex;
     flex-direction: column;
@@ -115,11 +115,11 @@
             }
         }
 
-        &--out-of-month {
+        &--outside-month {
             .b5r-month__day-number {
-                --day-color: var(--out-of-month-day-color);
-                --day-background: var(--out-of-month-day-background);
-                --day-border: var(--out-of-month-day-border);
+                --day-color: var(--day-outside-month-color);
+                --day-background: var(--day-outside-month-background);
+                --day-border: var(--day-outside-month-border);
             }
         }
     }

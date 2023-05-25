@@ -152,6 +152,9 @@ DesignTokens.args = {
         ['--day-background-hover']: '#ffb700',
         ['--day-background-focus']: '#ffb700',
         ['--day-background-active']: '#ffb700',
+        ['--day-outside-month-color']: 'grey',
+        ['--day-outside-month-background']: 'white',
+        ['--day-outside-month-border']: 'none',
         ['--selected-day-color']: 'green',
         ['--selected-day-background']: '#B7F9B2',
         ['--selected-day-border']: '2px solid green',
@@ -166,9 +169,6 @@ DesignTokens.args = {
         ['--header-background']: '#e88fc9',
         ['--cell-selected-color']: '#000FFF',
         ['--cell-selected-background']: '#9BF7FF',
-        ['--out-of-month-day-color']: 'grey',
-        ['--out-of-month-day-background']: 'white',
-        ['--out-of-month-day-border']: 'none',
     },
 };
 

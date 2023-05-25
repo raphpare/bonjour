@@ -26,7 +26,7 @@ import {
     ROW_CLASS,
     ROW_HEADER_CLASS,
     ROW_SELECTED_CLASS,
-    CELL_OUT_OF_MONTH_CLASS,
+    CELL_OUTSIDE_MONTH_CLASS,
 } from './month-view.utils';
 import cssText from './month-view.css';
 import {
@@ -410,7 +410,7 @@ export class B5rMonthView implements CalendarView {
         }
 
         if (!this.#isDateInSameMonthOfDatesDisplayed(date)) {
-            addClassOnElement(refCell, CELL_OUT_OF_MONTH_CLASS);
+            addClassOnElement(refCell, CELL_OUTSIDE_MONTH_CLASS);
             addClassOnElement(refCell, this.#classNames?.dayOutMonth);
         }
 

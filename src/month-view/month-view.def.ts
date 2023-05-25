@@ -45,6 +45,9 @@ export interface B5rMonthDesignTokens {
     ['--day-background-hover']?: string;
     ['--day-background-focus']?: string;
     ['--day-background-active']?: string;
+    ['--day-outside-month-color']?: string;
+    ['--day-outside-month-background']?: string;
+    ['--day-outside-month-border']?: string;
     ['--selected-day-color']?: string;
     ['--selected-day-background']?: string;
     ['--selected-day-border']?: string;
@@ -59,9 +62,6 @@ export interface B5rMonthDesignTokens {
     ['--header-background']?: string;
     ['--cell-selected-color']?: string;
     ['--cell-selected-background']?: string;
-    ['--out-of-month-day-color']?: string;
-    ['--out-of-month-day-background']?: string;
-    ['--out-of-month-day-border']?: string;
 }
 
 export type B5rDateCallback = (date: Date) => void;
