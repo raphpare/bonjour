@@ -85,14 +85,6 @@
             }
         }
 
-        &--today {
-            .b5r-month__day-number {
-                --day-color: var(--today-color);
-                --day-background: var(--today-background);
-                --day-border: var(--today-border);
-            }
-        }
-
         &--current {
             .b5r-month__day-number {
                 --day-color: var(--current-day-color);
@@ -109,6 +101,14 @@
                 --day-color: var(--selected-day-color);
                 --day-background: var(--selected-day-background);
                 --day-border: var(--selected-day-border);
+            }
+        }
+
+        &--today.b5r-month__cell--today {
+            .b5r-month__day-number {
+                --day-color: var(--today-color);
+                --day-background: var(--today-background);
+                --day-border: var(--today-border);
             }
         }
     }
