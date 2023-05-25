@@ -241,28 +241,8 @@ export class B5rWeekView implements CalendarView {
             currentEvent._id = generateUuid();
             currentEvent._dateRange = {
                 start: new Date(eventStart),
-                end: new Date(eventEnd),
+                end: new Date(eventEnd.getTime() - 1),
             };
-
-            if (
-                eventEnd.getHours() === 0 &&
-                eventEnd.getMinutes() === 0 &&
-                eventEnd.getSeconds() < 1
-            ) {
-                const newDateEnd = new Date(
-                    yearEnd,
-                    monthEnd,
-                    dateEnd - 1,
-                    23,
-                    59
-                );
-
-                if (
-                    isDateRangeSameDate({ start: eventStart, end: newDateEnd })
-                ) {
-                    currentEvent._dateRange.end = newDateEnd;
-                }
-            }
 
             if (
                 !isDateRangeSameDate(currentEvent.dateRange) &&
@@ -273,6 +253,7 @@ export class B5rWeekView implements CalendarView {
                     monthStart,
                     dateStart,
                     23,
+                    59,
                     59
                 );
 
@@ -309,6 +290,7 @@ export class B5rWeekView implements CalendarView {
                             start.getMonth(),
                             start.getDate(),
                             23,
+                            59,
                             59
                         ),
                     };
@@ -322,22 +304,12 @@ export class B5rWeekView implements CalendarView {
         const sortedEvents: B5rInternalEvent[] = sortEvents(initEvents);
 
         this.#internalEvents = sortedEvents.map((event) => {
-            let eventsOverlapped = [];
-            if (event.allDay) {
-                eventsOverlapped = sortedEvents.filter(
-                    (e) =>
-                        (isDateRangeOverlap(event._dateRange, e._dateRange) ||
-                            event === e) &&
-                        e.allDay === true
-                );
-            } else {
-                eventsOverlapped = sortedEvents.filter(
-                    (e) =>
-                        (isDateRangeOverlap(event._dateRange, e._dateRange) ||
-                            event === e) &&
-                        e.allDay !== true
-                );
-            }
+            const eventsOverlapped = sortedEvents.filter(
+                (e) =>
+                    (isDateRangeOverlap(event._dateRange, e._dateRange) ||
+                        event === e) &&
+                    e.allDay === event.allDay
+            );
 
             if (eventsOverlapped.length > 1) {
                 const eventIds = eventsOverlapped.map(
