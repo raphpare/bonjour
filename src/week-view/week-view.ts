@@ -171,6 +171,18 @@ export class B5rWeekView implements CalendarView {
         });
     }
 
+    scrollToCurrentTime(): void {
+        requestAnimationFrame(() => {
+            if (!this.refCurrentTime || !this.refHeader) return;
+
+            window.scrollTo(
+                0,
+                this.refCurrentTime.getBoundingClientRect().top -
+                    this.refHeader.getBoundingClientRect().height
+            );
+        });
+    }
+
     next(): Promise<Date[]> {
         return new Promise<Date[]>((resolve) => {
             this.currentDate = new Date(

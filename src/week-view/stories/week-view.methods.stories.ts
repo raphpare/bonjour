@@ -56,6 +56,22 @@ const TemplateToday: StoryFn = (args): HTMLElement => {
 export const Today = TemplateToday.bind({});
 Today.storyName = 'today()';
 
+const TemplateScrollToCurrentTime: StoryFn = (args): HTMLElement => {
+    const { refRoot, weekView } = getWeekViewDefaultTemplate({
+        showBtnToday: true,
+        showBtnNext: true,
+        showBtnPrevious: true,
+        weekOptions: args,
+    });
+
+    weekView.scrollToCurrentTime();
+
+    return refRoot;
+};
+
+export const ScrollToCurrentTime = TemplateScrollToCurrentTime.bind({});
+ScrollToCurrentTime.storyName = 'scrollToCurrentTime()';
+
 const TemplatePrevious: StoryFn = (weekOptions): HTMLElement => {
     const { refRoot, weekView } = getWeekViewDefaultTemplate({
         showBtnPrevious: true,
@@ -145,6 +161,8 @@ const TemplateOnEventClick: StoryFn = (args): HTMLElement => {
             pointerEvent
         );
     });
+
+    weekView.scrollToCurrentTime();
 
     return refRoot;
 };
