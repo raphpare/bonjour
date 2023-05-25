@@ -22,6 +22,7 @@ export interface B5rMonthClassNames {
     todayCell?: string;
     weekendCell?: string;
     dayNumber?: string;
+    dayOutMonth?: string;
 }
 
 export interface B5rMonthDesignTokens {
@@ -58,6 +59,9 @@ export interface B5rMonthDesignTokens {
     ['--header-background']?: string;
     ['--cell-selected-color']?: string;
     ['--cell-selected-background']?: string;
+    ['--out-of-month-day-color']?: string;
+    ['--out-of-month-day-background']?: string;
+    ['--out-of-month-day-border']?: string;
 }
 
 export type B5rDateCallback = (date: Date) => void;

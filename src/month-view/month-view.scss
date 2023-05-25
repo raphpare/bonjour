@@ -32,6 +32,9 @@
     --header-background: rgba(255, 255, 255, 0);
     --cell-selected-color: currentColor;
     --cell-selected-background: #fff;
+    --out-of-month-day-color: rgba(0, 0, 0, 0.4);
+    --out-of-month-day-background: var(--day-background);
+    --out-of-month-day-border: var(--day-border);
 
     display: flex;
     flex-direction: column;
@@ -111,6 +114,14 @@
                 --day-border: var(--selected-day-border);
             }
         }
+
+        &--out-of-month {
+            .b5r-month__day-number {
+                --day-color: var(--out-of-month-day-color);
+                --day-background: var(--out-of-month-day-background);
+                --day-border: var(--out-of-month-day-border);
+            }
+        }
     }
 
     &__day-number {
@@ -136,4 +147,8 @@
         position: absolute;
         bottom: 0;
     }
+}
+
+.not-same-month-selected {
+    opacity: 0.5;
 }
