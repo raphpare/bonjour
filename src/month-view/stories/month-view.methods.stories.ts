@@ -12,6 +12,14 @@ const TemplateSetEvents: StoryFn = (args): HTMLElement => {
     });
 
     monthView.setEvents(EVENT_MOCK_3);
+
+    monthView.onSelectedDateChange((date) => {
+        console.log('onSelectedDateChange :', date);
+    });
+
+    monthView.onCurrentDateChange((date) => {
+        console.log('onCurrentDateChange : ', date);
+    });
     return refRoot;
 };
 
