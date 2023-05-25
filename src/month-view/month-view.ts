@@ -26,6 +26,7 @@ import {
     ROW_CLASS,
     ROW_HEADER_CLASS,
     ROW_SELECTED_CLASS,
+    CELL_OUTSIDE_MONTH_CLASS,
 } from './month-view.utils';
 import cssText from './month-view.css';
 import {
@@ -408,9 +409,14 @@ export class B5rMonthView implements CalendarView {
             this.#addKeydowEventListener(refCell);
         }
 
-        refCell.addEventListener('click', (_event: PointerEvent) => {
+        if (this.selectedDate.getMonth() !== date.getMonth()) {
+            addClassOnElement(refCell, CELL_OUTSIDE_MONTH_CLASS);
+            addClassOnElement(refCell, this.#classNames?.dayOutsideMonth);
+        }
+
+        refCell.onclick = () => {
             this.currentDate = date;
-        });
+        };
 
         const dateRange: B5rDateRange = {
             start: new Date(

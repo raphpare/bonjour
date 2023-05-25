@@ -22,6 +22,7 @@ export interface B5rMonthClassNames {
     todayCell?: string;
     weekendCell?: string;
     dayNumber?: string;
+    dayOutsideMonth?: string;
 }
 
 export interface B5rMonthDesignTokens {
@@ -44,6 +45,9 @@ export interface B5rMonthDesignTokens {
     ['--day-background-hover']?: string;
     ['--day-background-focus']?: string;
     ['--day-background-active']?: string;
+    ['--day-outside-month-color']?: string;
+    ['--day-outside-month-background']?: string;
+    ['--day-outside-month-border']?: string;
     ['--selected-day-color']?: string;
     ['--selected-day-background']?: string;
     ['--selected-day-border']?: string;

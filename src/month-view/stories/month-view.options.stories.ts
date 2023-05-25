@@ -101,6 +101,9 @@ const TemplateClassNames: StoryFn = (args): HTMLElement => {
             border: 1px solid rgba(255, 255, 255, 0);
             border-radius: 50px;
         }
+        .test-day-out-of-month {
+            background-color: rgba(255, 99, 71, 0.1);
+        }
     `;
 
     injectStyleTag('styleTagTestClassMonthView', cssText);
@@ -125,6 +128,7 @@ ClassNames.args = {
         todayCell: 'test-today-cell',
         weekendCell: 'test-weekend-cell',
         dayNumber: 'test-day-number',
+        dayOutsideMonth: 'test-day-out-of-month',
     } as B5rMonthClassNames,
 };
 ClassNames.storyName = 'options.classNames';
@@ -148,6 +152,9 @@ DesignTokens.args = {
         ['--day-background-hover']: '#ffb700',
         ['--day-background-focus']: '#ffb700',
         ['--day-background-active']: '#ffb700',
+        ['--day-outside-month-color']: 'grey',
+        ['--day-outside-month-background']: 'white',
+        ['--day-outside-month-border']: 'none',
         ['--selected-day-color']: 'green',
         ['--selected-day-background']: '#B7F9B2',
         ['--selected-day-border']: '2px solid green',

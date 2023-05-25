@@ -18,6 +18,9 @@
     --day-background-hover: #ccc;
     --day-background-focus: var(--day-background-hover);
     --day-background-active: var(--day-background-focus);
+    --day-outside-month-color: rgba(0, 0, 0, 0.4);
+    --day-outside-month-background: var(--day-background);
+    --day-outside-month-border: var(--day-border);
     --selected-day-color: var(--day-color);
     --selected-day-background: yellow;
     --selected-day-border: var(--day-border);
@@ -102,6 +105,14 @@
                 --day-background: var(--selected-day-background);
                 --day-border: var(--selected-day-border);
             }
+        }
+
+        &--outside-month {
+            .b5r-month__day-number {
+                --day-color: var(--day-outside-month-color);
+                --day-background: var(--day-outside-month-background);
+            }
+            --day-border: var(--day-outside-month-border);
         }
 
         &--today.b5r-month__cell--today {
