@@ -31,6 +31,7 @@ import {
 import cssText from './month-view.css';
 import {
     B5rDateCallback,
+    B5rDateClickCallback,
     B5rMonthCallbacks,
     B5rMonthClassNames,
     B5rMonthDesignTokens,
@@ -67,6 +68,7 @@ export class B5rMonthView implements CalendarView {
     #callbacks: B5rMonthCallbacks = {
         selectedDateChange: [],
         currentDateChange: [],
+        dateClick: [],
     };
     #options: B5rMonthOptions = {};
     #keydowEvent: () => void;
@@ -238,6 +240,10 @@ export class B5rMonthView implements CalendarView {
 
     onCurrentDateChange(callback: B5rDateCallback): void {
         this.#callbacks.currentDateChange.push(callback);
+    }
+
+    onDateClick(callback: B5rDateClickCallback): void {
+        this.#callbacks.dateClick.push(callback);
     }
 
     set #events(events: B5rEvent[]) {
@@ -414,8 +420,9 @@ export class B5rMonthView implements CalendarView {
             addClassOnElement(refCell, this.#classNames?.dayOutsideMonth);
         }
 
-        refCell.onclick = () => {
+        refCell.onclick = (event: Event) => {
             this.currentDate = date;
+            this.#onDateClick(event, date);
         };
 
         const dateRange: B5rDateRange = {
@@ -474,12 +481,12 @@ export class B5rMonthView implements CalendarView {
         );
     }
 
-    #updateCurrentDate(element: HTMLElement) {
+    #updateCurrentDate(element: HTMLElement): void {
         const date = element.getAttribute(DATA_DATE);
         this.currentDate = new Date(`${date}:00:00:000`);
     }
 
-    #updateClassCurrentDate(element: HTMLElement) {
+    #updateClassCurrentDate(element: HTMLElement): void {
         const elementCurrentDate: HTMLElement = this.refRoot.querySelector(
             `.${CELL_CURRENT_CLASS}`
         );
@@ -497,7 +504,7 @@ export class B5rMonthView implements CalendarView {
         }
     }
 
-    #updateRowSelected() {
+    #updateRowSelected(): void {
         const elementRowCurrentDate: HTMLElement = this.refRoot.querySelector(
             `.${ROW_SELECTED_CLASS}`
         );
@@ -526,7 +533,7 @@ export class B5rMonthView implements CalendarView {
         );
     }
 
-    #updateSelectedCell() {
+    #updateSelectedCell(): void {
         if (!this.refRoot) return;
 
         const pastSelectedCell: HTMLElement = this.#getCell(
@@ -666,6 +673,15 @@ export class B5rMonthView implements CalendarView {
         );
     }
 
+    #onDateClick(event: Event, date: Date): void {
+        if (this.#callbacks.dateClick.length === 0) return;
+
+        this.#callbacks.dateClick.forEach(
+            (callback: (event: Event, date: Date) => void) =>
+                callback(event, date)
+        );
+    }
+
     #onKeydown(event: KeyboardEvent): void {
         const refCell = event.target as HTMLElement;
 
@@ -696,6 +712,7 @@ export class B5rMonthView implements CalendarView {
             case KEY_ENTER:
             case KEY_SPACE:
                 this.#updateCurrentDate(refCell);
+                this.#onDateClick(event, this.currentDate);
                 event.preventDefault();
                 break;
         }

@@ -66,7 +66,10 @@ export interface B5rMonthDesignTokens {
 
 export type B5rDateCallback = (date: Date) => void;
 
+export type B5rDateClickCallback = (event: Event, date: Date) => void;
+
 export interface B5rMonthCallbacks {
     selectedDateChange: B5rDateCallback[];
     currentDateChange: B5rDateCallback[];
+    dateClick: B5rDateClickCallback[];
 }
