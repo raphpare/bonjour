@@ -686,13 +686,10 @@ export class B5rMonthView implements CalendarView {
             dayToAdd: number,
             date: Date = this.selectedDate
         ): void => {
-            date = new Date(
+            this.selectedDate = new Date(
                 date.getFullYear(),
                 date.getMonth(),
-                date.getDate()
-            );
-            this.selectedDate = new Date(
-                date.setDate(date.getDate() + dayToAdd)
+                date.getDate() + dayToAdd
             );
         };
 
