@@ -21,6 +21,10 @@ import {
     KEY_ARROW_UP,
     KEY_ENTER,
     KEY_SPACE,
+    KEY_HOME,
+    KEY_END,
+    KEY_PAGE_UP,
+    KEY_PAGE_DOWN,
     ROLE_GRID_CELL,
     ROOT_CLASS,
     ROW_CLASS,
@@ -588,13 +592,6 @@ export class B5rMonthView implements CalendarView {
         }
     }
 
-    #addDays(date: string, days: number): Date {
-        const newDate = new Date(`${date}:00:00:000`);
-
-        newDate.setDate(newDate.getDate() + days);
-        return newDate;
-    }
-
     #getWeekday(date: Date, format: B5rWeekdayFormat): string {
         return date.toLocaleString(this.locale, {
             weekday: format,
@@ -685,10 +682,17 @@ export class B5rMonthView implements CalendarView {
     #onKeydown(event: KeyboardEvent): void {
         const refCell = event.target as HTMLElement;
 
-        const setSelectedDate = (dayToAdd: number): void => {
-            this.selectedDate = this.#addDays(
-                refCell.getAttribute(DATA_DATE),
-                dayToAdd
+        const setSelectedDate = (
+            dayToAdd: number,
+            date: Date = this.selectedDate
+        ): void => {
+            date = new Date(
+                date.getFullYear(),
+                date.getMonth(),
+                date.getDate()
+            );
+            this.selectedDate = new Date(
+                date.setDate(date.getDate() + dayToAdd)
             );
         };
 
@@ -707,6 +711,30 @@ export class B5rMonthView implements CalendarView {
                 break;
             case KEY_ARROW_DOWN:
                 setSelectedDate(7);
+                event.preventDefault();
+                break;
+            case KEY_HOME:
+                this.selectedDate = this.datesOfMonthDisplayed[0];
+                event.preventDefault();
+                break;
+            case KEY_END:
+                this.selectedDate =
+                    this.datesOfMonthDisplayed[
+                        this.datesOfMonthDisplayed.length - 1
+                    ];
+                event.preventDefault();
+                break;
+            case KEY_PAGE_UP:
+                setSelectedDate(-1, this.datesOfMonthDisplayed[0]);
+                event.preventDefault();
+                break;
+            case KEY_PAGE_DOWN:
+                setSelectedDate(
+                    1,
+                    this.datesOfMonthDisplayed[
+                        this.datesOfMonthDisplayed.length - 1
+                    ]
+                );
                 event.preventDefault();
                 break;
             case KEY_ENTER:

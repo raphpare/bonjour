@@ -1,5 +1,3 @@
-import { DAY_MS } from '../milliseconds';
-
 export const newDate = (options: {
     date?: Date | string;
     timeZone?: string;

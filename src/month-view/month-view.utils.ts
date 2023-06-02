@@ -24,6 +24,10 @@ export const KEY_ARROW_UP = 'ArrowUp';
 export const KEY_ARROW_DOWN = 'ArrowDown';
 export const KEY_ENTER = 'Enter';
 export const KEY_SPACE = 'Space';
+export const KEY_HOME = 'Home';
+export const KEY_END = 'End';
+export const KEY_PAGE_UP = 'PageUp';
+export const KEY_PAGE_DOWN = 'PageDown';
 
 export const DEFAULT_OPTIONS: B5rMonthOptions = {
     weekdayFormat: 'short',
