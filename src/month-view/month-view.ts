@@ -296,7 +296,6 @@ export class B5rMonthView implements CalendarView {
             refHeaderCell.role = 'columnheader';
             refHeaderCell.className = `${CELL_CLASS} ${CELL_HEADER_CLASS}`;
             refHeaderCell.setAttribute('aria-readonly', 'true');
-            refHeaderCell.setAttribute('aria-hidden', 'columnheader');
             refHeaderCell.setAttribute(
                 'aria-label',
                 this.#getWeekday(date, 'long')

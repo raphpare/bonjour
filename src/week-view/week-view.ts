@@ -361,16 +361,6 @@ export class B5rWeekView implements CalendarView {
         );
     }
 
-    get #dayOfWeekAriaLabel(): string[] {
-        return this.datesDisplayed.map((d) =>
-            d.toLocaleString(this.locale, {
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric',
-            })
-        );
-    }
-
     get #datesOfWeek(): string[] {
         return this.#datesDisplayed.map((d) =>
             d.toLocaleString(this.locale, {
@@ -519,6 +509,7 @@ export class B5rWeekView implements CalendarView {
 
         refEvent.type = 'button';
         refEvent.disabled = event.disabled;
+        refEvent.setAttribute('aria-label', this.#getEventAriaLabel(event));
         refEvent.style.setProperty('--start-time', eventStartTime.toString());
         refEvent.style.setProperty('--end-time', eventEndTime.toString());
 
@@ -604,6 +595,10 @@ export class B5rWeekView implements CalendarView {
         const refAllDayEvent = document.createElement('button');
         refAllDayEvent.id = event._id;
         refAllDayEvent.className = ALL_DAY_EVENT_CLASS;
+        refAllDayEvent.setAttribute(
+            'aria-label',
+            this.#getEventAriaLabel(event)
+        );
 
         addClassOnElement(refAllDayEvent, this.#classNames?.event?.root);
         addClassOnElement(refAllDayEvent, event?.classNames?.root);
@@ -730,11 +725,45 @@ export class B5rWeekView implements CalendarView {
         }
     }
 
+    #getEventAriaLabel(event: B5rInternalEvent): string {
+        const ariaLabels: string[] = [];
+        const getDateLocalString = (date: Date): string =>
+            date.toLocaleString(this.locale, {
+                weekday: 'short',
+                day: 'numeric',
+                year: 'numeric',
+                month: 'short',
+                hour: 'numeric',
+                minute: 'numeric',
+            });
+
+        if (event.title) {
+            ariaLabels.push(event.title);
+        }
+
+        if (event.subtitle) {
+            ariaLabels.push(event.subtitle);
+        }
+
+        if (event.dateRange) {
+            if (event.dateRange.start) {
+                ariaLabels.push(getDateLocalString(event.dateRange.start));
+            }
+
+            if (event.dateRange.end) {
+                ariaLabels.push(getDateLocalString(event.dateRange.end));
+            }
+        }
+
+        return ariaLabels.join(' – ');
+    }
+
     #getTitleAreaTemplate(
         event: B5rInternalEvent,
         className: string
     ): HTMLElement {
         const refTitleArea = document.createElement('span');
+
         refTitleArea.className = `${className}-title-area`;
 
         refTitleArea.append(
@@ -1031,8 +1060,6 @@ export class B5rWeekView implements CalendarView {
         for (let day = 0; day < this.#nbDaysDisplayed; day++) {
             const refColumn = document.createElement('div');
             refColumn.className = DAY_COLUMN_CLASS;
-            refColumn.setAttribute('aria-label', this.#dayOfWeekAriaLabel[day]);
-            refColumn.setAttribute('tabindex', '0');
             refColumns.append(refColumn);
         }
         this.refDayColumns = Array.from(
