@@ -727,15 +727,6 @@ export class B5rWeekView implements CalendarView {
 
     #getEventAriaLabel(event: B5rInternalEvent): string {
         const ariaLabels: string[] = [];
-        const getDateLocalString = (date: Date): string =>
-            date.toLocaleString(this.locale, {
-                weekday: 'short',
-                day: 'numeric',
-                year: 'numeric',
-                month: 'short',
-                hour: 'numeric',
-                minute: 'numeric',
-            });
 
         if (event.title) {
             ariaLabels.push(event.title);
@@ -745,14 +736,16 @@ export class B5rWeekView implements CalendarView {
             ariaLabels.push(event.subtitle);
         }
 
-        if (event.dateRange) {
-            if (event.dateRange.start) {
-                ariaLabels.push(getDateLocalString(event.dateRange.start));
-            }
-
-            if (event.dateRange.end) {
-                ariaLabels.push(getDateLocalString(event.dateRange.end));
-            }
+        if (event.dateRange.start) {
+            ariaLabels.push(
+                event.dateRange.start.toLocaleString(this.locale, {
+                    day: 'numeric',
+                    year: 'numeric',
+                    month: 'short',
+                    hour: event.allDay ? undefined : 'numeric',
+                    minute: event.allDay ? undefined : 'numeric',
+                })
+            );
         }
 
         return ariaLabels.join(' – ');
