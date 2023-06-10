@@ -52,7 +52,6 @@ export class B5rWeekView implements CalendarView {
     refDayColumns: HTMLElement[] = [];
     refCurrentTime: HTMLElement = null;
     timeZone?: string;
-    intervalCurrentTime?: NodeJS.Timer;
 
     #mode: B5rWeekViewMode = B5rWeekViewMode.SevenDays;
     #nbDaysDisplayed = 7;
@@ -62,6 +61,7 @@ export class B5rWeekView implements CalendarView {
     #currentDate: Date;
     #eventsClone: B5rEvent[] = [];
     #internalEvents: B5rInternalEvent[] = [];
+    #intervalCurrentTime?: NodeJS.Timer;
     #callbacks: B5rWeekCallbacks = {
         update: [],
         eventClick: [],
@@ -224,6 +224,7 @@ export class B5rWeekView implements CalendarView {
 
     destroy(): void {
         this.#deleteAllEvents();
+        clearInterval(this.#intervalCurrentTime);
         this.refRoot.innerHTML = '';
         this.refRoot.classList.remove(ROOT_CLASS);
     }
@@ -942,8 +943,8 @@ export class B5rWeekView implements CalendarView {
         };
 
         if (!isDateRangeOverlap(this.dateRangesDisplayed, todayDateRange)) {
-            if (this.intervalCurrentTime) {
-                clearInterval(this.intervalCurrentTime);
+            if (this.#intervalCurrentTime) {
+                clearInterval(this.#intervalCurrentTime);
             }
 
             if (this.refCurrentTime) {
@@ -966,11 +967,11 @@ export class B5rWeekView implements CalendarView {
     }
 
     #startIntervalCurrentTime(): void {
-        if (this.intervalCurrentTime) return;
+        if (this.#intervalCurrentTime) return;
 
-        this.intervalCurrentTime = setInterval(() => {
+        this.#intervalCurrentTime = setInterval(() => {
             this.#setCurrentTime();
-        }, 1000);
+        }, 2000);
     }
 
     #setCurrentTime(): void {
