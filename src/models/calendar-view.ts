@@ -9,10 +9,10 @@ export interface CalendarView {
     datesDisplayed: Date[];
     dateRangesDisplayed: B5rDateRange;
     refRoot: HTMLElement | null;
-    setEvents: (events: B5rEvent[]) => Promise<void>;
-    today: () => Promise<Date>;
-    previous: () => Promise<Date[]>;
-    next: () => Promise<Date[]>;
-    updateView: () => Promise<void> | void;
+    setEvents: (events: B5rEvent[]) => void;
+    today: () => Date;
+    previous: () => Date[];
+    next: () => Date[];
+    updateView: () => void;
     destroy: () => void;
 }

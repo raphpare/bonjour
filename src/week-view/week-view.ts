@@ -86,6 +86,10 @@ export class B5rWeekView implements CalendarView {
         this.#updateCurrentTimeTemplate();
     }
 
+    /**
+     * Set the mode of the week view.
+     * @param mode - The mode to set.
+     */
     set mode(mode: B5rWeekViewMode) {
         this.#mode = mode;
         switch (mode) {
@@ -106,10 +110,18 @@ export class B5rWeekView implements CalendarView {
         this.updateView();
     }
 
+    /**
+     * Get the current mode of the week view.
+     * @returns The current mode.
+     */
     get mode(): B5rWeekViewMode {
         return this.#mode;
     }
 
+    /**
+     * Set the current date of the week view.
+     * @param currentDate - The current date to set.
+     */
     set currentDate(currentDate: Date) {
         if (this.currentDate === currentDate) return;
         this.#currentDate = currentDate;
@@ -117,27 +129,51 @@ export class B5rWeekView implements CalendarView {
         this.updateView();
     }
 
+    /**
+     * Get the current date of the week view.
+     * @returns The current date.
+     */
     get currentDate(): Date {
         return this.#currentDate;
     }
 
+    /**
+     * Set the locale of the week view.
+     * @param locale - The locale to set.
+     */
     set locale(locale: string) {
         this.#locale = locale;
         this.updateView();
     }
 
+    /**
+     * Get the locale of the week view.
+     * @returns The locale.
+     */
     get locale(): string {
         return this.#locale;
     }
 
+    /**
+     * Get the events in the week view.
+     * @returns The events in the week view.
+     */
     get events(): B5rEvent[] {
         return this.#eventsClone;
     }
 
+    /**
+     * Get the dates displayed in the week view.
+     * @returns The dates displayed.
+     */
     get datesDisplayed(): Date[] {
         return this.#datesDisplayed;
     }
 
+    /**
+     * Get the date range displayed in the week view.
+     * @returns The date range displayed.
+     */
     get dateRangesDisplayed(): B5rDateRange {
         const dateFin = this.datesDisplayed[this.datesDisplayed.length - 1];
         return {
@@ -153,22 +189,15 @@ export class B5rWeekView implements CalendarView {
         };
     }
 
-    setEvents(events: B5rEvent[] = []): Promise<void> {
-        return new Promise<void>((resolve) => {
-            if (events !== this.#events) {
-                this.#events = events;
-                this.#createAllEvents();
-            }
-
-            resolve();
-        });
+    setEvents(events: B5rEvent[] = []): void {
+        if (events === this.#events) return;
+        this.#events = events;
+        this.#createAllEvents();
     }
 
-    today(): Promise<Date> {
-        return new Promise<Date>((resolve) => {
-            this.currentDate = this.#todayDate;
-            resolve(this.currentDate);
-        });
+    today(): Date {
+        this.currentDate = this.#todayDate;
+        return this.currentDate;
     }
 
     scrollToCurrentTime(): void {
@@ -183,26 +212,22 @@ export class B5rWeekView implements CalendarView {
         });
     }
 
-    next(): Promise<Date[]> {
-        return new Promise<Date[]>((resolve) => {
-            this.currentDate = new Date(
-                this.currentDate.setDate(
-                    this.currentDate.getDate() + this.#nbDaysDisplayed
-                )
-            );
-            resolve(this.datesDisplayed);
-        });
+    next(): Date[] {
+        this.currentDate = new Date(
+            this.currentDate.setDate(
+                this.currentDate.getDate() + this.#nbDaysDisplayed
+            )
+        );
+        return this.datesDisplayed;
     }
 
-    previous(): Promise<Date[]> {
-        return new Promise<Date[]>((resolve) => {
-            this.currentDate = new Date(
-                this.currentDate.setDate(
-                    this.currentDate.getDate() - this.#nbDaysDisplayed
-                )
-            );
-            resolve(this.datesDisplayed);
-        });
+    previous(): Date[] {
+        this.currentDate = new Date(
+            this.currentDate.setDate(
+                this.currentDate.getDate() - this.#nbDaysDisplayed
+            )
+        );
+        return this.datesDisplayed;
     }
 
     updateView(): void {
@@ -375,18 +400,14 @@ export class B5rWeekView implements CalendarView {
     #setDatesDisplayed(currentDate: Date): void {
         this.#datesDisplayed = [];
 
+        const startDay = this.#nbDaysDisplayed === 7 ? currentDate.getDay() : 0;
+
         for (let i = 0; i < this.#nbDaysDisplayed; i++) {
             const date = new Date(
                 currentDate.getFullYear(),
                 currentDate.getMonth(),
-                currentDate.getDate()
+                currentDate.getDate() + i - startDay
             );
-
-            if (this.#nbDaysDisplayed === 7) {
-                date.setDate(date.getDate() - date.getDay() + i);
-            } else {
-                date.setDate(currentDate.getDate() + i);
-            }
 
             this.#datesDisplayed.push(date);
         }
@@ -617,20 +638,20 @@ export class B5rWeekView implements CalendarView {
         refAllDayEvent.type = 'button';
         refAllDayEvent.disabled = event.disabled;
 
-        const indexStart =
-            event._dateRange.start < this.dateRangesDisplayed.start
-                ? 0
-                : getDaysBetween(
-                      this.dateRangesDisplayed.start,
-                      event._dateRange.start
-                  ) - 1;
-        const indexEnd =
-            event._dateRange.end > this.dateRangesDisplayed.end
-                ? this.datesDisplayed.length
-                : getDaysBetween(
-                      this.dateRangesDisplayed.start,
-                      event._dateRange.end
-                  );
+        const indexStart = Math.max(
+            getDaysBetween(
+                this.dateRangesDisplayed.start,
+                event._dateRange.start
+            ) - 1,
+            0
+        );
+        const indexEnd = Math.min(
+            getDaysBetween(
+                this.dateRangesDisplayed.start,
+                event._dateRange.end
+            ),
+            this.datesDisplayed.length
+        );
 
         refAllDayEvent.style.setProperty(
             '--index-start',
@@ -738,15 +759,18 @@ export class B5rWeekView implements CalendarView {
         }
 
         if (event.dateRange.start) {
-            ariaLabels.push(
-                event.dateRange.start.toLocaleString(this.locale, {
+            const startLabel = event.dateRange.start.toLocaleString(
+                this.locale,
+                {
                     day: 'numeric',
                     year: 'numeric',
                     month: 'short',
                     hour: event.allDay ? undefined : 'numeric',
                     minute: event.allDay ? undefined : 'numeric',
-                })
+                }
             );
+
+            ariaLabels.push(startLabel);
         }
 
         return ariaLabels.join(' – ');
@@ -757,7 +781,6 @@ export class B5rWeekView implements CalendarView {
         className: string
     ): HTMLElement {
         const refTitleArea = document.createElement('span');
-
         refTitleArea.className = `${className}-title-area`;
 
         refTitleArea.append(
@@ -816,12 +839,14 @@ export class B5rWeekView implements CalendarView {
     #getHeaderTemplate(): HTMLElement {
         this.refHeader = document.createElement('header');
         this.refHeader.className = HEADER_CLASS;
-
         addClassOnElement(this.refHeader, this.#classNames?.header);
 
-        this.refHeader.append(this.#getBackgroundTemplate());
-        this.refHeader.append(this.#getHeaderColumnsTemplate());
-        this.refHeader.append(this.#getAllDayAreaTemplate());
+        this.refHeader.append(
+            this.#getBackgroundTemplate(),
+            this.#getHeaderColumnsTemplate(),
+            this.#getAllDayAreaTemplate()
+        );
+
         return this.refHeader;
     }
 
@@ -833,57 +858,47 @@ export class B5rWeekView implements CalendarView {
     }
 
     #getHeaderColumnsContainTemplate(): string {
-        let html = ``;
+        const classNames = this.#classNames || {};
+        const weekendClassName = classNames.weekendModifier || '';
+        const todayClassName = classNames.todayModifier || '';
+        let html = '';
+
         for (let i = 0; i < this.#nbDaysDisplayed; i++) {
-            let day = this.#dayOfWeek[i];
-            let headerColumnClass = HEADER_COLUMN_CLASS;
-            let headerDayClass = HEADER_DAY_CLASS;
-            let headerWeekdayClass = HEADER_WEEKDAY_CLASS;
-
-            if (this.#classNames?.headerColumn) {
-                headerColumnClass += ` ${this.#classNames.headerColumn}`;
-            }
-
-            if (this.#classNames?.headerDay) {
-                headerDayClass += ` ${this.#classNames.headerDay}`;
-            }
-
-            if (this.#classNames?.headerWeekday) {
-                headerWeekdayClass += ` ${this.#classNames.headerWeekday}`;
-            }
-
-            const weekendClassName = this.#classNames?.weekendModifier;
+            const day = this.#dayOfWeek[i];
             const currentDay = this.datesDisplayed[i].getDay();
+            const isWeekend = currentDay === 0 || currentDay === 6;
+            const isToday = isTodayDate(this.datesDisplayed[i], this.timeZone);
 
-            if (currentDay === 0 || currentDay === 6) {
-                headerColumnClass += ` ${weekendClassName}`;
-                headerDayClass += ` ${weekendClassName}`;
-                headerWeekdayClass += ` ${weekendClassName}`;
-            }
+            const headerColumnClass = `${HEADER_COLUMN_CLASS} ${
+                classNames.headerColumn || ''
+            } ${isWeekend ? weekendClassName : ''} ${
+                isToday ? todayClassName : ''
+            }`;
+            const headerDayClass = `${HEADER_DAY_CLASS} ${
+                classNames.headerDay || ''
+            } ${isWeekend ? weekendClassName : ''} ${
+                isToday ? todayClassName : ''
+            }`;
+            const headerWeekdayClass = `${HEADER_WEEKDAY_CLASS} ${
+                classNames.headerWeekday || ''
+            } ${isWeekend ? weekendClassName : ''} ${
+                isToday ? todayClassName : ''
+            }`;
 
-            const todayClassName = this.#classNames?.todayModifier;
-
-            if (
-                isTodayDate(this.datesDisplayed[i], this.timeZone) &&
-                todayClassName
-            ) {
-                headerColumnClass += ` ${todayClassName}`;
-                headerDayClass += ` ${todayClassName}`;
-                headerWeekdayClass += ` ${todayClassName}`;
-            }
-            day = day
+            const formattedDay = day
                 .split(' ')
-                .map(
-                    (d) =>
-                        `<span class="${
-                            parseInt(d, 10)
-                                ? headerDayClass
-                                : headerWeekdayClass
-                        }">${d}</span>`
-                )
+                .map((d) => {
+                    const selectedClass = parseInt(d, 10)
+                        ? headerDayClass
+                        : headerWeekdayClass;
+                    return `<span class="${selectedClass}">${d}</span>`;
+                })
                 .join(' ');
-            html += `<div class="${headerColumnClass}" aria-hidden="true">${day}</div>`;
+
+            const columnHtml = `<div class="${headerColumnClass}" aria-hidden="true">${formattedDay}</div>`;
+            html += columnHtml;
         }
+
         return html;
     }
 
@@ -896,38 +911,38 @@ export class B5rWeekView implements CalendarView {
 
     #getBodyTemplate(): HTMLElement {
         this.refBody = document.createElement('div');
-        this.refBody.className = BODY_CLASS;
+        this.refBody.className = `${BODY_CLASS} ${
+            this.#classNames?.body || ''
+        }`;
 
-        addClassOnElement(this.refBody, this.#classNames?.body);
-
-        this.refBody.append(this.#getHourRowsTemplate());
-        this.refBody.append(this.#getDayColumnsTemplate());
+        this.refBody.append(
+            this.#getHourRowsTemplate(),
+            this.#getDayColumnsTemplate()
+        );
         return this.refBody;
     }
 
     #getBackgroundTemplate(): HTMLElement {
         const refBackground = document.createElement('div');
         refBackground.className = BACKGROUND_CLASS;
-        refBackground.ariaHidden = 'true';
+        refBackground.setAttribute('aria-hidden', 'true');
 
         for (let day = 0; day < this.#nbDaysDisplayed; day++) {
             const refColumn = document.createElement('div');
-            refColumn.className = COLUMN_CLASS;
-            refColumn.ariaHidden = 'true';
-
-            addClassOnElement(refColumn, this.#classNames?.bodyColumn);
+            refColumn.className = `${COLUMN_CLASS} ${
+                this.#classNames?.bodyColumn || ''
+            }`;
+            refColumn.setAttribute('aria-hidden', 'true');
 
             const currentDay = this.datesDisplayed[day].getDay();
 
             if (currentDay === 0 || currentDay === 6) {
-                refColumn.classList.add(COLUMN_WEEKEND_CLASS);
-
+                addClassOnElement(refColumn, COLUMN_WEEKEND_CLASS);
                 addClassOnElement(refColumn, this.#classNames?.weekendModifier);
             }
 
             if (isTodayDate(this.datesDisplayed[day], this.timeZone)) {
-                refColumn.classList.add(COLUMN_TODAY_CLASS);
-
+                addClassOnElement(refColumn, COLUMN_TODAY_CLASS);
                 addClassOnElement(refColumn, this.#classNames?.todayModifier);
             }
 
@@ -943,12 +958,12 @@ export class B5rWeekView implements CalendarView {
         };
 
         if (!isDateRangeOverlap(this.dateRangesDisplayed, todayDateRange)) {
-            if (this.#intervalCurrentTime) {
-                clearInterval(this.#intervalCurrentTime);
-            }
+            clearInterval(this.#intervalCurrentTime);
+            this.#intervalCurrentTime = null;
 
             if (this.refCurrentTime) {
                 this.refCurrentTime.remove();
+                this.refCurrentTime = null;
             }
             return;
         }
@@ -959,7 +974,7 @@ export class B5rWeekView implements CalendarView {
             this.#setCurrentTime();
         }
 
-        if (!this.refBody.querySelector(`.${CURRENT_TIME_CLASS}`)) {
+        if (!this.refBody.contains(this.refCurrentTime)) {
             this.refBody.append(this.refCurrentTime);
         }
 
@@ -984,13 +999,13 @@ export class B5rWeekView implements CalendarView {
     }
 
     #updateBackgroundTemplate(): void {
-        const refHeaderColumn: HTMLElement[] = Array.from(
+        const refHeaderColumns: HTMLElement[] = Array.from(
             this.refRoot.querySelectorAll(`.${HEADER_CLASS} .${COLUMN_CLASS}`)
         );
-        const refBodyColumn: HTMLElement[] = Array.from(
+        const refBodyColumns: HTMLElement[] = Array.from(
             this.refRoot.querySelectorAll(`.${BODY_CLASS} .${COLUMN_CLASS}`)
         );
-        [refHeaderColumn, refBodyColumn].forEach((refColumns) => {
+        [refHeaderColumns, refBodyColumns].forEach((refColumns) => {
             refColumns.forEach((refColumn, i) => {
                 const currentDay = this.datesDisplayed[i].getDay();
 
@@ -1038,10 +1053,12 @@ export class B5rWeekView implements CalendarView {
         for (let hour = 0; hour < 24; hour++) {
             const refHourRow = document.createElement('div');
             refHourRow.className = `${ROOT_CLASS}__hour-row`;
-            refHourRow.ariaHidden = 'true';
+            refHourRow.setAttribute('aria-hidden', 'true');
+
             if (hour > 0) {
-                refHourRow.setAttribute('data-hour', hour.toString());
+                refHourRow.dataset.hour = hour.toString();
             }
+
             refRows.append(refHourRow);
         }
         return refRows;
@@ -1051,14 +1068,16 @@ export class B5rWeekView implements CalendarView {
         const refColumns = document.createElement('div');
         refColumns.className = COLUMNS_CLASS;
 
+        const dayColumnElements: HTMLElement[] = [];
+
         for (let day = 0; day < this.#nbDaysDisplayed; day++) {
             const refColumn = document.createElement('div');
             refColumn.className = DAY_COLUMN_CLASS;
             refColumns.append(refColumn);
+            dayColumnElements.push(refColumn);
         }
-        this.refDayColumns = Array.from(
-            refColumns.querySelectorAll(`.${DAY_COLUMN_CLASS}`)
-        );
+
+        this.refDayColumns = dayColumnElements;
         return refColumns;
     }
 }

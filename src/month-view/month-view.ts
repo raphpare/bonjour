@@ -183,22 +183,18 @@ export class B5rMonthView implements CalendarView {
         return this.#datesOfMonthDisplayed;
     }
 
-    setEvents(events: B5rEvent[] = []): Promise<void> {
-        return new Promise<void>((resolve) => {
-            if (events !== this.#events) {
-                this.#events = events;
-                this.#createBodyTemplate();
-            }
-            resolve();
-        });
+    setEvents(events: B5rEvent[] = []): void {
+        if (events === this.#events) return;
+        this.#events = events;
+        this.#createBodyTemplate();
     }
 
-    today(): Promise<Date> {
+    today(): Date {
         this.selectedDate = newDate({ timeZone: this.timeZone });
-        return Promise.resolve(this.selectedDate);
+        return this.selectedDate;
     }
 
-    next(): Promise<Date[]> {
+    next(): Date[] {
         this.selectedDate = new Date(
             this.#selectedDate.getFullYear(),
             this.#selectedDate.getMonth() + 1,
@@ -208,10 +204,10 @@ export class B5rMonthView implements CalendarView {
             0,
             0
         );
-        return Promise.resolve(this.datesOfMonthDisplayed);
+        return this.datesOfMonthDisplayed;
     }
 
-    previous(): Promise<Date[]> {
+    previous(): Date[] {
         this.selectedDate = new Date(
             this.#selectedDate.getFullYear(),
             this.#selectedDate.getMonth(),
@@ -221,7 +217,7 @@ export class B5rMonthView implements CalendarView {
             0,
             0
         );
-        return Promise.resolve(this.datesOfMonthDisplayed);
+        return this.datesOfMonthDisplayed;
     }
 
     updateView(): void {
