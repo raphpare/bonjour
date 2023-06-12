@@ -1,5 +1,10 @@
 import { B5rEvent, B5rInternalEvent } from '../../models/event';
 
+/**
+ * Clones an array of events and returns a new array with cloned event objects.
+ * @param events - The array of events to clone.
+ * @returns A new array of cloned event objects.
+ */
 export const cloneEvents = (events: B5rEvent[]): B5rEvent[] =>
     (JSON.parse(JSON.stringify([...events])) as B5rEvent[]).map((e) => ({
         ...e,
@@ -9,6 +14,11 @@ export const cloneEvents = (events: B5rEvent[]): B5rEvent[] =>
         },
     }));
 
+/**
+ * Sorts an array of internal events based on the date range.
+ * @param events - The array of internal events to sort.
+ * @returns The sorted array of internal events.
+ */
 export const sortEvents = (events: B5rInternalEvent[]): B5rInternalEvent[] =>
     events
         .sort(

@@ -58,10 +58,9 @@ export class B5rMonthView implements CalendarView {
     refRoot: HTMLElement = null;
     refHeaderRow: HTMLElement = null;
     refWeekRows: HTMLElement[] = [];
-    refEvents: HTMLElement[] = [];
-    timeZone?: string;
 
     #locale: string = LOCALE_EN;
+    #timeZone?: string;
     #datesOfMonthDisplayed: Date[] = [];
     #selectedDate: Date = new Date();
     #pastSelectedDate: Date = new Date();
@@ -99,7 +98,7 @@ export class B5rMonthView implements CalendarView {
         this.currentDate = originalDate;
 
         this.#locale = options.locale;
-        this.timeZone = options.timeZone;
+        this.#timeZone = options.timeZone;
         this.#options = options;
         this.#classNames = options.classNames;
 
@@ -109,6 +108,10 @@ export class B5rMonthView implements CalendarView {
         this.#setDesignTokens(options?.designTokens);
     }
 
+    /**
+     * Set the selected date (focused date) in the month view.
+     * @param selectedDate - The selected date to set.
+     */
     set selectedDate(selectedDate: Date) {
         this.#selectedDate = selectedDate;
 
@@ -129,10 +132,18 @@ export class B5rMonthView implements CalendarView {
         this.#onSelectedDateChange(this.#selectedDate);
     }
 
+    /**
+     * Get the selected date (focused date) in the month view.
+     * @returns The selected date.
+     */
     get selectedDate(): Date {
         return this.#selectedDate;
     }
 
+    /**
+     * Set the current date in the month view.
+     * @param currentDate - The current date to set.
+     */
     set currentDate(currentDate: Date) {
         if (this.currentDate === currentDate) return;
 
@@ -142,28 +153,52 @@ export class B5rMonthView implements CalendarView {
         this.#onCurrentDateChange(currentDate);
     }
 
+    /**
+     * Get the current date in the month view.
+     * @returns The current date.
+     */
     get currentDate(): Date {
         return this.#currentDate;
     }
 
+    /**
+     * Set the locale for the month view.
+     * @param locale - The locale to set.
+     */
     set locale(locale: string) {
         this.#locale = locale;
         this.#createHeaderTemplate();
         this.#createBodyTemplate();
     }
 
+    /**
+     * Get the locale used in the month view.
+     * @returns The locale.
+     */
     get locale(): string {
         return this.#locale;
     }
 
+    /**
+     * Get the events send to the month view.
+     * @returns The events.
+     */
     get events(): B5rEvent[] {
         return this.#eventsClone;
     }
 
+    /**
+     * Get the dates displayed in the month view (includes dates outside the month).
+     * @returns The displayed dates in the view (includes dates outside the month).
+     */
     get datesDisplayed(): Date[] {
         return this.#visibleDates;
     }
 
+    /**
+     * Get the date range displayed in the month view (includes dates outside the month).
+     * @returns The displayed date range in the view (includes dates outside the month).
+     */
     get dateRangesDisplayed(): B5rDateRange {
         const dateFin = this.datesDisplayed[this.datesDisplayed.length - 1];
         return {
@@ -179,26 +214,39 @@ export class B5rMonthView implements CalendarView {
         };
     }
 
+    /**
+     * Get the dates of the month displayed in the month view (does not include dates outside the month).
+     * @returns The displayed dates of the month (does not include dates outside the month).
+     */
     get datesOfMonthDisplayed(): Date[] {
         return this.#datesOfMonthDisplayed;
     }
 
-    setEvents(events: B5rEvent[] = []): Promise<void> {
-        return new Promise<void>((resolve) => {
-            if (events !== this.#events) {
-                this.#events = events;
-                this.#createBodyTemplate();
-            }
-            resolve();
-        });
+    /**
+     * Set the events in the month view.
+     * If there are events, these are deleted and replaced by the new events passed in parameters
+     * @param events - The events to set.
+     */
+    setEvents(events: B5rEvent[] = []): void {
+        if (events === this.#events) return;
+        this.#events = events;
+        this.#createBodyTemplate();
     }
 
-    today(): Promise<Date> {
-        this.selectedDate = newDate({ timeZone: this.timeZone });
-        return Promise.resolve(this.selectedDate);
+    /**
+     * Set the current date of the month view to today's date.
+     * @returns The today's date.
+     */
+    today(): Date {
+        this.selectedDate = newDate({ timeZone: this.#timeZone });
+        return this.selectedDate;
     }
 
-    next(): Promise<Date[]> {
+    /**
+     * Navigate to the next month in the month view.
+     * @returns The dates of the month displayed (does not include dates outside the month).
+     */
+    next(): Date[] {
         this.selectedDate = new Date(
             this.#selectedDate.getFullYear(),
             this.#selectedDate.getMonth() + 1,
@@ -208,10 +256,14 @@ export class B5rMonthView implements CalendarView {
             0,
             0
         );
-        return Promise.resolve(this.datesOfMonthDisplayed);
+        return this.datesOfMonthDisplayed;
     }
 
-    previous(): Promise<Date[]> {
+    /**
+     * Navigate to the previous month in the month view.
+     * @returns The dates of the month displayed (does not include dates outside the month).
+     */
+    previous(): Date[] {
         this.selectedDate = new Date(
             this.#selectedDate.getFullYear(),
             this.#selectedDate.getMonth(),
@@ -221,31 +273,53 @@ export class B5rMonthView implements CalendarView {
             0,
             0
         );
-        return Promise.resolve(this.datesOfMonthDisplayed);
+        return this.datesOfMonthDisplayed;
     }
 
+    /**
+     * Update the month view.
+     */
     updateView(): void {
         this.#createBodyTemplate();
     }
 
+    /**
+     * Update the design tokens of the month view.
+     * @param designTokens - The design tokens to update.
+     */
     updateDesignTokens(designTokens: B5rMonthDesignTokens): void {
         this.#setDesignTokens(designTokens);
     }
 
+    /**
+     * Destroy the month view.
+     */
     destroy(): void {
         this.#removeAllKeydownEventListener();
         this.refRoot.innerHTML = '';
         removeClassOnElement(this.refRoot, ROOT_CLASS);
     }
 
+    /**
+     * Register a callback function to be invoked when the selected date (focused date) changes.
+     * @param callback - The callback function to be registered.
+     */
     onSelectedDateChange(callback: B5rDateCallback): void {
         this.#callbacks.selectedDateChange.push(callback);
     }
 
+    /**
+     * Register a callback function to be invoked when the current date changes.
+     * @param callback - The callback function to be registered.
+     */
     onCurrentDateChange(callback: B5rDateCallback): void {
         this.#callbacks.currentDateChange.push(callback);
     }
 
+    /**
+     * Register a callback function to be invoked when a date is clicked.
+     * @param callback - The callback function to be registered.
+     */
     onDateClick(callback: B5rDateClickCallback): void {
         this.#callbacks.dateClick.push(callback);
     }
@@ -401,7 +475,7 @@ export class B5rMonthView implements CalendarView {
         refCell.setAttribute(DATA_DATE, convertDateToString(date));
         refCell.append(refDayNumber);
 
-        if (isTodayDate(date, this.timeZone)) {
+        if (isTodayDate(date, this.#timeZone)) {
             addClassOnElement(refCell, CELL_TODAY_CLASS);
             addClassOnElement(refDayNumber, DAY_NUMBER_TODAY_CLASS);
             addClassOnElement(refCell, this.#classNames?.todayCell);

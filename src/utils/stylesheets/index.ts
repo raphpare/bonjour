@@ -1,1 +1,1 @@
-export { injectStyleTag } from './stylesheets';
+export { injectStyleTag } from './stylesheets.utils';

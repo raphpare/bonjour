@@ -1,4 +1,4 @@
-import { B5rEvent } from '../models/event';
+import { B5rEvent, B5rInternalEvent } from '../models/event';
 
 const dateNow = new Date();
 
@@ -594,3 +594,64 @@ export const EVENTS_SAMEDAY_MOCK: B5rEvent[] = [
         },
     },
 ];
+
+export const EVENT_1_JEST_MOCK: B5rInternalEvent = {
+    id: '1-jest-mock',
+    title: 'Event Title 1',
+    dateRange: {
+        start: new Date('2022-01-01'),
+        end: new Date('2022-01-05'),
+    },
+};
+
+export const INTERNAL_EVENT_1_JEST_MOCK: B5rInternalEvent = {
+    id: '1-jest-mock',
+    title: 'Event Title 1',
+    dateRange: {
+        start: new Date('2022-01-01'),
+        end: new Date('2022-01-05'),
+    },
+    _dateRange: {
+        start: new Date('2022-01-01'),
+        end: new Date('2022-01-05'),
+    },
+};
+
+export const INTERNAL_EVENT_2_JEST_MOCK: B5rInternalEvent = {
+    id: '2-jest-mock',
+    title: 'Event Title 2',
+    dateRange: {
+        start: new Date('2022-01-03'),
+        end: new Date('2022-01-06'),
+    },
+    _dateRange: {
+        start: new Date('2022-01-03'),
+        end: new Date('2022-01-06'),
+    },
+};
+
+export const INTERNAL_EVENT_3_JEST_MOCK: B5rInternalEvent = {
+    id: '3-jest-mock',
+    title: 'Event Title 3',
+    dateRange: {
+        start: new Date('2022-01-02'),
+        end: new Date('2022-01-04'),
+    },
+    _dateRange: {
+        start: new Date('2022-01-02'),
+        end: new Date('2022-01-04'),
+    },
+};
+
+export const INTERNAL_EVENT_4_JEST_MOCK: B5rInternalEvent = {
+    id: '3-jest-mock',
+    title: 'Event Title 4',
+    dateRange: {
+        start: new Date('2020-12-30'),
+        end: new Date('2022-01-01'),
+    },
+    _dateRange: {
+        start: new Date('2020-12-30'),
+        end: new Date('2022-01-01'),
+    },
+};
