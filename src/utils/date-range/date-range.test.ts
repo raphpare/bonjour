@@ -9,12 +9,12 @@ describe('utils/date-range', () => {
     describe('isDateRangeOverlap', () => {
         it('should return true if the date ranges overlap', () => {
             const dateRangeA = {
-                start: new Date('2023-01-01'),
-                end: new Date('2023-01-10'),
+                start: new Date(2022, 0, 1),
+                end: new Date(2023, 0, 6),
             };
             const dateRangeB = {
-                start: new Date('2023-01-05'),
-                end: new Date('2023-01-15'),
+                start: new Date(2023, 0, 5),
+                end: new Date(2023, 0, 15),
             };
 
             const result = isDateRangeOverlap(dateRangeA, dateRangeB);
@@ -24,12 +24,12 @@ describe('utils/date-range', () => {
 
         it('should return false if the date ranges do not overlap', () => {
             const dateRangeA = {
-                start: new Date('2023-01-01'),
-                end: new Date('2023-01-10'),
+                start: new Date(2023, 0, 1),
+                end: new Date(2023, 0, 14),
             };
             const dateRangeB = {
-                start: new Date('2023-01-15'),
-                end: new Date('2023-01-20'),
+                start: new Date(2023, 0, 15),
+                end: new Date(2023, 0, 20),
             };
 
             const result = isDateRangeOverlap(dateRangeA, dateRangeB);
@@ -89,8 +89,8 @@ describe('utils/date-range', () => {
     describe('isDateRangeSameDate', () => {
         it('should return true if the date range spans across the same date, month, and year', () => {
             const dateRange = {
-                start: new Date('2023-01-01'),
-                end: new Date('2023-01-01'),
+                start: new Date(2023, 0, 1, 5, 20),
+                end: new Date(2023, 0, 1, 15, 30),
             };
 
             const result = isDateRangeSameDate(dateRange);
@@ -100,8 +100,8 @@ describe('utils/date-range', () => {
 
         it('should return false if the date range does not span across the same date, month, and year', () => {
             const dateRange = {
-                start: new Date('2023-01-01'),
-                end: new Date('2023-01-02'),
+                start: new Date(2023, 0, 1),
+                end: new Date(2023, 0, 2),
             };
 
             const result = isDateRangeSameDate(dateRange);

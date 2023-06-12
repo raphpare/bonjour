@@ -21,16 +21,18 @@ describe('utils/date', () => {
         });
 
         it('should create a new Date object in the specified time zone', () => {
-            const result = newDate({ timeZone: 'America/New_York' });
-            const currentTime = new Date();
-            const expectedTime = currentTime.toLocaleString('en-US', {
-                timeZone: 'America/New_York',
+            const date = new Date();
+            const timeZone = 'Europe/Paris';
+            const result = newDate({
+                date,
+                timeZone,
             });
-            expect(
-                result.toLocaleString('en-US', {
-                    timeZone: 'America/New_York',
+            const expectedTime = new Date(
+                date.toLocaleString('en-US', {
+                    timeZone: 'Europe/Paris',
                 })
-            ).toBe(expectedTime);
+            );
+            expect(result).toEqual(expectedTime);
         });
     });
 
@@ -42,7 +44,7 @@ describe('utils/date', () => {
         });
 
         it('should return false if the provided date is not the same as the current date', () => {
-            const someDate = new Date('2023-06-15');
+            const someDate = new Date(2023, 6, 15);
             const result = isTodayDate(someDate);
             expect(result).toBe(false);
         });
