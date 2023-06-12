@@ -155,7 +155,7 @@ export class B5rWeekView implements CalendarView {
     }
 
     /**
-     * Get the events in the week view.
+     * Get the events send to the week view.
      * @returns The events in the week view.
      */
     get events(): B5rEvent[] {
@@ -189,29 +189,30 @@ export class B5rWeekView implements CalendarView {
         };
     }
 
+    /**
+     * Set the events in the week view.
+     * If there are events, these are deleted and replaced by the new events passed in parameters
+     * @param events - The events to set.
+     */
     setEvents(events: B5rEvent[] = []): void {
         if (events === this.#events) return;
         this.#events = events;
         this.#createAllEvents();
     }
 
+    /**
+     * Set the current date of the week view to today's date.
+     * @returns The today's date.
+     */
     today(): Date {
         this.currentDate = this.#todayDate;
         return this.currentDate;
     }
 
-    scrollToCurrentTime(): void {
-        requestAnimationFrame(() => {
-            if (!this.refCurrentTime || !this.refHeader) return;
-
-            window.scrollTo(
-                0,
-                this.refCurrentTime.getBoundingClientRect().top -
-                    this.refHeader.getBoundingClientRect().height
-            );
-        });
-    }
-
+    /**
+     * Go to the next set of dates in the week view.
+     * @returns The updated dates displayed.
+     */
     next(): Date[] {
         this.currentDate = new Date(
             this.currentDate.setDate(
@@ -221,6 +222,10 @@ export class B5rWeekView implements CalendarView {
         return this.datesDisplayed;
     }
 
+    /**
+     * Go to the previous set of dates in the week view.
+     * @returns The updated dates displayed.
+     */
     previous(): Date[] {
         this.currentDate = new Date(
             this.currentDate.setDate(
@@ -230,6 +235,9 @@ export class B5rWeekView implements CalendarView {
         return this.datesDisplayed;
     }
 
+    /**
+     * Update the view of the week.
+     */
     updateView(): void {
         if (!this.refRoot) return;
 
@@ -243,10 +251,17 @@ export class B5rWeekView implements CalendarView {
         this.#updated();
     }
 
+    /**
+     * Update the design tokens of the week view.
+     * @param designTokens - The design tokens to update.
+     */
     updateDesignTokens(designTokens: B5rWeekDesignTokens): void {
         this.#setDesignTokens(designTokens);
     }
 
+    /**
+     * Destroy the week view instance.
+     */
     destroy(): void {
         this.#deleteAllEvents();
         clearInterval(this.#intervalCurrentTime);
@@ -254,10 +269,35 @@ export class B5rWeekView implements CalendarView {
         this.refRoot.classList.remove(ROOT_CLASS);
     }
 
+    /**
+     * Scroll to the current time in the week view.
+     * @param offsetTopToAdd - The additional offset top to add to the scroll position.
+     */
+    scrollToCurrentTime(offsetTopToAdd = 0): void {
+        requestAnimationFrame(() => {
+            if (!this.refCurrentTime || !this.refHeader) return;
+
+            window.scrollTo(
+                0,
+                this.refCurrentTime.getBoundingClientRect().top -
+                    this.refHeader.getBoundingClientRect().height +
+                    offsetTopToAdd
+            );
+        });
+    }
+
+    /**
+     * Register a callback function to be invoked when the week view is updated.
+     * @param callback - The callback function to be registered.
+     */
     onUpdate(callback: B5rUpdateCallback): void {
         this.#callbacks.update.push(callback);
     }
 
+    /**
+     * Register a callback function to be invoked when an event is clicked.
+     * @param callback - The callback function to be registered.
+     */
     onEventClick(callback: B5rEventClickCallback): void {
         this.#callbacks.eventClick.push(callback);
     }
