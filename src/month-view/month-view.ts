@@ -59,9 +59,9 @@ export class B5rMonthView implements CalendarView {
     refHeaderRow: HTMLElement = null;
     refWeekRows: HTMLElement[] = [];
     refEvents: HTMLElement[] = [];
-    timeZone?: string;
 
     #locale: string = LOCALE_EN;
+    #timeZone?: string;
     #datesOfMonthDisplayed: Date[] = [];
     #selectedDate: Date = new Date();
     #pastSelectedDate: Date = new Date();
@@ -99,7 +99,7 @@ export class B5rMonthView implements CalendarView {
         this.currentDate = originalDate;
 
         this.#locale = options.locale;
-        this.timeZone = options.timeZone;
+        this.#timeZone = options.timeZone;
         this.#options = options;
         this.#classNames = options.classNames;
 
@@ -190,7 +190,7 @@ export class B5rMonthView implements CalendarView {
     }
 
     today(): Date {
-        this.selectedDate = newDate({ timeZone: this.timeZone });
+        this.selectedDate = newDate({ timeZone: this.#timeZone });
         return this.selectedDate;
     }
 
@@ -397,7 +397,7 @@ export class B5rMonthView implements CalendarView {
         refCell.setAttribute(DATA_DATE, convertDateToString(date));
         refCell.append(refDayNumber);
 
-        if (isTodayDate(date, this.timeZone)) {
+        if (isTodayDate(date, this.#timeZone)) {
             addClassOnElement(refCell, CELL_TODAY_CLASS);
             addClassOnElement(refDayNumber, DAY_NUMBER_TODAY_CLASS);
             addClassOnElement(refCell, this.#classNames?.todayCell);

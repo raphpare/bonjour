@@ -5,7 +5,6 @@ export interface CalendarView {
     events: B5rEvent[];
     currentDate: Date;
     locale: string;
-    timeZone?: string;
     datesDisplayed: Date[];
     dateRangesDisplayed: B5rDateRange;
     refRoot: HTMLElement | null;

@@ -51,11 +51,11 @@ export class B5rWeekView implements CalendarView {
     refBody: HTMLElement = null;
     refDayColumns: HTMLElement[] = [];
     refCurrentTime: HTMLElement = null;
-    timeZone?: string;
 
     #mode: B5rWeekViewMode = B5rWeekViewMode.SevenDays;
     #nbDaysDisplayed = 7;
     #locale: string = LOCALE_EN;
+    #timeZone?: string;
     #classNames: B5rWeekClassNames = {};
     #datesDisplayed: Date[] = [];
     #currentDate: Date;
@@ -75,7 +75,7 @@ export class B5rWeekView implements CalendarView {
             ...options,
         };
         this.mode = options.mode;
-        this.timeZone = options.timeZone;
+        this.#timeZone = options.timeZone;
         this.currentDate =
             options.currentDate || newDate({ timeZone: options.timeZone });
         this.#locale = options.locale;
@@ -414,7 +414,7 @@ export class B5rWeekView implements CalendarView {
     }
 
     get #todayDate(): Date {
-        return newDate({ timeZone: this.timeZone });
+        return newDate({ timeZone: this.#timeZone });
     }
 
     #createTemplate(element?: HTMLElement): void {
@@ -867,7 +867,7 @@ export class B5rWeekView implements CalendarView {
             const day = this.#dayOfWeek[i];
             const currentDay = this.datesDisplayed[i].getDay();
             const isWeekend = currentDay === 0 || currentDay === 6;
-            const isToday = isTodayDate(this.datesDisplayed[i], this.timeZone);
+            const isToday = isTodayDate(this.datesDisplayed[i], this.#timeZone);
 
             const headerColumnClass = `${HEADER_COLUMN_CLASS} ${
                 classNames.headerColumn || ''
@@ -941,7 +941,7 @@ export class B5rWeekView implements CalendarView {
                 addClassOnElement(refColumn, this.#classNames?.weekendModifier);
             }
 
-            if (isTodayDate(this.datesDisplayed[day], this.timeZone)) {
+            if (isTodayDate(this.datesDisplayed[day], this.#timeZone)) {
                 addClassOnElement(refColumn, COLUMN_TODAY_CLASS);
                 addClassOnElement(refColumn, this.#classNames?.todayModifier);
             }
@@ -1025,7 +1025,7 @@ export class B5rWeekView implements CalendarView {
                     );
                 }
 
-                if (isTodayDate(this.datesDisplayed[i], this.timeZone)) {
+                if (isTodayDate(this.datesDisplayed[i], this.#timeZone)) {
                     refColumn.classList.add(COLUMN_TODAY_CLASS);
 
                     addClassOnElement(
